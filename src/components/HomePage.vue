@@ -1,6 +1,6 @@
 <template>
     <div class="homepage">
-      <h1 class="title">Math Adventure Land</h1>
+      <h1 class="title">Welcome to Mathwhiz</h1>
       <button @click="openModal" class="login-button">Login</button>
   
       <div v-if="showModal" class="modal">
