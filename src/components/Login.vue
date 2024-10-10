@@ -35,4 +35,10 @@ function handleClick() {
 h1 {
   color: #da2e2e;
 }
+
+input, button{
+  display: block;
+  margin: auto;
+}
+
 </style>
