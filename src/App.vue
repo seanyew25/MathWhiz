@@ -32,9 +32,21 @@ onMounted(() => {
 //     return { path: "/" };
 //   }
 // });
+import HomePage from "./components/HomePage.vue";
+import { onMounted } from "vue";
+import { initializePhaser } from "./components/Environment.js";
+export default {
+  setup() {
+    onMounted(() => {
+      initializePhaser();
+    });
+  },
+};
 </script>
 
 <template>
+  <!--<Login />-->
+  <!-- <HomePage /> -->
   <Navbar />
   <RouterView></RouterView>
 </template>
