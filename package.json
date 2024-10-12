@@ -13,20 +13,20 @@
     "@vueuse/motion": "^2.2.6",
     "animate.css": "^4.1.1",
     "bootstrap": "^5.3.3",
-    "bootstrap-icons": "^1.11.3",
-    "canvas-confetti": "^1.9.3",
     "firebase": "^10.14.0",
+<<<<<<< HEAD
     "nes.css": "^2.2.1",
     "phaser": "^3.86.0",
     "vue": "^3.5.10",
     "vue-router": "^4.4.5"
+=======
+    "phaser": "^3.86.0",
+    "vue": "^3.5.10"
+>>>>>>> 6d93397 (Added phaser and environment render)
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.1.4",
-    "autoprefixer": "^10.4.20",
-    "postcss": "^8.4.47",
     "sass": "^1.79.4",
-    "tailwindcss": "^3.4.14",
     "vite": "^5.4.8"
   }
 }

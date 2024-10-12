@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <script setup>
 import Navbar from "./components/Navbar.vue";
 import { ref, onMounted } from "vue";
@@ -35,6 +36,26 @@ router.beforeEach(async (to, from) => {
   <div class="tw-bg-[#B7E0FF]">
     <RouterView></RouterView>
   </div>
+=======
+<script>
+import Login from "./components/Login.vue";
+import HomePage from "./components/HomePage.vue";
+import { onMounted } from "vue";
+import { initializePhaser } from "./components/Environment.js";
+export default {
+  setup() {
+    onMounted(() => {
+      initializePhaser();
+    });
+  },
+};
+</script>
+
+<template>
+  <!--<Login />-->
+  <!-- <HomePage /> -->
+  <div id="phaser-container"></div>
+>>>>>>> 6d93397 (Added phaser and environment render)
 </template>
 
 <style></style>
