@@ -1,16 +1,23 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav
+    class="navbar navbar-expand-lg"
+    style="
+      background-color: rgba(255, 245, 205, 1);
+      padding-left: 5%;
+      padding-right: 5%;
+    "
+  >
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Navbar</a>
+      <a class="navbar-brand" href="#">MathWhiz</a>
       <div class="d-flex order-lg-2 gap-2">
         <button
           @click="openModal"
           class="btn btn-outline-primary"
           type="submit"
-          data-bs-target="#exampleModal"
+          data-bs-target="#getStartedModal"
           data-bs-toggle="modal"
         >
-          Login</button
+          Get Started!</button
         ><button
           class="navbar-toggler"
           type="button"
@@ -41,7 +48,7 @@
   <div>
     <div
       class="modal fade"
-      id="exampleModal"
+      id="getStartedModal"
       tabindex="-1"
       aria-labelledby="exampleModalLabel"
       aria-hidden="true"
@@ -49,7 +56,7 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+            <h1 class="modal-title fs-5" id="getStartedLabel">Get Started!</h1>
             <button
               type="button"
               class="btn-close"
@@ -76,84 +83,103 @@
               >
             </nav>
             <form
+              class="mt-3"
               v-show="displayForm === 'login'"
               id="login"
               @submit.prevent="handleLogin"
             >
               <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label"
-                  >Email address</label
-                >
+                <label for="inputEmail" class="form-label">Email address</label>
                 <input
                   type="email"
-                  class="form-control"
-                  id="exampleInputEmail1"
+                  :class="'form-control ' + loginValidity"
+                  id="inputEmail"
                   aria-describedby="emailHelp"
+                  v-model="email"
                 />
+                <div class="invalid-feedback">
+                  Kindly re-check the email address you've provided.
+                </div>
               </div>
               <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label"
-                  >Password</label
-                >
+                <label for="inputPassword" class="form-label">Password</label>
                 <input
                   type="password"
-                  class="form-control"
-                  id="exampleInputPassword1"
+                  :class="'form-control ' + loginValidity"
+                  id="inputPassword"
+                  v-model="loginPassword"
                 />
+                <div class="invalid-feedback">
+                  Kindly re-check the password you've provided.
+                </div>
               </div>
-              <div class="mb-3 form-check"></div>
-              <button type="submit" class="btn btn-primary">Submit</button>
+              <div style="float: right">
+                <button
+                  @click="handleLogin"
+                  type="button"
+                  class="btn btn-primary"
+                >
+                  Login!
+                </button>
+              </div>
             </form>
             <form
+              class="mt-3"
               v-show="displayForm === 'signup'"
               id="signup"
               @submit.prevent="handleLogin"
             >
               <div class="mb-3">
-                <label for="exampleInputEmail1" class="form-label"
+                <label for="inputSignupEmail" class="form-label"
                   >Email address</label
                 >
                 <input
                   type="email"
-                  class="form-control"
-                  id="exampleInputEmail1"
+                  :class="'form-control ' + signupValidity"
+                  id="inputSignupEmail"
                   aria-describedby="emailHelp"
+                  v-model="signupEmail"
                 />
+                <div class="invalid-feedback">
+                  Kindly re-check the email address you've provided.
+                </div>
               </div>
               <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label"
+                <label for="inputSignupPassword" class="form-label"
                   >Password</label
                 >
                 <input
                   type="password"
-                  class="form-control"
-                  id="exampleInputPassword1"
+                  :class="'form-control ' + signupValidity"
+                  id="inputSignupPassword"
+                  v-model="signupPassword"
                 />
+                <div class="invalid-feedback">
+                  Kindly re-check the password you've provided.
+                </div>
               </div>
-              <div class="mb-3">
-                <label for="exampleInputPassword1" class="form-label"
-                  >Password</label
-                >
-                <input
+              <!-- <div class="mb-3"> -->
+              <!-- <label for="inputConfirmPassword" class="form-label"
+                  >Confirm Password</label
+                > -->
+              <!-- <input
                   type="password"
                   class="form-control"
-                  id="exampleInputPassword1"
-                />
+                  id="inputConfirmPassword"
+                  v-model="confirmPassword"
+                /> -->
+              <!-- </div> -->
+              <div style="float: right">
+                <button
+                  @click="handleSignup"
+                  type="button"
+                  class="btn btn-primary"
+                >
+                  Sign Up!
+                </button>
               </div>
-              <div class="mb-3 form-check"></div>
-              <button type="submit" class="btn btn-primary">Submit</button>
             </form>
           </div>
-          <!-- <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div> -->
         </div>
       </div>
     </div>
@@ -161,41 +187,59 @@
 </template>
 
 <script setup>
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+} from "firebase/auth";
 import { ref, onMounted } from "vue";
-
-const showModal = ref(false);
+import * as bootstrap from "bootstrap";
+const loginValidity = ref("");
+const error = ref("");
 const email = ref("");
-const password = ref("");
+const signupEmail = ref("");
+const loginPassword = ref("");
+const signupPassword = ref("");
+// const confirmPassword = ref("");
 const errorMessage = ref("");
 const displayForm = ref("login");
 const auth = getAuth();
-
-const openModal = () => {
-  showModal.value = true;
-  errorMessage.value = "";
-};
-
-const closeModal = () => {
-  showModal.value = false;
-  email.value = "";
-  password.value = "";
-  errorMessage.value = "";
-};
+const signupValidity = ref("");
 
 const handleLogin = () => {
-  signInWithEmailAndPassword(auth, email.value, password.value)
+  console.log(email.value);
+  console.log(loginPassword.value);
+
+  signInWithEmailAndPassword(auth, email.value, loginPassword.value)
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
       console.log("You're logged in", user);
-      closeModal();
       // Here you can add logic to redirect the user or update the UI
     })
     .catch((error) => {
       const errorCode = error.code;
       errorMessage.value = error.message;
       console.error("Login error:", errorCode, errorMessage.value);
+      loginValidity.value = "is-invalid";
+    });
+};
+
+const handleSignup = () => {
+  console.log(signupEmail.value);
+  console.log(signupPassword.value);
+  createUserWithEmailAndPassword(auth, signupEmail.value, signupPassword.value)
+    .then((userCredential) => {
+      // Signed up
+      const user = userCredential.user;
+      // ...
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(error.message);
+      signupValidity.value = "is-invalid";
+      // ..
     });
 };
 </script>
