@@ -1,6 +1,6 @@
 <script setup>
 import Login from "./components/Login.vue";
-import HomePage from "./components/HomePage.vue";
+import HomePage from "./components/OldHomePage.vue";
 import Navbar from "./components/Navbar.vue";
 import { useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
