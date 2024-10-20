@@ -8,17 +8,54 @@
     "
   >
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">MathWhiz</a>
+      <a class="navbar-brand"
+        ><RouterLink style="text-decoration: none; color: black" to="/"
+          >MathWhiz</RouterLink
+        ></a
+      >
       <div class="d-flex order-lg-2 gap-2">
         <button
+          v-if="!isAuthenticated"
           @click="openModal"
           class="btn btn-outline-primary"
           type="submit"
           data-bs-target="#getStartedModal"
           data-bs-toggle="modal"
         >
-          Get Started!</button
-        ><button
+          Get Started!
+        </button>
+
+        <!-- Example single danger button -->
+        <div v-else class="dropdown-center">
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            style="background-color: transparent; color: black; border: none"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-person"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"
+              />
+            </svg>
+            {{ userData.displayName }}
+          </button>
+          <ul class="dropdown-menu">
+            <li>
+              <a @click="handleLogout" class="dropdown-item" href="#">Logout</a>
+            </li>
+          </ul>
+        </div>
+
+        <button
           class="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
@@ -37,7 +74,12 @@
       >
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <RouterLink to="/home" aria-current="page">Home</RouterLink>
+            <RouterLink
+              to="/home"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Home</RouterLink
+            >
           </li>
         </ul>
       </div>
@@ -130,6 +172,19 @@
               @submit.prevent="handleLogin"
             >
               <div class="mb-3">
+                <label for="inputSignupUsername" class="form-label"
+                  >Username</label
+                >
+                <input
+                  :class="'form-control ' + usernameCheck"
+                  id="inputSignupUsername"
+                  aria-describedby="emailHelp"
+                  v-model="username"
+                />
+                <div class="invalid-feedback">Kindly add a username.</div>
+              </div>
+
+              <div class="mb-3">
                 <label for="inputSignupEmail" class="form-label"
                   >Email address</label
                 >
@@ -191,12 +246,14 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  updateProfile,
+  signOut,
 } from "firebase/auth";
 import { ref, onMounted } from "vue";
 import * as bootstrap from "bootstrap";
 import { useRouter } from "vue-router";
 const loginValidity = ref("");
-const error = ref("");
 const email = ref("");
 const signupEmail = ref("");
 const loginPassword = ref("");
@@ -204,8 +261,19 @@ const signupPassword = ref("");
 // const confirmPassword = ref("");
 const errorMessage = ref("");
 const displayForm = ref("login");
+const username = ref("");
+const usernameCheck = ref("");
+const userData = ref("");
+const isAuthenticated = ref(false);
 const auth = getAuth();
-console.log(auth.currentUser);
+
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    console.log(user);
+    userData.value = user;
+    isAuthenticated.value = user !== null;
+  });
+});
 const signupValidity = ref("");
 
 const router = useRouter();
@@ -218,11 +286,11 @@ const handleLogin = () => {
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
-      console.log(auth.currentUser);
+      // console.log(auth.currentUser);
       console.log("You're logged in", user);
       const modalElement = document.getElementById("getStartedModal");
       const modal = bootstrap.Modal.getInstance(modalElement);
-      console.log(modalElement);
+      // userData.value = user;
       router.push("/home");
       modal.hide();
 
@@ -239,13 +307,31 @@ const handleLogin = () => {
 const handleSignup = () => {
   console.log(signupEmail.value);
   console.log(signupPassword.value);
+  username.value.trim().length === 0
+    ? (usernameCheck.value = "is-invalid")
+    : "";
   createUserWithEmailAndPassword(auth, signupEmail.value, signupPassword.value)
     .then((userCredential) => {
       // Signed up
+      // const user = auth.currentUser;
       const user = userCredential.user;
-
-      router.go();
-      // ...
+      user["displayName"] = username.value.trim();
+      userData.value = user;
+      console.log(userData.value);
+      updateProfile(user, {
+        displayName: username.value.trim(),
+      })
+        .then((response) => {
+          // console.log(response);
+          // userData.value = updatedUser;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      router.push("/home");
+      const modalElement = document.getElementById("getStartedModal");
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      modal.hide();
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -253,6 +339,17 @@ const handleSignup = () => {
       console.log(error.message);
       signupValidity.value = "is-invalid";
       // ..
+    });
+};
+
+const handleLogout = () => {
+  signOut(auth)
+    .then(() => {
+      console.log("Sign-out successful.");
+      router.push("/");
+    })
+    .catch((error) => {
+      // An error happened.
     });
 };
 </script>
