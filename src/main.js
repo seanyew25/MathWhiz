@@ -10,6 +10,12 @@ import * as bootstrap from "bootstrap";
 import { initializeApp } from "firebase/app";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
+import { createWebHistory, createRouter } from "vue-router";
+import { getAuth } from "firebase/auth";
+
+import HomePage from "./components/HomePage.vue";
+import LandingPage from "./components/LandingPage.vue";
+// import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -26,4 +32,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-createApp(App).mount("#app");
+//Initialize Vue Router
+const routes = [
+  { path: "/home", component: HomePage },
+  { path: "/", component: LandingPage },
+];
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+});
+
+createApp(App).use(router).mount("#app");

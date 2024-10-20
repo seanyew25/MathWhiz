@@ -37,7 +37,7 @@
       >
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
+            <RouterLink to="/home" aria-current="page">Home</RouterLink>
           </li>
         </ul>
       </div>
@@ -155,7 +155,7 @@
                   v-model="signupPassword"
                 />
                 <div class="invalid-feedback">
-                  Kindly re-check the password you've provided.
+                  Password must have at least 6 characters.
                 </div>
               </div>
               <!-- <div class="mb-3"> -->
@@ -194,6 +194,7 @@ import {
 } from "firebase/auth";
 import { ref, onMounted } from "vue";
 import * as bootstrap from "bootstrap";
+import { useRouter } from "vue-router";
 const loginValidity = ref("");
 const error = ref("");
 const email = ref("");
@@ -204,7 +205,10 @@ const signupPassword = ref("");
 const errorMessage = ref("");
 const displayForm = ref("login");
 const auth = getAuth();
+console.log(auth.currentUser);
 const signupValidity = ref("");
+
+const router = useRouter();
 
 const handleLogin = () => {
   console.log(email.value);
@@ -214,7 +218,14 @@ const handleLogin = () => {
     .then((userCredential) => {
       // Signed in
       const user = userCredential.user;
+      console.log(auth.currentUser);
       console.log("You're logged in", user);
+      const modalElement = document.getElementById("getStartedModal");
+      const modal = bootstrap.Modal.getInstance(modalElement);
+      console.log(modalElement);
+      router.push("/home");
+      modal.hide();
+
       // Here you can add logic to redirect the user or update the UI
     })
     .catch((error) => {
@@ -232,6 +243,8 @@ const handleSignup = () => {
     .then((userCredential) => {
       // Signed up
       const user = userCredential.user;
+
+      router.go();
       // ...
     })
     .catch((error) => {
