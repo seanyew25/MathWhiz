@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Object Counting Game</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0;
+    }
+  
+    #app {
+      width: 80%;
+      text-align: center;
+    }
+  
+    .object-row {
+      display: flex;
+      justify-content: center;
+      gap: 50px;
+      margin-bottom: 30px;
+    }
+  
+    .object {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+  
+    /* Removed background colors */
+  
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  
+    @keyframes wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(5deg); }
+      50% { transform: rotate(-5deg); }
+      75% { transform: rotate(5deg); }
+    }
+  
+    .selected {
+      animation: wiggle 0.5s ease-in-out infinite;
+    }
+  
+    @keyframes enlargeAndGlow {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+    }
+  
+    .correct {
+      animation: enlargeAndGlow 1s ease-in-out;
+    }
+  </style>
+
+</head>
+<body>
+  <div id="app" class="container">
+
+    <div class="text-center mb-3 my-4">
+      <h3>Make a total of: {{ targetNumber }}</h3>
+    </div>
+
+    <!-- Render Rows -->
+    <div v-for="(row, rowIndex) in rows" :key="'row-' + rowIndex" class="object-row">
+      <div 
+      v-for="(object, index) in row" 
+      :key="'object-' + index" 
+      :class="['object', object.type, { 'selected': object.selected, 'correct': object.animate }]"
+      @click="toggleSelect(rowIndex, index)">
+      
+      <img v-if="object.image" :src="object.image" :alt="object.type" style="width: 100%; height: 100%;" />
+      <span v-else>{{ object.value }}</span>  
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-success" @click="submitAnswer">Submit</button>
+      <p class="mt-2" :class="feedbackClass">{{ feedbackMessage }}</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
