@@ -15,6 +15,7 @@ import { getAuth } from "firebase/auth";
 
 import HomePage from "./components/HomePage.vue";
 import LandingPage from "./components/LandingPage.vue";
+import GameComponent from "./components/GameComponent.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -36,6 +37,7 @@ const app = initializeApp(firebaseConfig);
 const routes = [
   { path: "/home", component: HomePage },
   { path: "/", component: LandingPage },
+  { path: "/operations", component: GameComponent },
 ];
 
 const router = createRouter({
