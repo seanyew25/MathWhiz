@@ -79,19 +79,49 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     // Runs once, loads up assets like images and audio
-    this.load.image("test", "/src/assets/testassets.png");
+    this.load.image(
+      "terrainsAndFences",
+      "/src/assets/mainassets/1_Terrains_and_Fences_16x16.png"
+    );
+    this.load.image(
+      "cityTerrains",
+      "/src/assets/mainassets/2_City_Terrains_16x16.png"
+    );
+    this.load.image(
+      "cityProps",
+      "/src/assets/mainassets/3_City_Props_16x16.png"
+    );
+    this.load.image(
+      "main",
+      "/src/assets/mainassets/Modern_Exteriors_Complete_Tileset.png"
+    );
     // tileset name need to be the same as the image name here
     this.load.tilemapTiledJSON("map", "/src/assets/testmap.json");
->>>>>>> 6d93397 (Added phaser and environment render)
+    this.load.spritesheet("player-left", "/src/assets/sprites/ACharLeft.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
+    this.load.spritesheet(
+      "player-right",
+      "/src/assets/sprites/ACharRight.png",
+      { frameWidth: 24, frameHeight: 24 }
+    );
+    this.load.spritesheet("player-down", "/src/assets/sprites/ACharDown.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
+    this.load.spritesheet("player-up", "/src/assets/sprites/ACharUp.png", {
+      frameWidth: 24,
+      frameHeight: 24,
+    });
   }
 
   create() {
     // Runs once, after all assets in preload are loaded
     const map = this.make.tilemap({
       key: "map",
-<<<<<<< HEAD
-      tileWidth: 16,
-      tileHeight: 16,
+      tileWidth: 12,
+      tileHeight: 12,
     });
     const mainTileset = map.addTilesetImage(
       "Modern_Exteriors_Complete_Tileset",
@@ -111,31 +141,16 @@ export default class MainScene extends Phaser.Scene {
     );
     const baseLayer = map.createLayer(
       "Base Foundation Layer (looks like road)",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
+      [cityTerrainsTileset, terrainAndFencesTileset],
       0,
       0
     );
-
-    baseLayer.setName("baseLayer");
     const roadLayer = map.createLayer(
       "Road Roads (Actual roads, road lane lines and Such)",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
+      [cityTerrainsTileset, terrainAndFencesTileset],
       0,
       0
     );
-    roadLayer.setName("roadLayer");
     const pavementLayer = map.createLayer(
       "City Floors Layer (the floor you walk on that's not road, including walking pavements, flooring facade for buildings)",
       [
@@ -143,80 +158,29 @@ export default class MainScene extends Phaser.Scene {
         terrainAndFencesTileset,
         cityTerrainsTileset,
         mainTileset,
-        cityPropsTileset,
       ],
       0,
       0
     );
-    pavementLayer.setName("pavementLayer");
-    const groundDecorLayer = map.createLayer(
-      "Ground Decor",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
+    const roadDecorLayer = map.createLayer(
+      "Parking Lots, Road Fixtures or 2nd layer for traffic lights(crossings etc)",
+      [cityPropsTileset, terrainAndFencesTileset, cityTerrainsTileset],
       0,
       0
     );
-    groundDecorLayer.setName("groundDecorLayer");
     const streetLightingLayer = map.createLayer(
       "Street Lightings",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
+      cityPropsTileset,
       0,
       0
     );
-    streetLightingLayer.setName("streetLightingLayer");
-    const carsLayer = map.createLayer(
-      "Cars on Roads",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
-      0,
-      0
-    );
-    carsLayer.setName("carsLayer");
+    const carsLayer = map.createLayer("Cars on Roads", mainTileset, 0, 0);
     const buildingFirstLayer = map.createLayer(
-      "Buildings, Parks 1st Layer",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
+      "Bank, School, Buildings, Parks 1st Layer",
+      [mainTileset, cityTerrainsTileset],
       0,
       0
     );
-    buildingFirstLayer.setName("buildingFirstLayer");
-
-    const bankSchoolFieldLayer = map.createLayer(
-      "Bank, School and Field Layer",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
-      0,
-      0
-    );
-
-    bankSchoolFieldLayer.setName("bankSchoolFieldLayer");
-
     const buildingSecondLayer = map.createLayer(
       "Bank, School, Buildings, Parks Deco Layers (Layer on top)",
       [
@@ -224,84 +188,19 @@ export default class MainScene extends Phaser.Scene {
         terrainAndFencesTileset,
         cityTerrainsTileset,
         mainTileset,
-        cityPropsTileset,
       ],
       0,
       0
     );
-    buildingSecondLayer.setName("buildingSecondLayer");
+
     const beachLayer = map.createLayer(
-      "Beach Layer",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
-      0,
-      0
-    );
-    beachLayer.setName("beachLayer");
-
-    const beachUmbrellaLayer = map.createLayer(
-      "Beach Umbrella Layer",
-      [
-        cityTerrainsTileset,
-        terrainAndFencesTileset,
-        cityTerrainsTileset,
-        mainTileset,
-        cityPropsTileset,
-      ],
-      0,
-      0
-    );
-    beachUmbrellaLayer.setName("beachUmbrellaLayer");
-    const collisionLayer = map.createLayer(
-      "Collides",
-      terrainAndFencesTileset,
-      0,
-      0
-    );
-    collisionLayer.setName("collisionLayer");
-    collisionLayer.setCollisionByProperty({ collides: true });
-    collisionLayer.setVisible(false);
-    this.collisionLayer = collisionLayer;
-
-    //GET OBJECT LAYER
-    const doorObjectsLayer = map.getObjectLayer("Doors");
-    MainScene.objects = doorObjectsLayer.objects;
-    doorObjectsLayer.objects.forEach((doorObject) => {
-      // console.log(doorObject.name);
-      this[doorObject.name] = new Phaser.Geom.Rectangle(
-        doorObject.x,
-        doorObject.y,
-        doorObject.width,
-        doorObject.height
-      );
-      // console.log(JSON.stringify(this[doorObject.name]));
-    });
-=======
-      tileWidth: 12,
-      tileHeight: 12,
-    });
-    const tileset = map.addTilesetImage("test");
-    const waterLayer = map.createLayer("Water", tileset, 0, 0);
-    const groundLayer = map.createLayer("Ground", tileset, 0, 0);
-    const pathsLayer = map.createLayer("Paths", tileset, 0, 0);
-    const treesLayer = map.createLayer("Trees", tileset, 0, 0);
-    const trees1Layer = map.createLayer("Trees1", tileset, 0, 0);
-    const plateauLayer = map.createLayer("Plateau", tileset, 0, 0);
-    const houseLayer = map.createLayer("House", tileset, 0, 0);
-    const grassAndFlowersLayer = map.createLayer(
-      "Grass and Flowers",
-      tileset,
+      "Beach",
+      [mainTileset, terrainAndFencesTileset],
       0,
       0
     );
     const fenceLayer = map.createLayer("Fence", tileset, 0, 0);
     const dockLayer = map.createLayer("Dock", tileset, 0, 0);
->>>>>>> 6d93397 (Added phaser and environment render)
 
     // Phaser supports multiple cameras, but you can access the default camera like this:
     const camera = this.cameras.main;
@@ -311,6 +210,11 @@ export default class MainScene extends Phaser.Scene {
     MainScene.cursors = this.input.keyboard.createCursorKeys();
     MainScene.controls = new Phaser.Cameras.Controls.FixedKeyControl({
       camera: camera,
+      left: MainScene.cursors.left,
+      right: MainScene.cursors.right,
+      up: MainScene.cursors.up,
+      down: MainScene.cursors.down,
+      speed: MainScene.speed,
     });
     // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -397,11 +301,36 @@ export default class MainScene extends Phaser.Scene {
       repeat: -1,
     });
 
+    groundLayer.setCollisionByProperty({ collides: true });
+    houseLayer.setCollisionByProperty({ collides: true });
+    treesLayer.setCollisionByProperty({ collides: true });
+    trees1Layer.setCollisionByProperty({ collides: true });
+    fenceLayer.setCollisionByProperty({ collides: true });
+    plateauLayer.setCollisionByProperty({ collides: true });
     this.anims.create({
       key: "walk-left",
-      frames: this.anims.generateFrameNumbers("player", {
-        start: 126,
-        end: 131,
+      frames: this.anims.generateFrameNumbers("player-left", {
+        start: 0,
+        end: 3,
+      }),
+      frameRate: 20,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "walk-right",
+      frames: this.anims.generateFrameNumbers("player-right", {
+        start: 0,
+        end: 3,
+      }),
+      frameRate: 20,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "walk-up",
+      frames: this.anims.generateFrameNumbers("player-up", {
+        start: 0,
+        end: 3,
       }),
       frameRate: 20,
       repeat: -1,
@@ -409,231 +338,16 @@ export default class MainScene extends Phaser.Scene {
 
     this.anims.create({
       key: "walk-down",
-      frames: this.anims.generateFrameNumbers("player", {
-        start: 132,
-        end: 137,
+      frames: this.anims.generateFrameNumbers("player-down", {
+        start: 0,
+        end: 3,
       }),
       frameRate: 20,
       repeat: -1,
     });
-    // In your create function or similar initialization method
-    // this.physics.world.createDebugGraphic(); // Create debug graphics for the physics world
-    // this.debugGraphics = this.add.graphics().setAlpha(0.75); // Set up graphics for displaying debug information
-    this.catOutBounds = false;
-    this.physics.add.collider(MainScene.player, collisionLayer, () => {
-      this.cat.body.setVelocity(0);
-      this.cat.x = MainScene.player.x + this.catOffsetX;
-      this.cat.y = MainScene.player.y + this.catOffsetY;
-    });
-    this.physics.add.collider(this.cat, MainScene.player, () => {
-      console.log("cat collided with player");
-      // this.cat.setVisible(false);
-      let catTeleportLocationX = MainScene.player.x + this.catOffsetX;
-      let catTeleportLocationY = MainScene.player.y + this.catOffsetY;
-      // console.log("cat", catTeleportLocationX, catTeleportLocationY);
-      // console.log(
-      //   "world",
-      //   this.physics.world.bounds.x,
-      //   this.physics.world.bounds.y + this.physics.world.bounds.height
-      // );
 
-      if (
-        catTeleportLocationX <=
-          this.physics.world.bounds.x + this.physics.world.bounds.width &&
-        catTeleportLocationX >= this.physics.world.bounds.x &&
-        catTeleportLocationY <=
-          this.physics.world.bounds.y + this.physics.world.bounds.height &&
-        catTeleportLocationY >= this.physics.world.bounds.y
-      ) {
-        this.catOutBounds = false;
-        // console.log("cat teleport");
-        this.cat.x = catTeleportLocationX;
-        this.cat.y = catTeleportLocationY;
-      } else {
-        this.catOutBounds = true;
-        // console.log("cat out of bounds");
-        // this.cat.setVisible(false);
-      }
-    });
-
-    // this.physics.add.collider(this.cat, collisionLayer, () => {
-    //   console.log("cat collided");
-    // });
-    //CREATE ANIMATIONS FOR DOORS
-    this.anims.create({
-      key: "homeDoor-open",
-      frames: this.anims.generateFrameNumbers("homeDoor", {
-        start: 13,
-        end: 7,
-      }),
-      frameRate: 30,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: "shoppingCentreDoor-open",
-      frames: this.anims.generateFrameNumbers("shoppingCentreDoor", {
-        start: 0,
-        end: 7,
-      }),
-      frameRate: 30,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: "bankDoor-open",
-      frames: this.anims.generateFrameNumbers("bankDoor", {
-        start: 0,
-        end: 7,
-      }),
-      frameRate: 30,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: "schoolDoor-open",
-      frames: this.anims.generateFrameNumbers("schoolDoor", {
-        start: 0,
-        end: 7,
-      }),
-      frameRate: 30,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: "bakeryDoor-open",
-      frames: this.anims.generateFrameNumbers("bakeryDoor", {
-        start: 0,
-        end: 7,
-      }),
-      frameRate: 30,
-      repeat: 0,
-    });
-
-    //CREATE ANIMATIONS FOR CATS
-    this.anims.create({
-      key: "cat-walk-down",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 44,
-        end: 47,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "cat-walk-left",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 176,
-        end: 180,
-        // start: 172,
-        // end: 175,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: "cat-walk-up",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 305,
-        end: 311,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: "cat-walk-right",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 432,
-        end: 436,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-
-    this.anims.create({
-      key: "cat-looking-around",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 36,
-        end: 39,
-      }),
-      frameRate: 8,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: "cat-sitting1",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 32,
-        end: 35,
-      }),
-      frameRate: 8,
-      repeat: 0,
-    });
-    this.anims.create({
-      key: "cat-sitting2",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 64,
-        end: 66,
-      }),
-      frameRate: 8,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: "cat-lay-down1",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 40,
-        end: 43,
-      }),
-      frameRate: 8,
-      repeat: 0,
-    });
-
-    this.anims.create({
-      key: "cat-lay-down2",
-      frames: this.anims.generateFrameNumbers("cat", {
-        start: 72,
-        end: 75,
-      }),
-      frameRate: 8,
-      repeat: 0,
-    });
-
-    this.cat.on("pointerdown", (pointer) => {
-      console.log("cat clicked");
-      if (pointer.leftButtonDown()) {
-        this.cat.anims.play("cat-looking-around", true);
-      } else if (pointer.rightButtonDown()) {
-        this.cat.anims.play("cat-sitting1", true);
-      } else if (pointer.middleButtonDown()) {
-        this.cat.anims.play("cat-lay-down1", true);
-      }
-
-      if (this.cat.anims.isPlaying) {
-        const currentAnimationName = this.cat.anims.currentAnim.key; // Get the name of the current animation
-        console.log("Current animation playing: ", currentAnimationName);
-      }
-      this.cat.on("animationcomplete", (animation) => {
-        console.log(`Animation completed: ${animation.key}`);
-
-        if (animation.key === "cat-looking-around") {
-          // Set the sprite directly to frame 65 after the animation ends
-          this.cat.setFrame(68);
-        }
-
-        if (animation.key === "cat-sitting1") {
-          this.cat.anims.play("cat-sitting2", true);
-        }
-
-        if (animation.key === "cat-lay-down1") {
-          this.cat.anims.play("cat-lay-down2", true);
-        }
-      });
-    });
-
-    // EACH ROW HAS 32 FRAMES!!!
+    // this.cursors = this.input.keyboard.createCursorKeys();
+    MainScene.player = this.physics.add.sprite(348, 84, "player-down");
 
     //FOR COLLIDER DEBUGGING
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
@@ -673,72 +387,32 @@ export default class MainScene extends Phaser.Scene {
     // this.collisionBlocks.forEach((tile) => {
     //   console.log(tile);
     // });
-
-    this.events.on("catOverlapWithCollisionBlocks", (cat) => {
-      console.log("cat is overlapping with collision blocks");
-      cat.setVisible(false);
-    });
-
-    this.events.on("catIsFreeToMove", (cat) => {
-      if (!this.catOutBounds) {
-        // console.log("cat is free to move");
-        // console.log("cat is in bounds");
-        cat.setVisible(true);
-      } else {
-        cat.setVisible(false);
-      }
-    });
-
-    // Set line color to red and full opacity
-    const graphics = this.add.graphics();
-    graphics.lineStyle(2, 0xff0000, 1); // Set line color to red and full opacity
-
-    // Loop through each collision block and draw its rectangle
-    // this.collisionBlocks.forEach((obj) => {
-    //   // graphics.strokeRect(obj.x, obj.y, obj.width, obj.height);
-    //   // graphics.setDepth(10000);
-    //   // console.log(obj);
+    // grassAndFlowersLayer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
+    // });
+    // treesLayer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
+    // });
+    // trees1Layer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
+    // });
+    // fenceLayer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
     // });
 
-    // eventEmitter.on("playerMovement", () => {
-    //   const playerY = MainScene.player.y;
-    //   const playerDepth = MainScene.player.depth;
-
-    //   // Iterate only over filtered depth-adjustable children
-    //   this.depthAdjustableChildren.forEach((child) => {
-    //     // Update depth only if the player is below the child
-    //     if (playerY > child.y && child.depth <= playerDepth) {
-    //       child.setDepth(playerDepth + 1);
-    //     }
-    //   });
-    // });
-=======
-    const cursors = this.input.keyboard.createCursorKeys();
-    controls = new Phaser.Cameras.Controls.FixedKeyControl({
-      camera: camera,
-      left: cursors.left,
-      right: cursors.right,
-      up: cursors.up,
-      down: cursors.down,
-      speed: 0.5,
-    });
-
-    // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
-    camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
-    // Help text that has a "fixed" position on the screen
-    this.add
-      .text(16, 16, "Arrow keys to scroll", {
-        font: "18px monospace",
-        fill: "#ffffff",
-        padding: { x: 20, y: 10 },
-        backgroundColor: "#000000",
-      })
-      .setScrollFactor(0);
-
-    worldLayer.setCollisionByProperty({ collides: true });
-    player = this.physics.add.sprite(400, 350, "atlas", "misa-front");
->>>>>>> 6d93397 (Added phaser and environment render)
+    this.physics.add.collider(MainScene.player, treesLayer);
+    this.physics.add.collider(MainScene.player, groundLayer);
+    this.physics.add.collider(MainScene.player, trees1Layer);
+    this.physics.add.collider(MainScene.player, houseLayer);
+    this.physics.add.collider(MainScene.player, fenceLayer);
   }
 
   update(time, delta) {
@@ -1045,8 +719,8 @@ export function initializePhaser(equippedCat) {
 export function initializePhaser() {
   const config = {
     type: Phaser.AUTO, // Which renderer to use
-    width: 800, // Canvas width in pixels
-    height: 600, // Canvas height in pixels
+    width: window.innerWidth, // Canvas width in pixels
+    height: window.innerHeight - 56, // Canvas height in pixels
     parent: "phaser-container", // ID of the DOM element to add the canvas to
 >>>>>>> 6d93397 (Added phaser and environment render)
     scene: MainScene,
@@ -1056,22 +730,6 @@ export function initializePhaser() {
         gravity: { y: 0 }, // Top down game, so no gravity
       },
     },
-<<<<<<< HEAD
-    scene: [MainScene, GameOverlayScene],
-    scale: {
-      mode: Phaser.Scale.RESIZE, // Makes the game responsive
-      autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game in the window
-    },
-    callbacks: {
-      preBoot: (game) => {
-        // Set initial data here if needed
-        game.registry.set("initialData", { equippedCat: equippedCat });
-      },
-    },
-  };
-  const game = new Phaser.Game(config);
-  return game;
-=======
   };
   new Phaser.Game(config);
 >>>>>>> 6d93397 (Added phaser and environment render)
