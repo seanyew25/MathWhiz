@@ -11,51 +11,130 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     // Runs once, loads up assets like images and audio
-    this.load.image("test", "/src/assets/testassets.png");
-    // tileset name need to be the same as the image name here
-    this.load.tilemapTiledJSON("map", "/src/assets/testmap.json");
-    this.load.spritesheet("player-left", "/src/assets/sprites/ACharLeft.png", {
-      frameWidth: 24,
-      frameHeight: 24,
-    });
-    this.load.spritesheet(
-      "player-right",
-      "/src/assets/sprites/ACharRight.png",
-      { frameWidth: 24, frameHeight: 24 }
+    this.load.image(
+      "terrainsAndFences",
+      "/src/assets/mainassets/1_Terrains_and_Fences_16x16.png"
     );
-    this.load.spritesheet("player-down", "/src/assets/sprites/ACharDown.png", {
-      frameWidth: 24,
-      frameHeight: 24,
-    });
-    this.load.spritesheet("player-up", "/src/assets/sprites/ACharUp.png", {
-      frameWidth: 24,
-      frameHeight: 24,
-    });
+    this.load.image(
+      "cityTerrains",
+      "/src/assets/mainassets/2_City_Terrains_16x16.png"
+    );
+    this.load.image(
+      "cityProps",
+      "/src/assets/mainassets/3_City_Props_16x16.png"
+    );
+    this.load.image(
+      "main",
+      "/src/assets/mainassets/Modern_Exteriors_Complete_Tileset.png"
+    );
+    // tileset name need to be the same as the image name here
+    this.load.tilemapTiledJSON(
+      "map",
+      "/src/assets/mainassets/MainTilemap.json"
+    );
+    this.load.spritesheet(
+      "player",
+      "/src/assets/mainassets/sprites/postman.png",
+      {
+        frameWidth: 16,
+        frameHeight: 32,
+      }
+    );
   }
 
   create() {
     // Runs once, after all assets in preload are loaded
     const map = this.make.tilemap({
       key: "map",
-      tileWidth: 12,
-      tileHeight: 12,
+      tileWidth: 16,
+      tileHeight: 16,
     });
-    const tileset = map.addTilesetImage("test");
-    const waterLayer = map.createLayer("Water", tileset, 0, 0);
-    const groundLayer = map.createLayer("Ground", tileset, 0, 0);
-    const pathsLayer = map.createLayer("Paths", tileset, 0, 0);
-    const treesLayer = map.createLayer("Trees", tileset, 0, 0);
-    const trees1Layer = map.createLayer("Trees1", tileset, 0, 0);
-    const plateauLayer = map.createLayer("Plateau", tileset, 0, 0);
-    const houseLayer = map.createLayer("House", tileset, 0, 0);
-    const grassAndFlowersLayer = map.createLayer(
-      "Grass and Flowers",
-      tileset,
+    const mainTileset = map.addTilesetImage(
+      "Modern_Exteriors_Complete_Tileset",
+      "main"
+    );
+    const cityTerrainsTileset = map.addTilesetImage(
+      "2_City_Terrains_16x16",
+      "cityTerrains"
+    );
+    const cityPropsTileset = map.addTilesetImage(
+      "3_City_Props_16x16",
+      "cityProps"
+    );
+    const terrainAndFencesTileset = map.addTilesetImage(
+      "1_Terrains_and_Fences_16x16",
+      "terrainsAndFences"
+    );
+    const baseLayer = map.createLayer(
+      "Base Foundation Layer (looks like road)",
+      [cityTerrainsTileset, terrainAndFencesTileset],
       0,
       0
     );
-    const fenceLayer = map.createLayer("Fence", tileset, 0, 0);
-    const dockLayer = map.createLayer("Dock", tileset, 0, 0);
+    const roadLayer = map.createLayer(
+      "Road Roads (Actual roads, road lane lines and Such)",
+      [cityTerrainsTileset, terrainAndFencesTileset],
+      0,
+      0
+    );
+    const pavementLayer = map.createLayer(
+      "City Floors Layer (the floor you walk on that's not road, including walking pavements, flooring facade for buildings)",
+      [
+        cityTerrainsTileset,
+        terrainAndFencesTileset,
+        cityTerrainsTileset,
+        mainTileset,
+      ],
+      0,
+      0
+    );
+    const roadDecorLayer = map.createLayer(
+      "Parking Lots, Road Fixtures or 2nd layer for traffic lights(crossings etc)",
+      [cityPropsTileset, terrainAndFencesTileset, cityTerrainsTileset],
+      0,
+      0
+    );
+    const streetLightingLayer = map.createLayer(
+      "Street Lightings",
+      cityPropsTileset,
+      0,
+      0
+    );
+    const carsLayer = map.createLayer("Cars on Roads", mainTileset, 0, 0);
+    const buildingFirstLayer = map.createLayer(
+      "Bank, School, Buildings, Parks 1st Layer",
+      [mainTileset, cityTerrainsTileset],
+      0,
+      0
+    );
+    const buildingSecondLayer = map.createLayer(
+      "Bank, School, Buildings, Parks Deco Layers (Layer on top)",
+      [
+        cityTerrainsTileset,
+        terrainAndFencesTileset,
+        cityTerrainsTileset,
+        mainTileset,
+      ],
+      0,
+      0
+    );
+
+    const beachLayer = map.createLayer(
+      "Beach",
+      [mainTileset, terrainAndFencesTileset],
+      0,
+      0
+    );
+
+    baseLayer.setCollisionByProperty({ collides: true });
+    roadLayer.setCollisionByProperty({ collides: true });
+    pavementLayer.setCollisionByProperty({ collides: true });
+    roadDecorLayer.setCollisionByProperty({ collides: true });
+    streetLightingLayer.setCollisionByProperty({ collides: true });
+    carsLayer.setCollisionByProperty({ collides: true });
+    buildingFirstLayer.setCollisionByProperty({ collides: true });
+    buildingSecondLayer.setCollisionByProperty({ collides: true });
+    beachLayer.setCollisionByProperty({ collides: true });
 
     // Phaser supports multiple cameras, but you can access the default camera like this:
     const camera = this.cameras.main;
@@ -64,11 +143,11 @@ export default class MainScene extends Phaser.Scene {
     MainScene.cursors = this.input.keyboard.createCursorKeys();
     MainScene.controls = new Phaser.Cameras.Controls.FixedKeyControl({
       camera: camera,
-      left: MainScene.cursors.left,
-      right: MainScene.cursors.right,
-      up: MainScene.cursors.up,
-      down: MainScene.cursors.down,
-      speed: MainScene.speed,
+      // left: MainScene.cursors.left,
+      // right: MainScene.cursors.right,
+      // up: MainScene.cursors.up,
+      // down: MainScene.cursors.down,
+      // speed: MainScene.speed,
     });
 
     // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
@@ -84,54 +163,53 @@ export default class MainScene extends Phaser.Scene {
       })
       .setScrollFactor(0);
 
-    groundLayer.setCollisionByProperty({ collides: true });
-    houseLayer.setCollisionByProperty({ collides: true });
-    treesLayer.setCollisionByProperty({ collides: true });
-    trees1Layer.setCollisionByProperty({ collides: true });
-    fenceLayer.setCollisionByProperty({ collides: true });
-    plateauLayer.setCollisionByProperty({ collides: true });
-    this.anims.create({
-      key: "walk-left",
-      frames: this.anims.generateFrameNumbers("player-left", {
-        start: 0,
-        end: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
+    // this.cursors = this.input.keyboard.createCursorKeys();
+    MainScene.player = this.physics.add.sprite(96, 400, "player", 3);
+    // Set up the camera to follow the player
+    // this.cameras.main.startFollow(this.player);
+
+    // Optional: Set camera deadzone (to avoid excessive camera movement)
+    // this.cameras.main.setDeadzone(50, 50);
 
     this.anims.create({
       key: "walk-right",
-      frames: this.anims.generateFrameNumbers("player-right", {
-        start: 0,
-        end: 3,
+      frames: this.anims.generateFrameNumbers("player", {
+        start: 114,
+        end: 119,
       }),
-      frameRate: 10,
+      frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
       key: "walk-up",
-      frames: this.anims.generateFrameNumbers("player-up", {
-        start: 0,
-        end: 3,
+      frames: this.anims.generateFrameNumbers("player", {
+        start: 120,
+        end: 125,
       }),
-      frameRate: 10,
+      frameRate: 20,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "walk-left",
+      frames: this.anims.generateFrameNumbers("player", {
+        start: 126,
+        end: 131,
+      }),
+      frameRate: 20,
       repeat: -1,
     });
 
     this.anims.create({
       key: "walk-down",
-      frames: this.anims.generateFrameNumbers("player-down", {
-        start: 0,
-        end: 3,
+      frames: this.anims.generateFrameNumbers("player", {
+        start: 132,
+        end: 137,
       }),
-      frameRate: 10,
+      frameRate: 20,
       repeat: -1,
     });
-
-    // this.cursors = this.input.keyboard.createCursorKeys();
-    MainScene.player = this.physics.add.sprite(348, 84, "player-down");
 
     //FOR COLLIDER DEBUGGING
     const debugGraphics = this.add.graphics().setAlpha(0.75);
@@ -145,32 +223,15 @@ export default class MainScene extends Phaser.Scene {
     //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
     // });
-    // grassAndFlowersLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-    // treesLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-    // trees1Layer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-    // fenceLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-
-    this.physics.add.collider(MainScene.player, treesLayer);
-    this.physics.add.collider(MainScene.player, groundLayer);
-    this.physics.add.collider(MainScene.player, trees1Layer);
-    this.physics.add.collider(MainScene.player, houseLayer);
-    this.physics.add.collider(MainScene.player, fenceLayer);
+    this.physics.add.collider(MainScene.player, baseLayer);
+    this.physics.add.collider(MainScene.player, roadLayer);
+    this.physics.add.collider(MainScene.player, pavementLayer);
+    this.physics.add.collider(MainScene.player, roadDecorLayer);
+    this.physics.add.collider(MainScene.player, streetLightingLayer);
+    this.physics.add.collider(MainScene.player, carsLayer);
+    this.physics.add.collider(MainScene.player, buildingFirstLayer);
+    this.physics.add.collider(MainScene.player, buildingSecondLayer);
+    this.physics.add.collider(MainScene.player, beachLayer);
   }
 
   update(time, delta) {
@@ -214,8 +275,8 @@ export default class MainScene extends Phaser.Scene {
 export function initializePhaser() {
   const config = {
     type: Phaser.AUTO, // Which renderer to use
-    width: 800, // Canvas width in pixels
-    height: 600, // Canvas height in pixels
+    width: window.innerWidth, // Canvas width in pixels
+    height: window.innerHeight - 56, // Canvas height in pixels
     parent: "phaser-container", // ID of the DOM element to add the canvas to
     scene: MainScene,
     physics: {
@@ -224,6 +285,10 @@ export function initializePhaser() {
         gravity: { y: 0 }, // Top down game, so no gravity
       },
     },
+    // scale: {
+    //   mode: Phaser.Scale.RESIZE, // Makes the game responsive
+    //   autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game in the window
+    // },
   };
   new Phaser.Game(config);
   // let controls;
