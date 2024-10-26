@@ -258,4 +258,10 @@ export default {
 .hover-purple {
   background-color: purple;
 }
+.hover-magenta {
+  background-color: magenta;
+}
+.hover-lightblue {
+  background-color: lightblue;
+}
 </style>
