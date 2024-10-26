@@ -134,7 +134,7 @@ export default {
       };
     },
     getEmojiClass(index) {
-      const colors = ['hover-red', 'hover-blue', 'hover-yellow', 'hover-green', 'hover-purple'];
+      const colors = ['hover-red', 'hover-blue', 'hover-yellow', 'hover-green', 'hover-purple', 'hover-magenta', 'hover-lightblue'];
       if (this.hoverIndex !== null && this.currentQuestion.operator === '÷') {
         const groupSize = this.currentQuestion.rightNumber; // Grouping for hover
         const groupIndex = Math.floor(index / groupSize);
@@ -204,4 +204,6 @@ export default {
 .hover-yellow { background-color: yellow; }
 .hover-green { background-color: green; }
 .hover-purple { background-color: purple; }
+.hover-magenta { background-color: magenta; } 
+.hover-lightblue { background-color: lightblue; }
 </style>
