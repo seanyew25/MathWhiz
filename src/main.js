@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 // import "./style.css";
-import App from "./App.vue";
+import App from "./App.vue"; //can write as import App from "@/App.vue", the @ directs to source directory (for vue cli) https://www.youtube.com/watch?v=PciUq6HcUNc
 // Import our custom CSS
 import "./styles.scss";
 
@@ -16,6 +16,7 @@ import { getAuth } from "firebase/auth";
 import HomePage from "./components/HomePage.vue";
 import LandingPage from "./components/LandingPage.vue";
 import GameComponent from "./components/GameComponent.vue";
+import moneyCounting from "./components/moneyCounting.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -38,6 +39,7 @@ const routes = [
   { path: "/home", component: HomePage },
   { path: "/", component: LandingPage },
   { path: "/operations", component: GameComponent },
+  { path: "/moneyCounting", component: moneyCounting },
 ];
 
 const router = createRouter({
