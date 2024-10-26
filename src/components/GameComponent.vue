@@ -1,9 +1,9 @@
 <template>
-  <div class="tw-min-h-screen tw-bg-gray-100 tw-flex tw-flex-col">
+  <div class="min-h-screen bg-gray-100 flex flex-col">
     <!-- Timer Bar -->
-    <div class="tw-w-full tw-h-8 tw-bg-gray-200">
+    <div class="w-full h-8 bg-gray-200">
       <div
-        class="tw-h-full tw-transition-all tw-duration-100 tw-ease-linear tw-rounded-r-full"
+        class="h-full transition-all duration-100 ease-linear rounded-r-full"
         :style="{
           width: `${timerWidth}%`,
           backgroundColor: `rgb(${
@@ -14,26 +14,26 @@
     </div>
 
     <!-- Main game content area -->
-    <div class="tw-flex-grow tw-flex tw-items-center tw-justify-center tw-p-4">
+    <div class="flex-grow flex items-center justify-center p-4">
       <div
-        class="tw-w-full tw-max-w-4xl tw-bg-white tw-rounded-lg tw-shadow-xl tw-overflow-hidden"
+        class="w-full max-w-4xl bg-white rounded-lg shadow-xl overflow-hidden"
       >
-        <div class="tw-p-6">
-          <h1 class="tw-text-3xl tw-font-bold tw-text-center tw-mb-6">
+        <div class="p-6">
+          <h1 class="text-3xl font-bold text-center mb-6">
             Multiplication and Division Game
           </h1>
 
           <!-- Numeric Question Section -->
-          <div class="tw-text-center tw-mb-4">
-            <div class="tw-text-4xl" v-if="currentQuestion">
+          <div class="text-center mb-4">
+            <div class="text-4xl" v-if="currentQuestion">
               {{ currentQuestion.leftNumber }} {{ currentQuestion.operator }}
               {{ currentQuestion.rightNumber }} = ?
             </div>
           </div>
 
           <!-- Emoji Question Section -->
-          <div class="tw-text-center tw-mb-6">
-            <div class="tw-text-4xl tw-mb-4" v-if="currentQuestion">
+          <div class="text-center mb-6">
+            <div class="text-4xl mb-4" v-if="currentQuestion">
               <span
                 v-for="(item, index) in currentQuestion.leftItems"
                 :key="`left-${index}`"
@@ -42,7 +42,7 @@
               >
                 {{ item }}
               </span>
-              <span class="tw-mx-2">{{ currentQuestion.operator }}</span>
+              <span class="mx-2">{{ currentQuestion.operator }}</span>
               <span
                 v-for="(item, index) in currentQuestion.rightItems"
                 :key="`right-${index}`"
@@ -52,12 +52,12 @@
               >
                 {{ item }}
               </span>
-              <span class="tw-mx-2">=</span>
+              <span class="mx-2">=</span>
             </div>
           </div>
 
           <!-- Answer Input Section -->
-          <div class="tw-text-center mb-6">
+          <div class="text-center mb-6">
             <input
               type="number"
               v-model="userInput"
@@ -67,20 +67,20 @@
           </div>
 
           <!-- Submit Button -->
-          <div class="tw-text-center">
+          <div class="text-center">
             <button
               @click="checkAnswer"
-              class="tw-bg-blue-500 hover:tw-bg-blue-600 tw-text-white tw-font-bold tw-py-2 tw-px-4 tw-rounded tw-transition tw-duration-300"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
             >
               Submit Answer
             </button>
           </div>
 
           <!-- Streak and Medal Display (only visible if streak >= 3) -->
-          <div class="tw-text-center tw-mt-6" v-if="correctStreak >= 3">
-            <p class="tw-text-xl">
+          <div class="text-center mt-6" v-if="correctStreak >= 3">
+            <p class="text-xl">
               Streak Count: {{ correctStreak }} Good Job! Medals earned:
-              <span v-for="n in medals" :key="n" class="tw-text-2xl">🏅</span>
+              <span v-for="n in medals" :key="n" class="text-2xl">🏅</span>
             </p>
           </div>
         </div>
@@ -173,6 +173,8 @@ export default {
         "hover-yellow",
         "hover-green",
         "hover-purple",
+        "hover-magenta",
+        "hover-lightblue",
       ];
       if (this.hoverIndex !== null && this.currentQuestion.operator === "÷") {
         const groupSize = this.currentQuestion.rightNumber; // Grouping for hover
