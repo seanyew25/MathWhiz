@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+
 // import { preload, create, update } from "phaser";
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -7,7 +8,8 @@ export default class MainScene extends Phaser.Scene {
   static controls;
   static player;
   static cursors;
-  static speed = 60;
+  static objects;
+  static speed = 100;
 
   preload() {
     // Runs once, loads up assets like images and audio
@@ -105,8 +107,8 @@ export default class MainScene extends Phaser.Scene {
       0
     );
     pavementLayer.setName("pavementLayer");
-    const roadDecorLayer = map.createLayer(
-      "Parking Lots, Road Fixtures or 2nd layer for traffic lights(crossings etc)",
+    const groundDecorLayer = map.createLayer(
+      "Ground Decor",
       [
         cityTerrainsTileset,
         terrainAndFencesTileset,
@@ -117,7 +119,7 @@ export default class MainScene extends Phaser.Scene {
       0,
       0
     );
-    roadDecorLayer.setName("roadDecorLayer");
+    groundDecorLayer.setName("groundDecorLayer");
     const streetLightingLayer = map.createLayer(
       "Street Lightings",
       [
@@ -145,7 +147,7 @@ export default class MainScene extends Phaser.Scene {
     );
     carsLayer.setName("carsLayer");
     const buildingFirstLayer = map.createLayer(
-      "Bank, School, Buildings, Parks 1st Layer",
+      "Buildings, Parks 1st Layer",
       [
         cityTerrainsTileset,
         terrainAndFencesTileset,
@@ -157,6 +159,22 @@ export default class MainScene extends Phaser.Scene {
       0
     );
     buildingFirstLayer.setName("buildingFirstLayer");
+
+    const bankSchoolFieldLayer = map.createLayer(
+      "Bank, School and Field Layer",
+      [
+        cityTerrainsTileset,
+        terrainAndFencesTileset,
+        cityTerrainsTileset,
+        mainTileset,
+        cityPropsTileset,
+      ],
+      0,
+      0
+    );
+
+    bankSchoolFieldLayer.setName("bankSchoolFieldLayer");
+
     const buildingSecondLayer = map.createLayer(
       "Bank, School, Buildings, Parks Deco Layers (Layer on top)",
       [
@@ -171,7 +189,7 @@ export default class MainScene extends Phaser.Scene {
     );
     buildingSecondLayer.setName("buildingSecondLayer");
     const beachLayer = map.createLayer(
-      "Beach",
+      "Beach Layer",
       [
         cityTerrainsTileset,
         terrainAndFencesTileset,
@@ -183,6 +201,20 @@ export default class MainScene extends Phaser.Scene {
       0
     );
     beachLayer.setName("beachLayer");
+
+    const beachUmbrellaLayer = map.createLayer(
+      "Beach Umbrella Layer",
+      [
+        cityTerrainsTileset,
+        terrainAndFencesTileset,
+        cityTerrainsTileset,
+        mainTileset,
+        cityPropsTileset,
+      ],
+      0,
+      0
+    );
+    beachUmbrellaLayer.setName("beachUmbrellaLayer");
     const collisionLayer = map.createLayer(
       "Collides",
       terrainAndFencesTileset,
@@ -193,6 +225,20 @@ export default class MainScene extends Phaser.Scene {
     collisionLayer.setCollisionByProperty({ collides: true });
     collisionLayer.setVisible(false);
 
+    //GET OBJECT LAYER
+    const doorObjectsLayer = map.getObjectLayer("Doors");
+    MainScene.objects = doorObjectsLayer.objects;
+    doorObjectsLayer.objects.forEach((doorObject) => {
+      console.log(doorObject.name);
+      this[doorObject.name] = new Phaser.Geom.Rectangle(
+        doorObject.x,
+        doorObject.y,
+        doorObject.width,
+        doorObject.height
+      );
+      console.log(JSON.stringify(this[doorObject.name]));
+    });
+
     // Phaser supports multiple cameras, but you can access the default camera like this:
     const camera = this.cameras.main;
 
@@ -200,15 +246,10 @@ export default class MainScene extends Phaser.Scene {
     MainScene.cursors = this.input.keyboard.createCursorKeys();
     MainScene.controls = new Phaser.Cameras.Controls.FixedKeyControl({
       camera: camera,
-      // left: MainScene.cursors.left,
-      // right: MainScene.cursors.right,
-      // up: MainScene.cursors.up,
-      // down: MainScene.cursors.down,
-      // speed: MainScene.speed,
     });
 
     // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
-    camera.setBounds(0, 0, map.widthInPixels - 32, map.heightInPixels - 32);
+    camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     // Help text that has a "fixed" position on the screen
     this.add
@@ -221,13 +262,37 @@ export default class MainScene extends Phaser.Scene {
       .setScrollFactor(0);
 
     // this.cursors = this.input.keyboard.createCursorKeys();
-    MainScene.player = this.physics.add.sprite(552, 588, "player", 3);
+
+    // PLAYER CREATION AND SPAWN POINT
+    MainScene.player = this.physics.add.sprite(736, 768, "player", 3);
+
+    //MAKE SPRITE COLLIDE WITH MAP BOUNDARIES
+    this.physics.world.setBounds(
+      0,
+      0,
+      map.widthInPixels,
+      map.heightInPixels,
+      true,
+      true,
+      true,
+      true
+    );
+    MainScene.player.body.setCollideWorldBounds(true);
+
+    //TO ALLOW HEAD TO OVERLAP WITH THE BORDERS
+    // Adjust the player's body size
+    MainScene.player.body.setSize(
+      MainScene.player.width,
+      MainScene.player.height * 0.75
+    ); // Make the player shorter for head overlap
+    MainScene.player.body.setOffset(0, MainScene.player.height * 0.25); // Adjust the offset so the player appears correctly on the screen
+
     // Set up the camera to follow the player
     this.cameras.main.startFollow(MainScene.player);
-    this.cameras.main.setZoom(2);
+    this.cameras.main.setZoom(2.5);
 
     // Optional: Set camera deadzone (to avoid excessive camera movement)
-    this.cameras.main.setDeadzone(50, 50);
+    // this.cameras.main.setDeadzone(50, 50);
 
     this.anims.create({
       key: "walk-right",
@@ -288,55 +353,91 @@ export default class MainScene extends Phaser.Scene {
     MainScene.player.body.setVelocity(0);
     let moving = false;
 
-    // Horizontal movement
-    if (MainScene.cursors.left.isDown) {
-      MainScene.player.body.setVelocityX(-100);
-      MainScene.player.anims.play("walk-left", true);
-      MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-      moving = true;
-    } else if (MainScene.cursors.right.isDown) {
-      MainScene.player.body.setVelocityX(100);
-      MainScene.player.anims.play("walk-right", true);
-      MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-      moving = true;
-    }
+    //DO NOTHING FOR DIAGONAL MOVEMENT
+    if (MainScene.cursors.left.isDown && MainScene.cursors.up.isDown) {
+      ("");
+    } else if (MainScene.cursors.left.isDown && MainScene.cursors.down.isDown) {
+      ("");
+    } else if (MainScene.cursors.right.isDown && MainScene.cursors.up.isDown) {
+      ("");
+    } else if (
+      MainScene.cursors.right.isDown &&
+      MainScene.cursors.down.isDown
+    ) {
+      ("");
+    } else {
+      //HORIZONTAL MOVEMENT
+      if (MainScene.cursors.left.isDown) {
+        MainScene.player.body.setVelocityX(-100);
+        MainScene.player.anims.play("walk-left", true);
+        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        moving = true;
+      } else if (MainScene.cursors.right.isDown) {
+        MainScene.player.body.setVelocityX(100);
+        MainScene.player.anims.play("walk-right", true);
+        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        moving = true;
+      }
 
-    // Vertical movement
-    if (MainScene.cursors.up.isDown) {
-      MainScene.player.body.setVelocityY(-100);
-      MainScene.player.anims.play("walk-up", true);
-      MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-      moving = true;
-    } else if (MainScene.cursors.down.isDown) {
-      MainScene.player.body.setVelocityY(100);
-      MainScene.player.anims.play("walk-down", true);
-      MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-      moving = true;
+      // VERTICAL MOVEMENT
+      if (MainScene.cursors.up.isDown) {
+        MainScene.player.body.setVelocityY(-100);
+        MainScene.player.anims.play("walk-up", true);
+        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        moving = true;
+      } else if (MainScene.cursors.down.isDown) {
+        MainScene.player.body.setVelocityY(100);
+        MainScene.player.anims.play("walk-down", true);
+        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        moving = true;
+      }
     }
 
     if (!moving) {
       MainScene.player.anims.stop();
     }
 
-    // Normalize and scale the velocity so that player can't move faster along a diagonal
-    MainScene.player.body.velocity.normalize().scale(MainScene.speed);
+    //GET BOUNDS TO CHECK IF PLAYER RECTANGLE OVERLAP WITH DOOR OBJECTS
+    const playerBounds = MainScene.player.getBounds();
+
+    // DEPTH SORTING
     this.children.each((child) => {
-      console.log(JSON.stringify(child));
+      // console.log(JSON.stringify(child));
       // console.log(child.depth);
       // if player is above the child, set the child's depth to be higher than the player
       if (
         child.name === "baseLayer" ||
         child.name === "roadLayer" ||
         child.name === "pavementLayer" ||
-        child.name === "roadDecorLayer"
+        child.name === "groundDecorLayer" ||
+        child.name === "bankSchoolFieldLayer"
       ) {
         ("");
       } else {
         if (MainScene.player.y > child.y) {
-          child.depth = MainScene.player.depth + 3;
-          console.log(`player depth: ${MainScene.player.depth}`);
-          console.log(`child depth: ${child.depth}`);
+          child.depth = MainScene.player.depth + 1;
+          // console.log(`player depth: ${MainScene.player.depth}`);
+          // console.log(`child depth: ${child.depth}`);
         }
+      }
+    });
+
+    MainScene.objects.forEach((doorObject) => {
+      if (
+        Phaser.Geom.Intersects.RectangleToRectangle(
+          playerBounds,
+          this[doorObject.name]
+        )
+      ) {
+        if (doorObject.name === "bankDoor") {
+          router.push("/bank");
+        }
+        console.log(
+          `Player is overlapping with door area. Door:
+          ${doorObject.name}
+        ${JSON.stringify(doorObject)}
+        `
+        );
       }
     });
   }
@@ -355,10 +456,10 @@ export function initializePhaser() {
         gravity: { y: 0 }, // Top down game, so no gravity
       },
     },
-    // scale: {
-    //   mode: Phaser.Scale.RESIZE, // Makes the game responsive
-    //   autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game in the window
-    // },
+    scale: {
+      mode: Phaser.Scale.RESIZE, // Makes the game responsive
+      autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game in the window
+    },
   };
   new Phaser.Game(config);
   // let controls;

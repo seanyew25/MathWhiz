@@ -12,4 +12,10 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+#phaser-container {
+  overflow: hidden;
+  height: calc(100vh - 56px);
+  /* flex: 1; */
+}
+</style>
