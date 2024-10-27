@@ -13,35 +13,26 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     // Runs once, loads up assets like images and audio
+    const basePath =
+      import.meta.env.MODE === "development"
+        ? "/src/assets/mainassets"
+        : "/assets/mainassets";
     this.load.image(
       "terrainsAndFences",
-      "/src/assets/mainassets/1_Terrains_and_Fences_16x16.png"
+      `${basePath}/1_Terrains_and_Fences_16x16.png`
     );
-    this.load.image(
-      "cityTerrains",
-      "/src/assets/mainassets/2_City_Terrains_16x16.png"
-    );
-    this.load.image(
-      "cityProps",
-      "/src/assets/mainassets/3_City_Props_16x16.png"
-    );
+    this.load.image("cityTerrains", `${basePath}/2_City_Terrains_16x16.png`);
+    this.load.image("cityProps", `${basePath}/3_City_Props_16x16.png`);
     this.load.image(
       "main",
-      "/src/assets/mainassets/Modern_Exteriors_Complete_Tileset.png"
+      `${basePath}/Modern_Exteriors_Complete_Tileset.png`
     );
     // tileset name need to be the same as the image name here
-    this.load.tilemapTiledJSON(
-      "map",
-      "/src/assets/mainassets/MainTilemap.json"
-    );
-    this.load.spritesheet(
-      "player",
-      "/src/assets/mainassets/sprites/postman.png",
-      {
-        frameWidth: 16,
-        frameHeight: 32,
-      }
-    );
+    this.load.tilemapTiledJSON("map", `${basePath}/MainTilemap.json`);
+    this.load.spritesheet("player", `${basePath}/sprites/postman.png`, {
+      frameWidth: 16,
+      frameHeight: 32,
+    });
   }
 
   create() {
