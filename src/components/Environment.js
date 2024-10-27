@@ -336,13 +336,13 @@ export default class MainScene extends Phaser.Scene {
     this.physics.add.collider(MainScene.player, collisionLayer);
 
     //FOR COLLIDER DEBUGGING
-    const debugGraphics = this.add.graphics().setAlpha(0.75);
+    // const debugGraphics = this.add.graphics().setAlpha(0.75);
 
-    collisionLayer.renderDebug(debugGraphics, {
-      tileColor: null, // Color of non-colliding tiles
-      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-      faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    });
+    // collisionLayer.renderDebug(debugGraphics, {
+    //   tileColor: null, // Color of non-colliding tiles
+    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
+    // });
 
     //CREATE DOOR COLLISION EVENT
     // This creates an event listener that listens for doorCollision event
@@ -440,7 +440,9 @@ export default class MainScene extends Phaser.Scene {
         Phaser.Geom.Intersects.RectangleToRectangle(
           playerBounds,
           this[doorObject.name]
-        )
+        ) &&
+        MainScene.cursors.up.isDown &&
+        moving
       ) {
         //CALL DOOR COLLISION EVENT
         // this emits the doorCollision event and the corresponding door object
