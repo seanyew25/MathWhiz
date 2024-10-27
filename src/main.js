@@ -15,6 +15,7 @@ import { getAuth } from "firebase/auth";
 
 import HomePage from "./components/HomePage.vue";
 import LandingPage from "./components/LandingPage.vue";
+import GameComponent from "./components/GameComponent.vue";
 import ProfilePage from "./components/ProfilePage.vue";
 import ShoppingCentrePage from "./components/ShoppingCentrePage.vue";
 import SchoolPage from "./components/SchoolPage.vue";
@@ -41,6 +42,7 @@ const app = initializeApp(firebaseConfig);
 const routes = [
   { path: "/home", component: HomePage },
   { path: "/", component: LandingPage },
+  { path: "/operations", component: GameComponent },
   { path: "/profile", component: ProfilePage },
   { path: "/shoppingcentre", component: ShoppingCentrePage },
   { path: "/school", component: SchoolPage },
