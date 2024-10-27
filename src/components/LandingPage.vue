@@ -1,5 +1,5 @@
 <template>
-  <h1>Landing Page</h1>
+  <h1 class="tw-bg-blue-500 tw-decoration-dashed tw-underline">Landing Page</h1>
 </template>
 
 <script setup></script>
