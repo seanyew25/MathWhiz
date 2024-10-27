@@ -199,8 +199,44 @@ export default class MainScene extends Phaser.Scene {
       0,
       0
     );
-    const fenceLayer = map.createLayer("Fence", tileset, 0, 0);
-    const dockLayer = map.createLayer("Dock", tileset, 0, 0);
+    beachLayer.setName("beachLayer");
+
+    const beachUmbrellaLayer = map.createLayer(
+      "Beach Umbrella Layer",
+      [
+        cityTerrainsTileset,
+        terrainAndFencesTileset,
+        cityTerrainsTileset,
+        mainTileset,
+        cityPropsTileset,
+      ],
+      0,
+      0
+    );
+    beachUmbrellaLayer.setName("beachUmbrellaLayer");
+    const collisionLayer = map.createLayer(
+      "Collides",
+      terrainAndFencesTileset,
+      0,
+      0
+    );
+
+    collisionLayer.setCollisionByProperty({ collides: true });
+    collisionLayer.setVisible(false);
+
+    //GET OBJECT LAYER
+    const doorObjectsLayer = map.getObjectLayer("Doors");
+    MainScene.objects = doorObjectsLayer.objects;
+    doorObjectsLayer.objects.forEach((doorObject) => {
+      console.log(doorObject.name);
+      this[doorObject.name] = new Phaser.Geom.Rectangle(
+        doorObject.x,
+        doorObject.y,
+        doorObject.width,
+        doorObject.height
+      );
+      console.log(JSON.stringify(this[doorObject.name]));
+    });
 
     // Phaser supports multiple cameras, but you can access the default camera like this:
     const camera = this.cameras.main;
@@ -345,10 +381,7 @@ export default class MainScene extends Phaser.Scene {
       frameRate: 20,
       repeat: -1,
     });
-
-    // this.cursors = this.input.keyboard.createCursorKeys();
-    MainScene.player = this.physics.add.sprite(348, 84, "player-down");
-
+    this.physics.add.collider(MainScene.player, collisionLayer);
     //FOR COLLIDER DEBUGGING
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
 
@@ -382,38 +415,13 @@ export default class MainScene extends Phaser.Scene {
       // );
       this.collisionBlocks.push(tile);
     });
-    // console.log(this.collisionBlocks);
-
-    // this.collisionBlocks.forEach((tile) => {
-    //   console.log(tile);
-    // });
-    // grassAndFlowersLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-    // treesLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-    // trees1Layer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-    // fenceLayer.renderDebug(debugGraphics, {
-    //   tileColor: null, // Color of non-colliding tiles
-    //   collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
-    //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
-    // });
-
-    this.physics.add.collider(MainScene.player, treesLayer);
-    this.physics.add.collider(MainScene.player, groundLayer);
-    this.physics.add.collider(MainScene.player, trees1Layer);
-    this.physics.add.collider(MainScene.player, houseLayer);
-    this.physics.add.collider(MainScene.player, fenceLayer);
   }
+
+  //DOOR COLLISION EVENT HANDLER
+  // this handles the door collision event
+  // handleDoorCollision(door) {
+  //   console.log(door.name);
+  // }
 
   update(time, delta) {
     // Apply the controls to the camera each update tick of the game
@@ -573,109 +581,23 @@ export default class MainScene extends Phaser.Scene {
       }
     });
 
-    let catPositionTile = this.collisionLayer.getTileAt(
-      Math.floor(this.cat.x / 16),
-      Math.floor(this.cat.y / 16)
-    );
-    if (catPositionTile != null) {
-      this.events.emit("catOverlapWithCollisionBlocks", this.cat);
-    } else {
-      // console.log("cat is free to move");
-      this.events.emit("catIsFreeToMove", this.cat);
-    }
-
-    // MainScene.objects.forEach((doorObject) => {
-    //   if (
-    //     Phaser.Geom.Intersects.RectangleToRectangle(
-    //       playerBounds,
-    //       this[doorObject.name]
-    //     ) &&
-    //     MainScene.cursors.up.isDown &&
-    //     moving
-    //   ) {
-    //     //CALL DOOR COLLISION EVENT
-    //     // this emits the doorCollision event and the corresponding door object
-    //     this.events.emit("doorCollision", doorObject);
-    //     // console.log(
-    //     //   `Player is overlapping with door area. Door:
-    //     //   ${doorObject.name}
-    //     // ${JSON.stringify(doorObject)}
-    //     // `
-    //     // );
-    //   }
-    // });
-    this.prevPosition = { x: MainScene.player.x, y: MainScene.player.y };
-  }
-}
-
-class GameOverlayScene extends Phaser.Scene {
-  constructor() {
-    super("GameOverlayScene");
-  }
-
-  preload() {
-    this.load.image("minimap", `/assets/mainassets/minimap_small.png`);
-    this.load.image("marker", `/assets/mainassets/marker.png`);
-  }
-
-  create() {
-    // MINIMAP;
-    const minimapX = 100;
-    const minimapY = 200;
-
-    const minimap = this.add
-      .image(this.scale.width - 230, 10, "minimap")
-      .setOrigin(0);
-
-    const bankMarker = this.add
-      .image(this.scale.width - 212, 14, "marker")
-      .setOrigin(0);
-
-    const shoppingCentreMarker = this.add
-      .image(this.scale.width - 164, 14, "marker")
-      .setOrigin(0);
-
-    const bakeryMarker = this.add
-      .image(this.scale.width - 137, 14, "marker")
-      .setOrigin(0);
-
-    const schoolMarker = this.add
-      .image(this.scale.width - 70, 14, "marker")
-      .setOrigin(0);
-
-    const homeMarker = this.add
-      .image(this.scale.width - 160, 65, "marker")
-      .setOrigin(0);
-
-    const minimapWidth = minimap.width;
-    const minimapHeight = minimap.height;
-    this.playerPosition = this.add.graphics();
-    this.playerPosition.fillStyle(0xff0000, 1); // Red color with full opacity
-    const radius = 3.2;
-    // Draw the circle with a 3.2-pixel radius
-    this.playerX = 736;
-    this.playerY = 768;
-    const circleX = minimap.x + this.playerX / 10 - radius; // X position in top-right corner
-    const circleY = minimap.y + this.playerY / 10 - radius;
-    this.playerPosition.fillCircle(circleX, circleY, radius);
-
-    // minimap.setDisplaySize(minimapWidth, minimapHeight);
-    minimap.setScrollFactor(0); // Make the minimap fixed in the camera view
-
-    // console.log(minimap);
-    // console.log(minimap.x);
-    // console.log(`width: ${this.scale.width}`);
-    // console.log(`height: ${this.scale.height}`);
-    eventEmitter.on("playerMovement", (data) => {
-      this.playerPosition.clear();
-      // console.log("Player position in GameOverlayScene:", data.x, data.y);
-      this.playerX = data.x;
-      this.playerY = data.y;
-      this.playerPosition = this.add.graphics();
-      this.playerPosition.fillStyle(0xff0000, 1);
-      const circleX = minimap.x + data.x / 10 - radius; // X position in top-right corner
-      const circleY = minimap.y + data.y / 10 - radius;
-      this.playerPosition.fillCircle(circleX, circleY, radius);
+    MainScene.objects.forEach((doorObject) => {
+      if (
+        Phaser.Geom.Intersects.RectangleToRectangle(
+          playerBounds,
+          this[doorObject.name]
+        )
+      ) {
+        if (doorObject.name === "bankDoor") {
+          router.push("/bank");
+        }
+        console.log(
+          `Player is overlapping with door area. Door:
+          ${doorObject.name}
+        ${JSON.stringify(doorObject)}
+        `
+        );
+      }
     });
 
     function repositionMinimap() {
@@ -732,5 +654,5 @@ export function initializePhaser() {
     },
   };
   new Phaser.Game(config);
->>>>>>> 6d93397 (Added phaser and environment render)
+  // let controls;
 }
