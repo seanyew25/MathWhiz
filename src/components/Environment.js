@@ -229,14 +229,14 @@ export default class MainScene extends Phaser.Scene {
     const doorObjectsLayer = map.getObjectLayer("Doors");
     MainScene.objects = doorObjectsLayer.objects;
     doorObjectsLayer.objects.forEach((doorObject) => {
-      console.log(doorObject.name);
+      // console.log(doorObject.name);
       this[doorObject.name] = new Phaser.Geom.Rectangle(
         doorObject.x,
         doorObject.y,
         doorObject.width,
         doorObject.height
       );
-      console.log(JSON.stringify(this[doorObject.name]));
+      // console.log(JSON.stringify(this[doorObject.name]));
     });
 
     // Phaser supports multiple cameras, but you can access the default camera like this:
@@ -334,6 +334,7 @@ export default class MainScene extends Phaser.Scene {
       repeat: -1,
     });
     this.physics.add.collider(MainScene.player, collisionLayer);
+
     //FOR COLLIDER DEBUGGING
     const debugGraphics = this.add.graphics().setAlpha(0.75);
 
@@ -342,7 +343,19 @@ export default class MainScene extends Phaser.Scene {
       collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
       faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
     });
+
+    //CREATE DOOR COLLISION EVENT
+    // This creates an event listener that listens for doorCollision event
+    // Upon door collision, it calls function handleDoorCollision
+    // the third argument is meant to set the context in which handleEnemyHit is executed
+    // this.events.on("doorCollision", this.handleDoorCollision, this);
   }
+
+  //DOOR COLLISION EVENT HANDLER
+  // this handles the door collision event
+  // handleDoorCollision(door) {
+  //   console.log(door.name);
+  // }
 
   update(time, delta) {
     // Apply the controls to the camera each update tick of the game
@@ -429,15 +442,15 @@ export default class MainScene extends Phaser.Scene {
           this[doorObject.name]
         )
       ) {
-        if (doorObject.name === "bankDoor") {
-          router.push("/bank");
-        }
-        console.log(
-          `Player is overlapping with door area. Door:
-          ${doorObject.name}
-        ${JSON.stringify(doorObject)}
-        `
-        );
+        //CALL DOOR COLLISION EVENT
+        // this emits the doorCollision event and the corresponding door object
+        this.events.emit("doorCollision", doorObject);
+        // console.log(
+        //   `Player is overlapping with door area. Door:
+        //   ${doorObject.name}
+        // ${JSON.stringify(doorObject)}
+        // `
+        // );
       }
     });
   }
@@ -461,6 +474,7 @@ export function initializePhaser() {
       autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game in the window
     },
   };
-  new Phaser.Game(config);
+  const game = new Phaser.Game(config);
+  return game;
   // let controls;
 }
