@@ -13,10 +13,11 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     // Runs once, loads up assets like images and audio
-    const basePath =
-      import.meta.env.MODE === "development"
-        ? "/src/assets/mainassets"
-        : "/assets/mainassets";
+    // const basePath =
+    //   import.meta.env.MODE === "development"
+    //     ? "/assets/mainassets"
+    //     : "/assets/mainassets";
+    const basePath = "/assets/mainassets";
     this.load.image(
       "terrainsAndFences",
       `${basePath}/1_Terrains_and_Fences_16x16.png`
