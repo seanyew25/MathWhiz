@@ -34,6 +34,30 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 16,
       frameHeight: 32,
     });
+    this.load.spritesheet("homeDoor", `${basePath}/sprites/homeDoor.png`, {
+      frameWidth: 16,
+      frameHeight: 32,
+    });
+    this.load.spritesheet(
+      "shoppingCentreDoor",
+      `${basePath}/sprites/shoppingCentreDoor.png`,
+      {
+        frameWidth: 32,
+        frameHeight: 48,
+      }
+    );
+    this.load.spritesheet("bankDoor", `${basePath}/sprites/bankDoor.png`, {
+      frameWidth: 48,
+      frameHeight: 32,
+    });
+    this.load.spritesheet("schoolDoor", `${basePath}/sprites/schoolDoor.png`, {
+      frameWidth: 64,
+      frameHeight: 48,
+    });
+    this.load.spritesheet("bakeryDoor", `${basePath}/sprites/bakeryDoor.png`, {
+      frameWidth: 48,
+      frameHeight: 32,
+    });
   }
 
   create() {
@@ -327,6 +351,57 @@ export default class MainScene extends Phaser.Scene {
     });
     this.physics.add.collider(MainScene.player, collisionLayer);
 
+    //CREATE ANIMATIONS FOR DOORS
+    this.anims.create({
+      key: "homeDoor-open",
+      frames: this.anims.generateFrameNumbers("homeDoor", {
+        start: 13,
+        end: 7,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+
+    this.anims.create({
+      key: "shoppingCentreDoor-open",
+      frames: this.anims.generateFrameNumbers("shoppingCentreDoor", {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+
+    this.anims.create({
+      key: "bankDoor-open",
+      frames: this.anims.generateFrameNumbers("bankDoor", {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+
+    this.anims.create({
+      key: "schoolDoor-open",
+      frames: this.anims.generateFrameNumbers("schoolDoor", {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+
+    this.anims.create({
+      key: "bakeryDoor-open",
+      frames: this.anims.generateFrameNumbers("bakeryDoor", {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+
     //FOR COLLIDER DEBUGGING
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
 
@@ -415,7 +490,8 @@ export default class MainScene extends Phaser.Scene {
         child.name === "roadLayer" ||
         child.name === "pavementLayer" ||
         child.name === "groundDecorLayer" ||
-        child.name === "bankSchoolFieldLayer"
+        child.name === "bankSchoolFieldLayer" ||
+        ("texture" in child && child.texture.key.includes("Door")) //exclude doors to ensure character appears on top of door sprites when they open
       ) {
         ("");
       } else {
