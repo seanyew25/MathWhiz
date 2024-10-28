@@ -74,11 +74,23 @@
       >
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
+            <!-- <a>Test</a> -->
             <RouterLink
+              class="nav-link"
               to="/home"
               aria-current="page"
               style="text-decoration: none; color: black"
               >Home</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
+              to="/operations"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Operations</RouterLink
             >
           </li>
         </ul>
