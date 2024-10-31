@@ -17,6 +17,7 @@ import HomePage from "./components/HomePage.vue";
 import LandingPage from "./components/LandingPage.vue";
 import GameComponent from "./components/GameComponent.vue";
 import moneyCounting from "./components/moneyCounting.vue";
+import FractionGame from "./components/FractionGame.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -40,6 +41,7 @@ const routes = [
   { path: "/", component: LandingPage },
   { path: "/operations", component: GameComponent },
   { path: "/moneyCounting", component: moneyCounting },
+  { path: "/fractiongame", component: FractionGame },
 ];
 
 const router = createRouter({

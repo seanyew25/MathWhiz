@@ -1,8 +1,8 @@
 <template>
   <div class="container-fluid">
-    <h1 class="text-center my-4">Mummy wants you to deposit ${{ targetAmount.toFixed(2) }}</h1>
+    <h1 class="text-center">Mummy wants you to deposit ${{ targetAmount.toFixed(2) }}</h1>
     <div class="row">
-      <div class="col-md-6 mb-4">
+      <div class="col-lg-6 mb-4">
         <div class="counter bg-light p-3 rounded" @dragover.prevent @drop="onDrop($event, 'counter')">
           <h2>Counter</h2>
           <div class="d-flex flex-wrap">
@@ -20,7 +20,7 @@
           </div>
         </div>
       </div>
-      <div class="col-md-6 mb-4">
+      <div class="col-lg-6 mb-4">
         <div class="piggy-bank-container p-3 rounded" @dragover.prevent @drop="onDrop($event, 'piggyBank')">
           <!-- <h2>Piggy Bank</h2> -->
           <img src="../assets/piggybank2.png" alt="Piggy Bank" class="piggy-bank">
@@ -184,6 +184,13 @@ export default {
   cursor: grab;
   margin:0;
   transition: transform 0.1s;
+}
+
+@media (max-width: 515px) {
+  .coin {
+    width: 10vw; /* Adjust this size to fit smaller screens */
+    height: 10vw;
+  }
 }
 
 .coin:hover {
