@@ -64,48 +64,6 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
-    const initialData = this.registry.get("initialData");
-    console.log(initialData.equippedCat);
-    this.load.spritesheet(
-      "cat",
-      `${basePath}/sprites/cats/${initialData.equippedCat}.png`,
-      {
-        frameWidth: 32,
-        frameHeight: 32,
-      }
-    );
-=======
-  }
-
-  preload() {
-    // Runs once, loads up assets like images and audio
-    const basePath =
-      import.meta.env.MODE === "development"
-        ? "/src/assets/mainassets"
-        : "/assets/mainassets";
-    this.load.image(
-      "terrainsAndFences",
-      `${basePath}/1_Terrains_and_Fences_16x16.png`
-    );
-    this.load.image("cityTerrains", `${basePath}/2_City_Terrains_16x16.png`);
-    this.load.image("cityProps", `${basePath}/3_City_Props_16x16.png`);
-    this.load.image(
-      "main",
-      `${basePath}/Modern_Exteriors_Complete_Tileset.png`
-    );
-    // tileset name need to be the same as the image name here
-    this.load.tilemapTiledJSON(
-      "map",
-      "/src/assets/mainassets/MainTilemap.json"
-    );
-    this.load.spritesheet(
-      "player",
-      "/src/assets/mainassets/sprites/postman.png",
-      {
-        frameWidth: 16,
-        frameHeight: 32,
-      }
-    );
   }
 
   create() {
@@ -248,12 +206,7 @@ export default class MainScene extends Phaser.Scene {
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     // PLAYER CREATION AND SPAWN POINT
-    MainScene.player = this.physics.add.sprite(736, 780, "player", 3);
-    this.cat = this.physics.add.sprite(736, 760, "cat", 44);
-    // this.catOffsetX = 0;
-    // this.catOffsetY = -20;
-    this.cat.setSize(20, 20);
-    this.cat.setInteractive();
+    MainScene.player = this.physics.add.sprite(736, 768, "player", 3);
 
     //MAKE SPRITE COLLIDE WITH MAP BOUNDARIES
     this.physics.world.setBounds(
@@ -373,7 +326,27 @@ export default class MainScene extends Phaser.Scene {
       frameRate: 20,
       repeat: -1,
     });
-    this.physics.add.collider(MainScene.player, collisionLayer);
+
+    this.anims.create({
+      key: "schoolDoor-open",
+      frames: this.anims.generateFrameNumbers("schoolDoor", {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+
+    this.anims.create({
+      key: "bakeryDoor-open",
+      frames: this.anims.generateFrameNumbers("bakeryDoor", {
+        start: 0,
+        end: 7,
+      }),
+      frameRate: 30,
+      repeat: 0,
+    });
+
     //FOR COLLIDER DEBUGGING
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
 
@@ -419,6 +392,7 @@ export default class MainScene extends Phaser.Scene {
     // Apply the controls to the camera each update tick of the game
 <<<<<<< HEAD
     // Automatically set depth based on the Y position
+
     MainScene.controls.update(delta);
     MainScene.player.body.setVelocity(0);
     let moving = false;
@@ -454,20 +428,6 @@ export default class MainScene extends Phaser.Scene {
         eventEmitter.emit("playerMovement", MainScene.player);
         MainScene.player.anims.play("walk-left", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
-        this.catOffsetX = 25;
-        this.catOffsetY = 8;
-        // only runs once upon keydown to teleport the cat behind/beside the player
-        // when player change direction/start moving
-        if (!this.setCatPosition) {
-          //cat position hasn't been set
-          // console.log("cat teleported");
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
-          this.setCatPosition = true; //cat position has been set
-        }
-        this.cat.body.setVelocityX(-100);
-        this.cat.anims.play("cat-walk-left", true);
         moving = true;
       } else if (MainScene.cursors.right.isDown) {
         // console.log(MainScene.player.body.velocity.x);
@@ -477,18 +437,6 @@ export default class MainScene extends Phaser.Scene {
         // console.log(MainScene.player.body.velocity.x);
         MainScene.player.anims.play("walk-right", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
-        this.catOffsetX = -25;
-        this.catOffsetY = 8;
-        if (!this.setCatPosition) {
-          // console.log("cat teleported");
-          // console.log(this.setCatPosition);
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
-          this.setCatPosition = true;
-        }
-        this.cat.body.setVelocityX(100);
-        this.cat.anims.play("cat-walk-right", true);
         moving = true;
       }
       // VERTICAL MOVEMENT
@@ -498,17 +446,6 @@ export default class MainScene extends Phaser.Scene {
         eventEmitter.emit("playerMovement", MainScene.player);
         MainScene.player.anims.play("walk-up", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.anims.play("cat-walk-up", true);
-        this.catOffsetX = 0;
-        this.catOffsetY = 30;
-        if (!this.setCatPosition) {
-          // console.log("cat teleported");
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
-          this.setCatPosition = true;
-        }
-        this.cat.body.setVelocityY(-100);
         moving = true;
       } else if (MainScene.cursors.down.isDown) {
         currentDirection.y = 1;
@@ -516,17 +453,6 @@ export default class MainScene extends Phaser.Scene {
         eventEmitter.emit("playerMovement", MainScene.player);
         MainScene.player.anims.play("walk-down", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
-        this.catOffsetX = 0;
-        this.catOffsetY = -23;
-        if (!this.setCatPosition) {
-          // console.log("cat teleported");
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
-          this.setCatPosition = true;
-        }
-        this.cat.body.setVelocityY(100);
-        this.cat.anims.play("cat-walk-down", true);
         moving = true;
       }
     }
@@ -546,18 +472,6 @@ export default class MainScene extends Phaser.Scene {
     if (!moving) {
       this.setCatPosition = false;
       MainScene.player.anims.stop();
-      if (this.cat.anims.isPlaying) {
-        const currentAnimationName = this.cat.anims.currentAnim.key;
-        if (currentAnimationName.includes("walk")) {
-          this.cat.body.setVelocity(0);
-          this.cat.anims.stop();
-        }
-      }
-    }
-
-    if (this.directionChanged) {
-      this.setCatPosition = false;
-      this.cat.body.setVelocity(0);
     }
 
     const playerBounds = MainScene.player.getBounds();
