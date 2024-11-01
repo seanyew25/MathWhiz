@@ -58,6 +58,10 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
+    this.load.spritesheet("cat", `${basePath}/calico.png`, {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
   }
 
   create() {
@@ -281,6 +285,13 @@ export default class MainScene extends Phaser.Scene {
 
     // PLAYER CREATION AND SPAWN POINT
     MainScene.player = this.physics.add.sprite(736, 768, "player", 3);
+    this.cat = this.physics.add.sprite(736, 752, "cat", 44);
+    this.catOffsetX = 0;
+    this.catOffsetY = -20;
+    this.cat.setInteractive();
+    this.cat.on("pointerdown", () => {
+      console.log("cat clicked");
+    });
 
     //MAKE SPRITE COLLIDE WITH MAP BOUNDARIES
     this.physics.world.setBounds(
@@ -402,6 +413,46 @@ export default class MainScene extends Phaser.Scene {
       repeat: 0,
     });
 
+    //CREATE ANIMATIONS FOR CATS
+    this.anims.create({
+      key: "cat-walk-down",
+      frames: this.anims.generateFrameNumbers("cat", {
+        start: 44,
+        end: 47,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "cat-walk-left",
+      frames: this.anims.generateFrameNumbers("cat", {
+        start: 176,
+        end: 180,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "cat-walk-up",
+      frames: this.anims.generateFrameNumbers("cat", {
+        start: 305,
+        end: 311,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: "cat-walk-right",
+      frames: this.anims.generateFrameNumbers("cat", {
+        start: 432,
+        end: 436,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+
     //FOR COLLIDER DEBUGGING
     // const debugGraphics = this.add.graphics().setAlpha(0.75);
 
@@ -427,7 +478,8 @@ export default class MainScene extends Phaser.Scene {
   update(time, delta) {
     // Apply the controls to the camera each update tick of the game
     // Automatically set depth based on the Y position
-
+    this.cat.x = MainScene.player.x + this.catOffsetX;
+    this.cat.y = MainScene.player.y + this.catOffsetY;
     MainScene.controls.update(delta);
 
     MainScene.player.body.setVelocity(0);
@@ -451,11 +503,19 @@ export default class MainScene extends Phaser.Scene {
         MainScene.player.body.setVelocityX(-100);
         MainScene.player.anims.play("walk-left", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.catOffsetX = 25;
+        this.catOffsetY = 8;
+        this.cat.anims.play("cat-walk-left", true);
         moving = true;
       } else if (MainScene.cursors.right.isDown) {
         MainScene.player.body.setVelocityX(100);
         MainScene.player.anims.play("walk-right", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.catOffsetX = -25;
+        this.catOffsetY = 8;
+        this.cat.anims.play("cat-walk-right", true);
         moving = true;
       }
 
@@ -464,17 +524,26 @@ export default class MainScene extends Phaser.Scene {
         MainScene.player.body.setVelocityY(-100);
         MainScene.player.anims.play("walk-up", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.anims.play("cat-walk-up", true);
+        this.catOffsetX = 0;
+        this.catOffsetY = 30;
         moving = true;
       } else if (MainScene.cursors.down.isDown) {
         MainScene.player.body.setVelocityY(100);
         MainScene.player.anims.play("walk-down", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.catOffsetX = 0;
+        this.catOffsetY = -20;
+        this.cat.anims.play("cat-walk-down", true);
         moving = true;
       }
     }
 
     if (!moving) {
       MainScene.player.anims.stop();
+      this.cat.anims.stop();
     }
 
     //GET BOUNDS TO CHECK IF PLAYER RECTANGLE OVERLAP WITH DOOR OBJECTS
