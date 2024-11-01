@@ -87,7 +87,7 @@
             <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
-              to="/operations"
+              to="/quiz"
               aria-current="page"
               style="text-decoration: none; color: black"
               >Operations</RouterLink
