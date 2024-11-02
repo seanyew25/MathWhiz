@@ -4,6 +4,7 @@ import Phaser from "phaser";
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super({ key: "MainScene" });
+    this.prevDirection = { x: 0, y: 0 };
   }
   static controls;
   static player;
@@ -287,9 +288,9 @@ export default class MainScene extends Phaser.Scene {
     // PLAYER CREATION AND SPAWN POINT
     MainScene.player = this.physics.add.sprite(736, 768, "player", 3);
     this.cat = this.physics.add.sprite(736, 752, "cat", 44);
-    this.catOffsetX = 0;
-    this.catOffsetY = -20;
-    this.cat.setSize(2, 2);
+    // this.catOffsetX = 0;
+    // this.catOffsetY = -20;
+    this.cat.setSize(20, 20);
     this.cat.setInteractive();
 
     //MAKE SPRITE COLLIDE WITH MAP BOUNDARIES
@@ -306,20 +307,20 @@ export default class MainScene extends Phaser.Scene {
     MainScene.player.body.setCollideWorldBounds(true);
     this.cat.body.setCollideWorldBounds(true);
     // In your create function or similar initialization method
-    this.physics.world.createDebugGraphic(); // Create debug graphics for the physics world
-    this.debugGraphics = this.add.graphics().setAlpha(0.75); // Set up graphics for displaying debug information
+    // this.physics.world.createDebugGraphic(); // Create debug graphics for the physics world
+    // this.debugGraphics = this.add.graphics().setAlpha(0.75); // Set up graphics for displaying debug information
 
-    // In your update function, after updating positions, you can draw the debug graphics
-    this.physics.world.debugGraphic.clear(); // Clear previous debug graphics
-    this.physics.world.debugGraphic.lineStyle(1, 0xff0000, 1); // Set line style for debug
+    // // In your update function, after updating positions, you can draw the debug graphics
+    // this.physics.world.debugGraphic.clear(); // Clear previous debug graphics
+    // this.physics.world.debugGraphic.lineStyle(1, 0xff0000, 1); // Set line style for debug
 
     // Draw debug shapes for the cat and other objects
-    this.physics.world.debugGraphic.strokeRect(
-      this.cat.body.x,
-      this.cat.body.y,
-      this.cat.body.width,
-      this.cat.body.height
-    );
+    // this.physics.world.debugGraphic.strokeRect(
+    //   this.cat.body.x,
+    //   this.cat.body.y,
+    //   this.cat.body.width,
+    //   this.cat.body.height
+    // );
 
     //TO ALLOW HEAD TO OVERLAP WITH THE BORDERS
     // Adjust the player's body size
@@ -379,9 +380,11 @@ export default class MainScene extends Phaser.Scene {
     // this.physics.world.createDebugGraphic(); // Create debug graphics for the physics world
     // this.debugGraphics = this.add.graphics().setAlpha(0.75); // Set up graphics for displaying debug information
 
-    this.physics.add.collider(MainScene.player, collisionLayer);
-    // collider only works if setVelocity is involved, so useless for cat
-
+    this.physics.add.collider(MainScene.player, collisionLayer, () => {
+      this.cat.body.setVelocity(0);
+      this.cat.x = MainScene.player.x + this.catOffsetX;
+      this.cat.y = MainScene.player.y + this.catOffsetY;
+    });
     //CREATE ANIMATIONS FOR DOORS
     this.anims.create({
       key: "homeDoor-open",
@@ -541,7 +544,6 @@ export default class MainScene extends Phaser.Scene {
       this.cat.on("animationcomplete", (animation) => {
         console.log(`Animation completed: ${animation.key}`);
 
-        // If the walk animation completed, switch to idle animation
         if (animation.key === "cat-looking-around") {
           // Set the sprite directly to frame 65 after the animation ends
           this.cat.setFrame(68);
@@ -568,26 +570,14 @@ export default class MainScene extends Phaser.Scene {
     //   faceColor: new Phaser.Display.Color(40, 39, 37, 255), // Color of colliding face edges
     // });
 
-    //CREATE DOOR COLLISION EVENT
-    // This creates an event listener that listens for doorCollision event
-    // Upon door collision, it calls function handleDoorCollision
-    // the third argument is meant to set the context in which handleEnemyHit is executed
-    // this.events.on("doorCollision", this.handleDoorCollision, this);
+    this.setCatPosition = false;
+    this.prevPosition = { x: MainScene.player.x, y: MainScene.player.y };
   }
-
-  //DOOR COLLISION EVENT HANDLER
-  // this handles the door collision event
-  // handleDoorCollision(door) {
-  //   console.log(door.name);
-  // }
 
   update(time, delta) {
     // Apply the controls to the camera each update tick of the game
     // Automatically set depth based on the Y position
     MainScene.controls.update(delta);
-    this.cat.x = MainScene.player.x + this.catOffsetX;
-    this.cat.y = MainScene.player.y + this.catOffsetY;
-    this.catOverlapStatus = false;
     MainScene.player.body.setVelocity(0);
     let moving = false;
     //CHECK IF CAT OVERLAP ANY BARRIERS
@@ -595,6 +585,11 @@ export default class MainScene extends Phaser.Scene {
     // this.cat.setVisible(true);
     // console.log(this.catOverlapStatus);
     // this.cat.setVisible(true);
+    // Get current velocity of the player
+    this.directionChanged = false;
+
+    let currentDirection = { x: 0, y: 0 };
+
     //DO NOTHING FOR DIAGONAL MOVEMENT
     if (MainScene.cursors.left.isDown && MainScene.cursors.up.isDown) {
       ("");
@@ -607,30 +602,54 @@ export default class MainScene extends Phaser.Scene {
       MainScene.cursors.down.isDown
     ) {
       ("");
+    } else if (MainScene.cursors.down.isDown && MainScene.cursors.up.isDown) {
+      ("");
     } else {
       //HORIZONTAL MOVEMENT
       if (MainScene.cursors.left.isDown) {
+        currentDirection.x = -1;
         MainScene.player.body.setVelocityX(-100);
         MainScene.player.anims.play("walk-left", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
         this.cat.setDepth(MainScene.player.y + MainScene.player.height);
         this.catOffsetX = 25;
         this.catOffsetY = 8;
+        // only runs once upon keydown to teleport the cat behind/beside the player
+        // when player change direction/start moving
+        if (!this.setCatPosition) {
+          //cat position hasn't been set
+          console.log("cat teleported");
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true; //cat position has been set
+        }
+        this.cat.body.setVelocityX(-100);
         this.cat.anims.play("cat-walk-left", true);
         moving = true;
       } else if (MainScene.cursors.right.isDown) {
+        // console.log(MainScene.player.body.velocity.x);
+        currentDirection.x = 1;
         MainScene.player.body.setVelocityX(100);
+        console.log(MainScene.player.body.velocity.x);
         MainScene.player.anims.play("walk-right", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
         this.cat.setDepth(MainScene.player.y + MainScene.player.height);
         this.catOffsetX = -25;
         this.catOffsetY = 8;
+        if (!this.setCatPosition) {
+          console.log("cat teleported");
+          console.log(this.setCatPosition);
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true;
+        }
+        this.cat.body.setVelocityX(100);
         this.cat.anims.play("cat-walk-right", true);
         moving = true;
       }
-
       // VERTICAL MOVEMENT
       if (MainScene.cursors.up.isDown) {
+        currentDirection.y = -1;
         MainScene.player.body.setVelocityY(-100);
         MainScene.player.anims.play("walk-up", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
@@ -638,30 +657,62 @@ export default class MainScene extends Phaser.Scene {
         this.cat.anims.play("cat-walk-up", true);
         this.catOffsetX = 0;
         this.catOffsetY = 30;
+        if (!this.setCatPosition) {
+          console.log("cat teleported");
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true;
+        }
+        this.cat.body.setVelocityY(-100);
         moving = true;
       } else if (MainScene.cursors.down.isDown) {
+        currentDirection.y = 1;
         MainScene.player.body.setVelocityY(100);
         MainScene.player.anims.play("walk-down", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
         this.cat.setDepth(MainScene.player.y + MainScene.player.height);
         this.catOffsetX = 0;
         this.catOffsetY = -20;
+        if (!this.setCatPosition) {
+          console.log("cat teleported");
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true;
+        }
+        this.cat.body.setVelocityY(100);
         this.cat.anims.play("cat-walk-down", true);
         moving = true;
       }
     }
+    // Check if direction has changed compared to previous direction
+    if (
+      currentDirection.x !== this.prevDirection.x ||
+      currentDirection.y !== this.prevDirection.y
+    ) {
+      this.directionChanged = true; // Set flag if direction has changed
+      console.log("Direction changed");
+    }
+
+    // Update previous direction to current for the next frame check
+    this.prevDirection = currentDirection;
 
     if (!moving) {
+      this.setCatPosition = false;
       MainScene.player.anims.stop();
       if (this.cat.anims.isPlaying) {
         const currentAnimationName = this.cat.anims.currentAnim.key;
         if (currentAnimationName.includes("walk")) {
+          this.cat.setVelocity(0);
           this.cat.anims.stop();
         }
       }
     }
 
-    //GET BOUNDS TO CHECK IF PLAYER RECTANGLE OVERLAP WITH DOOR OBJECTS
+    if (this.directionChanged) {
+      this.setCatPosition = false;
+      this.cat.setVelocity(0);
+    }
+
     const playerBounds = MainScene.player.getBounds();
 
     // DEPTH SORTING
@@ -686,15 +737,15 @@ export default class MainScene extends Phaser.Scene {
         }
       }
 
-      if (child.name === "collisionLayer") {
-        let catBounds = this.cat.getBounds();
-        let childBounds = child.getBounds();
-        if (
-          Phaser.Geom.Intersects.RectangleToRectangle(catBounds, childBounds)
-        ) {
-          console.log("cat collision");
-        }
-      }
+      // if (child.name === "collisionLayer") {
+      //   let catBounds = this.cat.getBounds();
+      //   let childBounds = child.getBounds();
+      //   if (
+      //     Phaser.Geom.Intersects.RectangleToRectangle(catBounds, childBounds)
+      //   ) {
+      //     console.log("cat collision");
+      //   }
+      // }
     });
 
     MainScene.objects.forEach((doorObject) => {
@@ -717,6 +768,7 @@ export default class MainScene extends Phaser.Scene {
         // );
       }
     });
+    this.prevPosition = { x: MainScene.player.x, y: MainScene.player.y };
   }
 }
 
@@ -742,5 +794,4 @@ export function initializePhaser() {
   };
   const game = new Phaser.Game(config);
   return game;
-  // let controls;
 }
