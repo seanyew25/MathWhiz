@@ -353,6 +353,9 @@ export default {
 
     const generateUniqueQuestion = () => {
       let question;
+      let attempts = 0;
+      const maxAttempts = 100; // Prevent infinite loop
+
       do {
         question = generateQuestion(); // Generate a question
       } while (generatedQuestions.has(JSON.stringify(question))); // Check for duplicates
@@ -365,7 +368,7 @@ export default {
       if (gameOver.value) return;
       userInput.value = "";
       hoverIndex.value = null;
-      currentQuestion.value = generateUniqueQuestion(); // Get a unique question
+      currentQuestion.value = generateUniqueQuestion();
       timerWidth.value = 100;
       startTimer();
     };
