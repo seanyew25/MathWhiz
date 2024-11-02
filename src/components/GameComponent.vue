@@ -176,7 +176,7 @@ export default {
     const userInput = ref('');
     const hoverIndex = ref(null);
     let timerInterval = null;
-    
+
     const startTimer = () => {
       if (gameOver.value) return;
       timerWidth.value = 100;
@@ -278,25 +278,23 @@ export default {
       }
     };
 
-    const currentQuestion = ref(generateQuestion());
+    const generatedQuestions = new Set(); // Set to store unique questions
 
+    const generateUniqueQuestion = () => {
+      let question;
+      do {
+        question = generateQuestion(); // Generate a question
+      } while (generatedQuestions.has(JSON.stringify(question))); // Check for duplicates
+      
+      generatedQuestions.add(JSON.stringify(question)); // Store the new question
+      return question;
+    };
+    
     const nextQuestion = () => {
       if (gameOver.value) return;
       userInput.value = '';
       hoverIndex.value = null;
-      currentQuestion.value = generateQuestion();
-      timerWidth.value = 100;
-      startTimer();
-
-      if (questionIndex.value === 0) {
-          questions.value = [
-            generateQuestion(),
-            generateQuestion(),
-            generateQuestion(),
-            generateQuestion()
-          ];
-        }
-
+      currentQuestion.value = generateUniqueQuestion(); // Get a unique question
       timerWidth.value = 100;
       startTimer();
     };
