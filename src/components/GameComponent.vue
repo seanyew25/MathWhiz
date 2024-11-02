@@ -167,8 +167,7 @@ export default {
     const highScore = ref(localStorage.getItem('highScore') || 0);
     const isBonusRound = ref(false);
 
-    const questions = ref([generateQuestion(), generateQuestion(), generateQuestion(), generateQuestion()]);
-    const questionIndex = ref(0);
+    const currentQuestion = ref(generateQuestion());
     const correctStreak = ref(0);
     const medals = ref(0);
     const timerWidth = ref(100);
@@ -281,11 +280,20 @@ export default {
 
     const generateUniqueQuestion = () => {
       let question;
+      let attempts = 0;
+      const maxAttempts = 100; // Prevent infinite loop
+
       do {
-        question = generateQuestion(); // Generate a question
-      } while (generatedQuestions.has(JSON.stringify(question))); // Check for duplicates
+        question = generateQuestion();
+        attempts++;
+        if (attempts > maxAttempts) {
+          console.warn('Max attempts reached. Resetting generated questions.');
+          generatedQuestions.clear();
+          break;
+        }
+      } while (generatedQuestions.has(JSON.stringify(question)));
       
-      generatedQuestions.add(JSON.stringify(question)); // Store the new question
+      generatedQuestions.add(JSON.stringify(question));
       return question;
     };
     
@@ -293,7 +301,7 @@ export default {
       if (gameOver.value) return;
       userInput.value = '';
       hoverIndex.value = null;
-      currentQuestion.value = generateUniqueQuestion(); // Get a unique question
+      currentQuestion.value = generateUniqueQuestion();
       timerWidth.value = 100;
       startTimer();
     };
@@ -303,7 +311,7 @@ export default {
       completionMessage.value = "Congratulations! You've earned all 10 medals!";
       clearInterval(timerInterval);
       isBonusRound.value = false;
-    };
+    };  
 
     const restartGame = () => {
       gameOver.value = false;
@@ -313,8 +321,7 @@ export default {
       userInput.value = '';
       score.value = 0;
       isBonusRound.value = false;
-      questions.value = [generateQuestion(), generateQuestion(), generateQuestion(), generateQuestion()];
-      questionIndex.value = 0;
+      currentQuestion.value = generateQuestion();
       startTimer();
     };
     
@@ -361,7 +368,7 @@ export default {
       checkAnswer, hoverDivisor, clearHover, getEmojiClass,
       earnedMedal, restartGame, exitGame,
       score, highScore, isBonusRound, gameOver, completionMessage,
-      multiplicationGrid, currentQuestion
+      multiplicationGrid
     };
   }
 };
@@ -371,22 +378,6 @@ export default {
 @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import url('https://unpkg.com/nes.css/css/nes.min.css');
-
-html, body {
-  font-family: 'Press Start 2P', sans-serif;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: mediumseagreen;
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}
 
 .game-container {
   display: flex;
@@ -399,7 +390,9 @@ body {
   padding: 2rem;
   background-color: red;
   border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 
+
+ 0.1);
 }
 
 .outer-game-container {
