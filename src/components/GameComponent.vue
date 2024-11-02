@@ -72,7 +72,7 @@
           </div>
 
           <div class="text-center tw-mb-6">
-            <div class="text-4xl mb-4" v-if="currentQuestion">
+            <div class="tw-text-4xl tw-mb-4" v-if="currentQuestion">
               <transition-group name="bounce" tag="div">
                 <span
                   v-for="(item, index) in currentQuestion.leftItems"
