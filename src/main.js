@@ -16,7 +16,11 @@ import { getFirestore } from "firebase/firestore";
 
 import HomePage from "./components/HomePage.vue";
 import LandingPage from "./components/LandingPage.vue";
-import GameComponent from "./components/GameComponent.vue";
+import ProfilePage from "./components/ProfilePage.vue";
+import ShoppingCentrePage from "./components/ShoppingCentrePage.vue";
+import SchoolPage from "./components/SchoolPage.vue";
+import BakeryPage from "./components/BakeryPage.vue";
+import BankPage from "./components/BankPage.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -39,7 +43,11 @@ const db = getFirestore(app);
 const routes = [
   { path: "/home", component: HomePage },
   { path: "/", component: LandingPage },
-  { path: "/operations", component: GameComponent },
+  { path: "/profile", component: ProfilePage },
+  { path: "/shoppingcentre", component: ShoppingCentrePage },
+  { path: "/school", component: SchoolPage },
+  { path: "/bakery", component: BakeryPage },
+  { path: "/bank", component: BankPage },
 ];
 
 const router = createRouter({

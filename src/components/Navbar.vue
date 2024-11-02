@@ -93,26 +93,6 @@
               >Operations</RouterLink
             >
           </li>
-          <li class="nav-item">
-            <!-- <a>Test</a> -->
-            <RouterLink
-              class="nav-link"
-              to="/story"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Story</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <!-- <a>Test</a> -->
-            <RouterLink
-              class="nav-link"
-              to="/shop"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Shop</RouterLink
-            >
-          </li>
         </ul>
       </div>
     </div>
