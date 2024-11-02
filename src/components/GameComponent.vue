@@ -97,14 +97,13 @@
           </div>
 
           <div class="text-center mt-6" v-if="correctStreak >= 3">
-            <p class="text-xl" :class="{ 'streak-animation': medals > 0 && earnedMedal }">
+            <p class="text-xl" :class="{ 'streak-animation': medals > 0 && earnedMedal}">
               Streak Count: {{ correctStreak }} Good Job! Medals earned:
               <div class="medals-grid">
                 <span v-for="n in medals" :key="n">  
                   <i class="nes-icon coin is-medium"></i>
                 </span>
               </div>
-            </p>
           </div>
 
           <div class="text-center mt-4">
