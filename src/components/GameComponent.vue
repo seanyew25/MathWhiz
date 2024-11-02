@@ -128,6 +128,7 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import confetti from 'canvas-confetti';
 
 const emojiSet = ['😀', '🐶', '🍕', '🚗', '🎉', '🏀', '🌍', '💡', '📚', '💻'];
 const getRandomEmoji = () => emojiSet[Math.floor(Math.random() * emojiSet.length)];
@@ -176,7 +177,6 @@ export default {
     const hoverIndex = ref(null);
     let timerInterval = null;
 
-    const isTimerLow = computed(() => timerWidth.value < 50);
     const currentQuestion = computed(() => questions.value[questionIndex.value]);
 
     const startTimer = () => {
@@ -287,8 +287,13 @@ export default {
       questionIndex.value = (questionIndex.value + 1) % questions.value.length;
 
       if (questionIndex.value === 0) {
-        questions.value = [generateQuestion(), generateQuestion(), generateQuestion(), generateQuestion()];
-      }
+          questions.value = [
+            generateQuestion(),
+            generateQuestion(),
+            generateQuestion(),
+            generateQuestion()
+          ];
+        }
 
       timerWidth.value = 100;
       startTimer();
@@ -355,15 +360,15 @@ export default {
     return { 
       timerWidth, currentQuestion, userInput, correctStreak, medals,
       checkAnswer, hoverDivisor, clearHover, getEmojiClass,
-      earnedMedal, restartGame, exitGame, isTimerLow,
+      earnedMedal, restartGame, exitGame,
       score, highScore, isBonusRound, gameOver, completionMessage,
-      multiplicationGrid
+      multiplicationGrid, questions, questionIndex
     };
   }
 };
 </script>
 
-<style>
+<style scoped>
 @import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import url('https://unpkg.com/nes.css/css/nes.min.css');
