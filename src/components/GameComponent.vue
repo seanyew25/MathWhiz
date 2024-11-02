@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col" style="background-color: #add8e6;">
+  <div class="math-game min-h-screen bg-gray-100 flex flex-col" style="background-color: #add8e6;">
     <div class="flex-grow flex items-center justify-center p-4">
       <div class="w-full max-w-5xl bg-white rounded-lg shadow-xl overflow-hidden">
         <div class="p-6 w-[400px] h-[300px] mx-auto">
@@ -80,13 +80,14 @@
               :disabled="gameOver">
           </div>
 
-          <div v-if="currentQuestion.operator === '×'" class="multiplication-grid" 
+          <!--Multiplication Game Taken Out -->
+          <!-- <div v-if="currentQuestion.operator === '×'" class="multiplication-grid" 
               :style="{ gridTemplateColumns: 'repeat(' + currentQuestion.rightNumber + ', 1fr)' }">
             <div v-for="(row, rowIndex) in multiplicationGrid" :key="'row-' + rowIndex">
               <div v-for="(cell, cellIndex) in row" :key="'cell-' + rowIndex + '-' + cellIndex" 
                   class="multiplication-cell"></div>
             </div>
-          </div>
+          </div> -->
 
           <div class="text-center">
             <button @click="checkAnswer" 
@@ -95,16 +96,18 @@
               Submit Answer
             </button>
           </div>
-
-          <div class="text-center mt-6" v-if="correctStreak >= 3">
-            <p class="text-xl" :class="{ 'streak-animation': medals > 0 && earnedMedal}">
+          
+          <div class="text-center mt-6" v-if="hasCorrectStreak">
+            <p class="text-xl" :class="streakClass">
               Streak Count: {{ correctStreak }} Good Job! Medals earned:
-              <div class="medals-grid">
-                <span v-for="n in medals" :key="n">  
-                  <i class="nes-icon coin is-medium"></i>
-                </span>
-              </div>
+            </p>
+            <div class="medals-grid">
+              <span v-for="n in medals" :key="n">
+                <i class="nes-icon coin is-medium"></i>
+              </span>
+            </div>
           </div>
+
 
           <div class="text-center mt-4">
             <p class="text-xl">Score: {{ score }}</p>
@@ -174,6 +177,13 @@ export default {
     const userInput = ref('');
     const hoverIndex = ref(null);
     let timerInterval = null;
+
+    const hasCorrectStreak = computed(() => correctStreak.value >= 3); // Streak value shifted down here
+
+    const streakClass = computed(() => ({ // Streak animation based on streak class
+      'streak-animation': medals.value > 0 && earnedMedal.value,
+    }));
+
 
     const startTimer = () => {
       if (gameOver.value) return;
@@ -325,24 +335,26 @@ export default {
       startTimer();
     };
     
-    const generateMultiplicationGrid = (left, right) => {
-      const grid = [];
-      for (let i = 0; i < left; i++) {
-        const row = [];
-        for (let j = 0; j < right; j++) {
-          row.push(1);
-        }
-        grid.push(row);
-      }
-      return grid;
-    };
+    // Multiplication Game taken out
+    // const generateMultiplicationGrid = (left, right) => {
+    //   const grid = [];
+    //   for (let i = 0; i < left; i++) {
+    //     const row = [];
+    //     for (let j = 0; j < right; j++) {
+    //       row.push(1);
+    //     }
+    //     grid.push(row);
+    //   }
+    //   return grid;
+    // };
     
-    const multiplicationGrid = computed(() => { 
-      if (currentQuestion.value.operator === '×') {
-        return generateMultiplicationGrid(currentQuestion.value.leftNumber, currentQuestion.value.rightNumber);
-      }
-      return null;
-    });
+    // Multiplication Game taken out
+    // const multiplicationGrid = computed(() => { 
+    //   if (currentQuestion.value.operator === '×') {
+    //     return generateMultiplicationGrid(currentQuestion.value.leftNumber, currentQuestion.value.rightNumber);
+    //   }
+    //   return null;
+    // });
 
     const exitGame = () => {
       console.log('Exiting game');
@@ -365,10 +377,12 @@ export default {
 
     return { 
       timerWidth, currentQuestion, userInput, correctStreak, medals,
+      hasCorrectStreak, streakClass, // Streak related returned here.
       checkAnswer, hoverDivisor, clearHover, getEmojiClass,
       earnedMedal, restartGame, exitGame,
       score, highScore, isBonusRound, gameOver, completionMessage,
-      multiplicationGrid
+      // Multiplication Game taken out
+      // multiplicationGrid
     };
   }
 };
@@ -379,7 +393,11 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 @import url('https://unpkg.com/nes.css/css/nes.min.css');
 
-.game-container {
+.math-game {
+  font-family: 'Press Start 2P', cursive;
+}
+
+.math-game .game-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -395,17 +413,17 @@ export default {
  0.1);
 }
 
-.outer-game-container {
+.math-game .outer-game-container {
   width: 100%;
   max-width: 800px;
   padding: 2rem;
 }
 
-.text-center {
+.math-game .text-center {
   text-align: center;
 }
 
-.emoji-group {
+.math-game .emoji-group {
   display: inline-block;
   padding: 0.2em;
   border-radius: 0.25em;
@@ -413,15 +431,15 @@ export default {
   transition: transform 0.3s ease, background-color  0.3s ease;
 }
 
-.emoji-group:hover {
+.math-game .emoji-group:hover {
   transform: scale(1.2);
 }
 
-.streak-animation {
+.math-game .streak-animation {
   animation: shake 0.5s;
 }
 
-@keyframes shake {
+@keyframes math-game-shake {
   0% { transform: translate(1px, 1px) rotate(0deg); }
   25% { transform: translate(-1px, -2px) rotate(-1deg); }
   50% { transform: translate(-3px, 0px) rotate(1deg); }
@@ -429,7 +447,7 @@ export default {
   100% { transform: translate(1px, -1px) rotate(-1deg); }
 }
 
-.bonus-round {
+.math-game .bonus-round {
   background-color: #ffd700;
   color: #000;
   padding: 1rem;
@@ -439,13 +457,13 @@ export default {
   animation: pulse 1s infinite;
 }
 
-@keyframes pulse {
+@keyframes math-game-pulse {
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
   100% { transform: scale(1); }
 }
 
-.medals-grid {
+.math-game .medals-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
@@ -453,7 +471,7 @@ export default {
   margin-top: 1rem;
 }
 
-.game-over-overlay {
+.math-game .game-over-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -466,29 +484,30 @@ export default {
   z-index: 1000;
 }
 
-.game-over-content {
+.math-game .game-over-content {
   background-color: white;
   padding: 2rem;
   border-radius: 1rem;
   text-align: center;
 }
 
-.hover-red { background-color: lightpink; }
-.hover-blue { background-color: lightblue; }
-.hover-yellow { background-color: lightyellow; }
-.hover-green { background-color: lightgreen; }
-.hover-purple { background-color: lightcoral; }
+.math-game .hover-red { background-color: lightpink; }
+.math-game .hover-blue { background-color: lightblue; }
+.math-game .hover-yellow { background-color: lightyellow; }
+.math-game .hover-green { background-color: lightgreen; }
+.math-game .hover-purple { background-color: lightcoral; }
 
-.multiplication-grid {
+/* Taking out this part for demo to prof. Will fix this agn. */
+/* .math-game .multiplication-grid {
   display: inline-grid;
   gap: 2px;
   margin: 10px 0;
 }
 
-.multiplication-cell {
+.math-game .multiplication-cell {
   width: 20px;
   height: 20px;
   background-color: #4CAF50;
   border: 1px solid #45a049;
-}
+} */
 </style>
