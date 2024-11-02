@@ -176,9 +176,7 @@ export default {
     const userInput = ref('');
     const hoverIndex = ref(null);
     let timerInterval = null;
-
-    const currentQuestion = computed(() => questions.value[questionIndex.value]);
-
+    
     const startTimer = () => {
       if (gameOver.value) return;
       timerWidth.value = 100;
@@ -280,11 +278,15 @@ export default {
       }
     };
 
+    const currentQuestion = ref(generateQuestion());
+
     const nextQuestion = () => {
       if (gameOver.value) return;
       userInput.value = '';
       hoverIndex.value = null;
-      questionIndex.value = (questionIndex.value + 1) % questions.value.length;
+      currentQuestion.value = generateQuestion();
+      timerWidth.value = 100;
+      startTimer();
 
       if (questionIndex.value === 0) {
           questions.value = [
@@ -362,7 +364,7 @@ export default {
       checkAnswer, hoverDivisor, clearHover, getEmojiClass,
       earnedMedal, restartGame, exitGame,
       score, highScore, isBonusRound, gameOver, completionMessage,
-      multiplicationGrid, questions, questionIndex
+      multiplicationGrid, currentQuestion
     };
   }
 };
