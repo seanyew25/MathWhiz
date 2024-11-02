@@ -15,6 +15,9 @@ export default {
       this.handleDoorCollision();
     });
     this.router = useRouter();
+    document.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+    });
   },
   data() {
     return {
@@ -42,14 +45,14 @@ export default {
       }
       return new Promise((resolve, reject) => {
         function checkStatus(game) {
-          if (getSceneStatus(game)) {
-            resolve("scene found");
-          } else {
-            // console.log("Scene not found!");
-            setTimeout(() => {
-              checkStatus(game);
-            }, 500);
-          }
+          // console.log("Scene not found!");
+          setInterval(() => {
+            if (getSceneStatus(game)) {
+              resolve("scene found");
+            } else {
+              getSceneStatus(game);
+            }
+          }, 500);
         }
         checkStatus(game);
       });
