@@ -500,17 +500,17 @@ body {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.outer-game-container {
+.math-game .outer-game-container {
   width: 100%;
   max-width: 800px;
   padding: 2rem;
 }
 
-.text-center {
+.math-game .text-center {
   text-align: center;
 }
 
-.emoji-group {
+.math-game .emoji-group {
   display: inline-block;
   padding: 0.2em;
   border-radius: 0.25em;
@@ -518,11 +518,11 @@ body {
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.emoji-group:hover {
+.math-game .emoji-group:hover {
   transform: scale(1.2);
 }
 
-.streak-animation {
+.math-game .streak-animation {
   animation: shake 0.5s;
 }
 
@@ -544,7 +544,7 @@ body {
   }
 }
 
-.bonus-round {
+.math-game .bonus-round {
   background-color: #ffd700;
   color: #000;
   padding: 1rem;
@@ -566,7 +566,7 @@ body {
   }
 }
 
-.medals-grid {
+.math-game .medals-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 0.5rem;
@@ -574,7 +574,7 @@ body {
   margin-top: 1rem;
 }
 
-.game-over-overlay {
+.math-game .game-over-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -587,7 +587,7 @@ body {
   z-index: 1000;
 }
 
-.game-over-content {
+.math-game .game-over-content {
   background-color: white;
   padding: 2rem;
   border-radius: 1rem;
@@ -610,16 +610,17 @@ body {
   background-color: lightcoral;
 }
 
-.multiplication-grid {
+/* Taking out this part for demo to prof. Will fix this agn. */
+/* .math-game .multiplication-grid {
   display: inline-grid;
   gap: 2px;
   margin: 10px 0;
 }
 
-.multiplication-cell {
+.math-game .multiplication-cell {
   width: 20px;
   height: 20px;
   background-color: #4caf50;
   border: 1px solid #45a049;
-}
+} */
 </style>
