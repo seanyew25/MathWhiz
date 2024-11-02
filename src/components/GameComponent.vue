@@ -1,26 +1,50 @@
 <template>
-  <div class="math-game min-h-screen bg-gray-100 flex flex-col" style="background-color: #add8e6;">
-    <div class="flex-grow flex items-center justify-center p-4">
-      <div class="w-full max-w-5xl bg-white rounded-lg shadow-xl overflow-hidden">
-        <div class="p-6 w-[400px] h-[300px] mx-auto">
-          <h1 class="text-3xl font-bold text-center align-center mb-6">
-            {{ currentQuestion.operator === '×' ? 'Multiplication Game' : 'Division Game' }}
+  <div
+    class="math-game tw-min-h-screen tw-bg-gray-100 tw-flex tw-flex-col"
+    style="background-color: #add8e6"
+  >
+    <div class="tw-flex-grow tw-flex tw-items-center tw-justify-center tw-p-4">
+      <div
+        class="tw-w-full tw-max-w-5xl tw-bg-white tw-rounded-lg tw-shadow-xl tw-overflow-hidden"
+      >
+        <!-- <div class="tw-p-6 tw-w-[400px] tw-h-[300px] tw-mx-auto"> -->
+        <!-- including width and heights cause the box to be too small to show everything -->
+        <div class="tw-p-6 tw-mx-auto">
+          <h1
+            class="tw-text-3xl tw-font-bold tw-text-center tw-align-center tw-mb-6"
+          >
+            {{
+              currentQuestion.operator === "×"
+                ? "Multiplication Game"
+                : "Division Game"
+            }}
           </h1>
 
           <div class="progress-container">
-            <progress class="nes-progress is-success" :value="timerWidth" :max="100"></progress>
+            <progress
+              class="nes-progress is-success"
+              :value="timerWidth"
+              :max="100"
+            ></progress>
             <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
           </div>
 
           <div>
             <section>
-              <button type="button" class="nes-btn is-primary" onclick="document.getElementById('dialog-default').showModal();">
+              <button
+                type="button"
+                class="nes-btn is-primary"
+                onclick="document.getElementById('dialog-default').showModal();"
+              >
                 Hint!
               </button>
               <dialog class="nes-dialog" id="dialog-default">
                 <form method="dialog">
                   <p class="title">Hint</p>
-                  <p>Hover over the denominator in division questions to better understand the question!</p>
+                  <p>
+                    Hover over the denominator in division questions to better
+                    understand the question!
+                  </p>
                   <menu class="dialog-menu">
                     <button class="nes-btn">Cancel</button>
                     <button class="nes-btn is-success">Confirm</button>
@@ -31,12 +55,15 @@
           </div>
 
           <transition name="fade">
-            <div v-if="isBonusRound && !gameOver" class="bonus-round text-center mb-4">
+            <div
+              v-if="isBonusRound && !gameOver"
+              class="bonus-round text-center mb-4"
+            >
               Bonus Round! Double points for correct answers!
             </div>
           </transition>
 
-          <div class="text-center mb-4">
+          <div class="text-center tw-mb-4">
             <div class="text-4xl" v-if="currentQuestion">
               <span>{{ currentQuestion.leftNumber }}</span>
               <span class="mx-2">{{ currentQuestion.operator }}</span>
@@ -44,25 +71,29 @@
             </div>
           </div>
 
-          <div class="text-center mb-6">
-            <div class="text-4xl mb-4" v-if="currentQuestion">
+          <div class="text-center tw-mb-6">
+            <div class="tw-text-4xl tw-mb-4" v-if="currentQuestion">
               <transition-group name="bounce" tag="div">
-                <span v-for="(item, index) in currentQuestion.leftItems" 
-                      :key="'left-' + index" 
-                      :class="getEmojiClass(index)" 
-                      class="emoji-group">
+                <span
+                  v-for="(item, index) in currentQuestion.leftItems"
+                  :key="'left-' + index"
+                  :class="getEmojiClass(index)"
+                  class="emoji-group"
+                >
                   {{ item }}
                 </span>
               </transition-group>
 
-              <div class="text-4xl">{{ currentQuestion.operator }}</div>
+              <div class="tw-text-4xl">{{ currentQuestion.operator }}</div>
 
               <transition-group name="bounce" tag="div">
-                <span v-for="(item, index) in currentQuestion.rightItems" 
-                      :key="'right-' + index" 
-                      class="emoji-group" 
-                      @mouseover="hoverDivisor(index)" 
-                      @mouseleave="clearHover">
+                <span
+                  v-for="(item, index) in currentQuestion.rightItems"
+                  :key="'right-' + index"
+                  class="emoji-group"
+                  @mouseover="hoverDivisor(index)"
+                  @mouseleave="clearHover"
+                >
                   {{ item }}
                 </span>
               </transition-group>
@@ -72,12 +103,14 @@
           </div>
 
           <div class="nes-field is-inline">
-            <input type="number" 
+            <input
+              type="number"
               v-model="userInput"
               @keyup.enter="checkAnswer"
-              class="nes-input is-success" 
+              class="nes-input is-success"
               placeholder="Enter Your Answer"
-              :disabled="gameOver">
+              :disabled="gameOver"
+            />
           </div>
 
           <!--Multiplication Game Taken Out -->
@@ -89,16 +122,18 @@
             </div>
           </div> -->
 
-          <div class="text-center">
-            <button @click="checkAnswer" 
-                    :class="{'nes-btn': true, 'is-disabled': gameOver}"
-                    :disabled="gameOver">
+          <div class="tw-text-center">
+            <button
+              @click="checkAnswer"
+              :class="{ 'nes-btn': true, 'is-disabled': gameOver }"
+              :disabled="gameOver"
+            >
               Submit Answer
             </button>
           </div>
-          
-          <div class="text-center mt-6" v-if="hasCorrectStreak">
-            <p class="text-xl" :class="streakClass">
+
+          <div class="tw-text-center tw-mt-6" v-if="hasCorrectStreak">
+            <p class="tw-text-xl" :class="streakClass">
               Streak Count: {{ correctStreak }} Good Job! Medals earned:
             </p>
             <div class="medals-grid">
@@ -108,18 +143,21 @@
             </div>
           </div>
 
-
-          <div class="text-center mt-4">
-            <p class="text-xl">Score: {{ score }}</p>
-            <p class="text-xl">High Score: {{ highScore }}</p>
+          <div class="tw-text-center mt-4">
+            <p class="tw-text-xl">Score: {{ score }}</p>
+            <p class="tw-text-xl">High Score: {{ highScore }}</p>
           </div>
 
           <div v-if="gameOver" class="game-over-overlay">
             <div class="game-over-content">
               <h2>{{ completionMessage }}</h2>
               <p>Your final score: {{ score }}</p>
-              <button @click="exitGame" class="nes-btn is-primary">Exit Game</button>
-              <button @click="restartGame" class="nes-btn is-success">Restart Game</button>
+              <button @click="exitGame" class="nes-btn is-primary">
+                Exit Game
+              </button>
+              <button @click="restartGame" class="nes-btn is-success">
+                Restart Game
+              </button>
             </div>
           </div>
         </div>
@@ -129,22 +167,23 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import confetti from 'canvas-confetti';
+import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import confetti from "canvas-confetti";
 
-const emojiSet = ['😀', '🐶', '🍕', '🚗', '🎉', '🏀', '🌍', '💡', '📚', '💻'];
-const getRandomEmoji = () => emojiSet[Math.floor(Math.random() * emojiSet.length)];
+const emojiSet = ["😀", "🐶", "🍕", "🚗", "🎉", "🏀", "🌍", "💡", "📚", "💻"];
+const getRandomEmoji = () =>
+  emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
 const tables = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
 const generateQuestion = () => {
-  const operators = ['×', '÷'];
+  const operators = ["×", "÷"];
   const operator = operators[Math.floor(Math.random() * operators.length)];
   let leftNumber, rightNumber, correct, leftItems, rightItems, selectedEmoji;
 
   selectedEmoji = getRandomEmoji();
-  
-  if (operator === '×') {
+
+  if (operator === "×") {
     leftNumber = tables[Math.floor(Math.random() * tables.length)];
     rightNumber = Math.floor(Math.random() * 8) + 2;
     correct = leftNumber * rightNumber;
@@ -163,27 +202,33 @@ const generateQuestion = () => {
 export default {
   setup() {
     const gameOver = ref(false);
-    const completionMessage = ref('');
-    const colors = ['hover-red', 'hover-blue', 'hover-yellow', 'hover-green', 'hover-purple'];
+    const completionMessage = ref("");
+    const colors = [
+      "hover-red",
+      "hover-blue",
+      "hover-yellow",
+      "hover-green",
+      "hover-purple",
+    ];
     const earnedMedal = ref(false);
     const score = ref(0);
-    const highScore = ref(localStorage.getItem('highScore') || 0);
+    const highScore = ref(localStorage.getItem("highScore") || 0);
     const isBonusRound = ref(false);
 
     const currentQuestion = ref(generateQuestion());
     const correctStreak = ref(0);
     const medals = ref(0);
     const timerWidth = ref(100);
-    const userInput = ref('');
+    const userInput = ref("");
     const hoverIndex = ref(null);
     let timerInterval = null;
 
     const hasCorrectStreak = computed(() => correctStreak.value >= 3); // Streak value shifted down here
 
-    const streakClass = computed(() => ({ // Streak animation based on streak class
-      'streak-animation': medals.value > 0 && earnedMedal.value,
+    const streakClass = computed(() => ({
+      // Streak animation based on streak class
+      "streak-animation": medals.value > 0 && earnedMedal.value,
     }));
-
 
     const startTimer = () => {
       if (gameOver.value) return;
@@ -205,23 +250,29 @@ export default {
     };
 
     const getEmojiClass = (index) => {
-      if (currentQuestion.value.operator === '÷' && hoverIndex.value !== null) {
+      if (currentQuestion.value.operator === "÷" && hoverIndex.value !== null) {
         const groupSize = currentQuestion.value.rightNumber;
         const groupIndex = Math.floor(index / groupSize);
         return colors[groupIndex % colors.length];
       }
-      return '';
+      return "";
     };
 
-    const hoverDivisor = (index) => { 
-      if (currentQuestion.value.operator === '÷') {
-        hoverIndex.value = index; 
+    const hoverDivisor = (index) => {
+      if (currentQuestion.value.operator === "÷") {
+        hoverIndex.value = index;
       }
     };
-    const clearHover = () => { hoverIndex.value = null; };
+    const clearHover = () => {
+      hoverIndex.value = null;
+    };
 
     const playSound = (correct) => {
-      const audio = new Audio(correct ? 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3' : 'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3');
+      const audio = new Audio(
+        correct
+          ? "https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"
+          : "https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"
+      );
       audio.play();
     };
 
@@ -229,7 +280,7 @@ export default {
       confetti({
         particleCount: 100,
         spread: 70,
-        origin: { y: 0.6 }
+        origin: { y: 0.6 },
       });
     };
 
@@ -262,7 +313,9 @@ export default {
       }
 
       earnedMedal.value = true;
-      setTimeout(() => { earnedMedal.value  = false; }, 1000);
+      setTimeout(() => {
+        earnedMedal.value = false;
+      }, 1000);
 
       if (!gameOver.value) {
         nextQuestion();
@@ -297,19 +350,19 @@ export default {
         question = generateQuestion();
         attempts++;
         if (attempts > maxAttempts) {
-          console.warn('Max attempts reached. Resetting generated questions.');
+          console.warn("Max attempts reached. Resetting generated questions.");
           generatedQuestions.clear();
           break;
         }
       } while (generatedQuestions.has(JSON.stringify(question)));
-      
+
       generatedQuestions.add(JSON.stringify(question));
       return question;
     };
-    
+
     const nextQuestion = () => {
       if (gameOver.value) return;
-      userInput.value = '';
+      userInput.value = "";
       hoverIndex.value = null;
       currentQuestion.value = generateUniqueQuestion();
       timerWidth.value = 100;
@@ -321,20 +374,20 @@ export default {
       completionMessage.value = "Congratulations! You've earned all 10 medals!";
       clearInterval(timerInterval);
       isBonusRound.value = false;
-    };  
+    };
 
     const restartGame = () => {
       gameOver.value = false;
-      completionMessage.value = '';
+      completionMessage.value = "";
       medals.value = 0;
       correctStreak.value = 0;
-      userInput.value = '';
+      userInput.value = "";
       score.value = 0;
       isBonusRound.value = false;
       currentQuestion.value = generateQuestion();
       startTimer();
     };
-    
+
     // Multiplication Game taken out
     // const generateMultiplicationGrid = (left, right) => {
     //   const grid = [];
@@ -347,9 +400,9 @@ export default {
     //   }
     //   return grid;
     // };
-    
+
     // Multiplication Game taken out
-    // const multiplicationGrid = computed(() => { 
+    // const multiplicationGrid = computed(() => {
     //   if (currentQuestion.value.operator === '×') {
     //     return generateMultiplicationGrid(currentQuestion.value.leftNumber, currentQuestion.value.rightNumber);
     //   }
@@ -357,44 +410,58 @@ export default {
     // });
 
     const exitGame = () => {
-      console.log('Exiting game');
+      console.log("Exiting game");
     };
 
     watch(score, (newScore) => {
       if (newScore > highScore.value) {
         highScore.value = newScore;
-        localStorage.setItem('highScore', newScore);
+        localStorage.setItem("highScore", newScore);
       }
     });
 
-    onMounted(() => { 
+    onMounted(() => {
       startTimer();
     });
 
-    onUnmounted(() => { 
+    onUnmounted(() => {
       clearInterval(timerInterval);
     });
 
-    return { 
-      timerWidth, currentQuestion, userInput, correctStreak, medals,
-      hasCorrectStreak, streakClass, // Streak related returned here.
-      checkAnswer, hoverDivisor, clearHover, getEmojiClass,
-      earnedMedal, restartGame, exitGame,
-      score, highScore, isBonusRound, gameOver, completionMessage,
+    return {
+      timerWidth,
+      currentQuestion,
+      userInput,
+      correctStreak,
+      medals,
+      hasCorrectStreak,
+      streakClass, // Streak related returned here.
+      checkAnswer,
+      hoverDivisor,
+      clearHover,
+      getEmojiClass,
+      earnedMedal,
+      restartGame,
+      exitGame,
+      score,
+      highScore,
+      isBonusRound,
+      gameOver,
+      completionMessage,
       // Multiplication Game taken out
       // multiplicationGrid
     };
-  }
+  },
 };
 </script>
 
 <style scoped>
-@import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-@import url('https://unpkg.com/nes.css/css/nes.min.css');
+/* @import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"); */
+/* @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
+/* @import url("https://unpkg.com/nes.css/css/nes.min.css"); */
 
 .math-game {
-  font-family: 'Press Start 2P', cursive;
+  font-family: "Press Start 2P", cursive;
 }
 
 .math-game .game-container {
@@ -408,9 +475,7 @@ export default {
   padding: 2rem;
   background-color: red;
   border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 
-
- 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .math-game .outer-game-container {
@@ -428,7 +493,7 @@ export default {
   padding: 0.2em;
   border-radius: 0.25em;
   text-align: center;
-  transition: transform 0.3s ease, background-color  0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
 .math-game .emoji-group:hover {
@@ -440,11 +505,21 @@ export default {
 }
 
 @keyframes math-game-shake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  25% { transform: translate(-1px, -2px) rotate(-1deg); }
-  50% { transform: translate(-3px, 0px) rotate(1deg); }
-  75% { transform: translate(3px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -1px) rotate(-1deg); }
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  25% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  50% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  75% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -1px) rotate(-1deg);
+  }
 }
 
 .math-game .bonus-round {
@@ -458,9 +533,15 @@ export default {
 }
 
 @keyframes math-game-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .math-game .medals-grid {
@@ -491,11 +572,21 @@ export default {
   text-align: center;
 }
 
-.math-game .hover-red { background-color: lightpink; }
-.math-game .hover-blue { background-color: lightblue; }
-.math-game .hover-yellow { background-color: lightyellow; }
-.math-game .hover-green { background-color: lightgreen; }
-.math-game .hover-purple { background-color: lightcoral; }
+.math-game .hover-red {
+  background-color: lightpink;
+}
+.math-game .hover-blue {
+  background-color: lightblue;
+}
+.math-game .hover-yellow {
+  background-color: lightyellow;
+}
+.math-game .hover-green {
+  background-color: lightgreen;
+}
+.math-game .hover-purple {
+  background-color: lightcoral;
+}
 
 /* Taking out this part for demo to prof. Will fix this agn. */
 /* .math-game .multiplication-grid {
