@@ -618,7 +618,7 @@ export default class MainScene extends Phaser.Scene {
         // when player change direction/start moving
         if (!this.setCatPosition) {
           //cat position hasn't been set
-          console.log("cat teleported");
+          // console.log("cat teleported");
           this.cat.x = MainScene.player.x + this.catOffsetX;
           this.cat.y = MainScene.player.y + this.catOffsetY;
           this.setCatPosition = true; //cat position has been set
@@ -630,15 +630,15 @@ export default class MainScene extends Phaser.Scene {
         // console.log(MainScene.player.body.velocity.x);
         currentDirection.x = 1;
         MainScene.player.body.setVelocityX(100);
-        console.log(MainScene.player.body.velocity.x);
+        // console.log(MainScene.player.body.velocity.x);
         MainScene.player.anims.play("walk-right", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
         this.cat.setDepth(MainScene.player.y + MainScene.player.height);
         this.catOffsetX = -25;
         this.catOffsetY = 8;
         if (!this.setCatPosition) {
-          console.log("cat teleported");
-          console.log(this.setCatPosition);
+          // console.log("cat teleported");
+          // console.log(this.setCatPosition);
           this.cat.x = MainScene.player.x + this.catOffsetX;
           this.cat.y = MainScene.player.y + this.catOffsetY;
           this.setCatPosition = true;
@@ -658,7 +658,7 @@ export default class MainScene extends Phaser.Scene {
         this.catOffsetX = 0;
         this.catOffsetY = 30;
         if (!this.setCatPosition) {
-          console.log("cat teleported");
+          // console.log("cat teleported");
           this.cat.x = MainScene.player.x + this.catOffsetX;
           this.cat.y = MainScene.player.y + this.catOffsetY;
           this.setCatPosition = true;
@@ -674,7 +674,7 @@ export default class MainScene extends Phaser.Scene {
         this.catOffsetX = 0;
         this.catOffsetY = -20;
         if (!this.setCatPosition) {
-          console.log("cat teleported");
+          // console.log("cat teleported");
           this.cat.x = MainScene.player.x + this.catOffsetX;
           this.cat.y = MainScene.player.y + this.catOffsetY;
           this.setCatPosition = true;
@@ -690,7 +690,7 @@ export default class MainScene extends Phaser.Scene {
       currentDirection.y !== this.prevDirection.y
     ) {
       this.directionChanged = true; // Set flag if direction has changed
-      console.log("Direction changed");
+      // console.log("Direction changed");
     }
 
     // Update previous direction to current for the next frame check
