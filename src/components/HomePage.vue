@@ -15,6 +15,9 @@ export default {
       this.handleDoorCollision();
     });
     this.router = useRouter();
+    document.addEventListener("contextmenu", (event) => {
+      event.preventDefault();
+    });
   },
   data() {
     return {
