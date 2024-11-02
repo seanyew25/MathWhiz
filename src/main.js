@@ -16,13 +16,12 @@ import { getFirestore } from "firebase/firestore";
 
 import HomePage from "./components/HomePage.vue";
 import LandingPage from "./components/LandingPage.vue";
-import GameComponent from "./components/GameComponent.vue";
 import ProfilePage from "./components/ProfilePage.vue";
 import ShoppingCentrePage from "./components/ShoppingCentrePage.vue";
 import SchoolPage from "./components/SchoolPage.vue";
 import BakeryPage from "./components/BakeryPage.vue";
 import BankPage from "./components/BankPage.vue";
-import StoryPage from "./components/StoryPage.vue";
+import QuizPage from "./components/QuizPage.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration

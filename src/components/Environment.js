@@ -428,15 +428,40 @@ export default class MainScene extends Phaser.Scene {
         eventEmitter.emit("playerMovement", MainScene.player);
         MainScene.player.anims.play("walk-left", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.catOffsetX = 25;
+        this.catOffsetY = 8;
+        // only runs once upon keydown to teleport the cat behind/beside the player
+        // when player change direction/start moving
+        if (!this.setCatPosition) {
+          //cat position hasn't been set
+          console.log("cat teleported");
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true; //cat position has been set
+        }
+        this.cat.body.setVelocityX(-100);
+        this.cat.anims.play("cat-walk-left", true);
         moving = true;
       } else if (MainScene.cursors.right.isDown) {
         // console.log(MainScene.player.body.velocity.x);
         currentDirection.x = 1;
         MainScene.player.body.setVelocityX(100);
-        eventEmitter.emit("playerMovement", MainScene.player);
-        // console.log(MainScene.player.body.velocity.x);
+        console.log(MainScene.player.body.velocity.x);
         MainScene.player.anims.play("walk-right", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.catOffsetX = -25;
+        this.catOffsetY = 8;
+        if (!this.setCatPosition) {
+          console.log("cat teleported");
+          console.log(this.setCatPosition);
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true;
+        }
+        this.cat.body.setVelocityX(100);
+        this.cat.anims.play("cat-walk-right", true);
         moving = true;
       }
       // VERTICAL MOVEMENT
@@ -446,6 +471,17 @@ export default class MainScene extends Phaser.Scene {
         eventEmitter.emit("playerMovement", MainScene.player);
         MainScene.player.anims.play("walk-up", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.anims.play("cat-walk-up", true);
+        this.catOffsetX = 0;
+        this.catOffsetY = 30;
+        if (!this.setCatPosition) {
+          console.log("cat teleported");
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true;
+        }
+        this.cat.body.setVelocityY(-100);
         moving = true;
       } else if (MainScene.cursors.down.isDown) {
         currentDirection.y = 1;
@@ -453,6 +489,17 @@ export default class MainScene extends Phaser.Scene {
         eventEmitter.emit("playerMovement", MainScene.player);
         MainScene.player.anims.play("walk-down", true);
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
+        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.catOffsetX = 0;
+        this.catOffsetY = -20;
+        if (!this.setCatPosition) {
+          console.log("cat teleported");
+          this.cat.x = MainScene.player.x + this.catOffsetX;
+          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.setCatPosition = true;
+        }
+        this.cat.body.setVelocityY(100);
+        this.cat.anims.play("cat-walk-down", true);
         moving = true;
       }
     }
