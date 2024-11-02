@@ -95,16 +95,18 @@
               Submit Answer
             </button>
           </div>
-
-          <div class="text-center mt-6" v-if="correctStreak >= 3">
-            <p class="text-xl" :class="{ 'streak-animation': medals > 0 && earnedMedal}">
+          
+          <div class="text-center mt-6" v-if="hasCorrectStreak">
+            <p class="text-xl" :class="streakClass">
               Streak Count: {{ correctStreak }} Good Job! Medals earned:
-              <div class="medals-grid">
-                <span v-for="n in medals" :key="n">  
-                  <i class="nes-icon coin is-medium"></i>
-                </span>
-              </div>
+            </p>
+            <div class="medals-grid">
+              <span v-for="n in medals" :key="n">
+                <i class="nes-icon coin is-medium"></i>
+              </span>
+            </div>
           </div>
+
 
           <div class="text-center mt-4">
             <p class="text-xl">Score: {{ score }}</p>
@@ -174,6 +176,13 @@ export default {
     const userInput = ref('');
     const hoverIndex = ref(null);
     let timerInterval = null;
+
+    const hasCorrectStreak = computed(() => correctStreak.value >= 3); // Streak value shifted down here
+
+    const streakClass = computed(() => ({ // Streak animation based on streak class
+      'streak-animation': medals.value > 0 && earnedMedal.value,
+    }));
+
 
     const startTimer = () => {
       if (gameOver.value) return;
@@ -365,6 +374,7 @@ export default {
 
     return { 
       timerWidth, currentQuestion, userInput, correctStreak, medals,
+      hasCorrectStreak, streakClass, // Streak related returned here.
       checkAnswer, hoverDivisor, clearHover, getEmojiClass,
       earnedMedal, restartGame, exitGame,
       score, highScore, isBonusRound, gameOver, completionMessage,
