@@ -21,7 +21,8 @@ import ShoppingCentrePage from "./components/ShoppingCentrePage.vue";
 import SchoolPage from "./components/SchoolPage.vue";
 import BakeryPage from "./components/BakeryPage.vue";
 import BankPage from "./components/BankPage.vue";
-import QuizPage from "./components/QuizPage.vue";
+import StoryPage from "./components/StoryPage.vue";
+import GameComponent from "./components/GameComponent.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -51,6 +52,7 @@ const routes = [
   { path: "/bakery", component: BakeryPage },
   { path: "/bank", component: BankPage },
   { path: "/story", component: StoryPage },
+  { path: "/shop", component: ShopPage },
 ];
 
 const router = createRouter({
