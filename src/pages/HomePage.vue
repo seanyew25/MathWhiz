@@ -3,7 +3,7 @@
 </template>
 <script>
 import { onMounted } from "vue";
-import MainScene, { initializePhaser } from "./Environment.js";
+import MainScene, { initializePhaser } from "../components/Environment.js";
 import { useRouter } from "vue-router";
 export default {
   mounted() {

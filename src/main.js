@@ -13,15 +13,16 @@ import { initializeApp } from "firebase/app";
 import { createWebHistory, createRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
 
-import HomePage from "./components/HomePage.vue";
-import LandingPage from "./components/LandingPage.vue";
-import ProfilePage from "./components/ProfilePage.vue";
-import ShoppingCentrePage from "./components/ShoppingCentrePage.vue";
-import SchoolPage from "./components/SchoolPage.vue";
-import BakeryPage from "./components/BakeryPage.vue";
-import BankPage from "./components/BankPage.vue";
-import StoryPage from "./components/StoryPage.vue";
-import GameComponent from "./components/GameComponent.vue";
+import HomePage from "./pages/HomePage.vue";
+import LandingPage from "./pages/LandingPage.vue";
+import ProfilePage from "./pages/ProfilePage.vue";
+import ShoppingCentrePage from "./pages/ShoppingCentrePage.vue";
+import SchoolPage from "./pages/SchoolPage.vue";
+import BakeryPage from "./pages/BakeryPage.vue";
+import BankPage from "./pages/BankPage.vue";
+import StoryPage from "./pages/StoryPage.vue";
+import GameComponent from "./pages/GameComponent.vue";
+import ShopPage from "./pages/ShopPage.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -50,6 +51,7 @@ const routes = [
   { path: "/bakery", component: BakeryPage },
   { path: "/bank", component: BankPage },
   { path: "/story", component: StoryPage },
+  { path: "/shop", component: ShopPage },
 ];
 
 const router = createRouter({
