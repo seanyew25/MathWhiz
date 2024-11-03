@@ -1,6 +1,8 @@
 <template>
   <button @click="handleCardClick" class="card" ref="cardButton">
-    <div class="card-front tw-w-60 tw-rounded-lg border border-dark border-5">
+    <div
+      class="card-front tw-w-60 tw-h-[299px] tw-rounded-lg border border-dark border-5"
+    >
       <div
         class="tw-p-2 tw-bg-[#FFCFB3] tw-text-center tw-items-center border-bottom border-dark border-5"
       >
@@ -8,11 +10,13 @@
           {{ catObj.name }}
         </p>
       </div>
-      <div class="tw-flex tw-justify-center tw-items-center tw-bg-white">
+      <div
+        class="tw-flex tw-justify-center tw-items-center tw-bg-white tw-py-1"
+      >
         <img class="tw-h-24" :src="catObj.imgLocation" />
       </div>
       <div
-        class="tw-h-20 tw-flex border-top border-dark border-5 tw-p-2 tw-justify-center tw-text-center tw-items-center tw-bg-[#D5F5E3]"
+        class="tw-h-20 tw-flex-1 border-top border-dark border-5 tw-p-2 tw-justify-center tw-text-center tw-items-center tw-bg-[#D5F5E3]"
       >
         <p class="tw-text-sm" style="font-family: monospace">
           {{ catObj.description }}
@@ -22,11 +26,12 @@
         class="tw-grid border-dark border-5 border-top tw-p-2 tw-grid-cols-2 tw-bg-[#FFF5CD]"
       >
         <div class="tw-flex tw-items-center tw-ml-1">
-          <span class="tw-font-press-start">200</span>
+          <span class="tw-font-press-start">{{ catObj.price }}</span>
           <i class="nes-icon coin is-small"></i>
         </div>
 
         <button
+          @click.stop="handleBuyClick"
           type="button"
           class="nes-btn is-primary tw-font-press-start tw-text-xs tw-justify-self-end"
         >
@@ -34,7 +39,9 @@
         </button>
       </div>
     </div>
-    <div class="card-back tw-w-60 tw-rounded-lg border border-dark border-5">
+    <div
+      class="card-back tw-w-60 tw-rounded-lg border border-dark border-5 tw-h-[299px]"
+    >
       <div
         class="tw-p-2 tw-bg-[#FFCFB3] tw-text-center tw-items-center border-bottom border-dark border-5"
       >
@@ -42,10 +49,14 @@
           {{ catObj.name }}
         </p>
       </div>
-      <div class="tw-flex tw-justify-center tw-items-center tw-bg-white">
+      <div
+        class="tw-flex tw-justify-center tw-items-center tw-bg-white tw-py-1"
+      >
         <img class="tw-h-24" :src="catObj.imgLocation" />
       </div>
-      <div class="tw-h-full tw-p-2 border-top border-5 border-dark">
+      <div
+        class="tw-h-[144.5px] tw-p-2 border-top border-5 border-dark tw-bg-[#D5F5E3]"
+      >
         <div class="tw-space-y-3">
           <div class="tw-pl-2 tw-pr-4">
             <div class="tw-flex tw-justify-between tw-mb-1">
@@ -144,6 +155,7 @@ p {
 
 .card:hover {
   transform: scale(1.05);
+  margin: 0;
 }
 
 .card.show {
@@ -159,7 +171,7 @@ p {
   transition: transform 0.4s ease;
 }
 .card-back {
-  background-color: #d5f5e3;
+  background-color: #ffcfb3;
   transform: rotateY(180deg);
 }
 .card.show {
@@ -167,6 +179,7 @@ p {
 }
 .card.show:hover {
   transform: rotateY(180deg) scale(1.05);
+  margin: 0;
 }
 .nes-btn {
   border-image-slice: 2;
@@ -201,6 +214,9 @@ export default {
   methods: {
     handleCardClick() {
       this.$refs.cardButton.classList.toggle("show");
+    },
+    handleBuyClick() {
+      this.$emit("buyAction", this.catObj);
     },
   },
 };
