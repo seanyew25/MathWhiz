@@ -1,5 +1,9 @@
 <template>
-  <div class="tw-h-full tw-p-6 tw-bg-[#B7E0FF]">
+  <div class="tw-bg-[#B7E0FF]">
+    <br />
+    <div class="nes-container tw-bg-[#FFCFB3] tw-mb-6 tw-mx-auto tw-w-fit">
+      <span class="tw-font-press-start tw-text-xs">Destress Coins</span>
+    </div>
     <div
       class="tw-grid tw-gap-x-2 tw-gap-y-4 md:tw-gap-y-8 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-mx-auto"
     >
