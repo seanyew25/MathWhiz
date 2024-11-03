@@ -12,6 +12,7 @@ import { initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { createWebHistory, createRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 import HomePage from "./pages/HomePage.vue";
 import LandingPage from "./pages/LandingPage.vue";
@@ -39,6 +40,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 //Initialize Vue Router
 const routes = [
