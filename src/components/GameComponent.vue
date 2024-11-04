@@ -7,7 +7,7 @@
             {{ currentQuestion.operator === '×' ? 'Multiplication Game' : 'Division Game' }}
           </h1>
 
-          <!--Timer Bar Logic-->
+          <!--Timer Bar Logic -->
           <div class="progress-container">
             <progress class="nes-progress is-success" :value="timerWidth" :max="100"></progress>
             <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
