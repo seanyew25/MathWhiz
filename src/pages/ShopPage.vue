@@ -7,7 +7,7 @@
       >&nbsp;<i class="nes-icon coin is-small"></i>
     </div>
     <div
-      class="tw-grid tw-gap-x-2 tw-gap-y-8 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-m-auto"
+      class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-m-auto tw-mb-10"
     >
       <div v-for="cat in cats" class="tw-m-auto">
         <CardComponent
@@ -134,7 +134,7 @@ export default {
         },
 
         {
-          name: "Luminiscent",
+          name: "Luminescent",
           cuteness: 85,
           fluffiness: 80,
           coolness: 95,
