@@ -1,6 +1,8 @@
 <template>
   <!-- <div class="nes-container is-rounded">Hello</div> -->
-  <div class="shadow-box">Hello</div>
+  <div class="shadow-box tw-font-press-start">
+    <slot></slot>
+  </div>
 </template>
 <style scoped>
 .shadow-box {
@@ -11,12 +13,12 @@
   padding: 0.3rem 3.4rem;
   border: 3px solid black;
   border-width: 3px;
-  margin-right: 2.6rem;
+  /* margin-right: 2.6rem; */
   box-shadow: 0 0 0 black;
   transition: all 0.2s;
   padding-top: 10px;
-  height: 200px;
-  width: 300px;
+  width: fit-content;
+  padding: 20px;
 }
 .shadow-box:last-child {
   margin: 0;

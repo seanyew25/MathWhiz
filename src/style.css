@@ -5,10 +5,12 @@ body {
   font-family: "Comic Neue", cursive;
   margin: 0;
   padding: 0;
+  height: 100vh;
 }
 
 #app {
-  min-height: 100vh;
+  height: inherit;
+  width: inherit;
 }
 
 @tailwind base;
