@@ -43,7 +43,9 @@
         :class="rarityPrices"
       >
         <div class="tw-flex tw-items-center tw-ml-1">
-          <span class="tw-font-russo-one tw-mr-1">{{ catObj.price }} </span>
+          <span class="tw-font-russo-one tw-mr-1"
+            >{{ catObj.name === "Furless" ? "Ꝏ" : catObj.price }}
+          </span>
           <i class="nes-icon coin is-small"></i>
         </div>
 
