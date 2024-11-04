@@ -5,8 +5,12 @@
 import { onMounted } from "vue";
 import MainScene, { initializePhaser } from "../components/Environment.js";
 import { useRouter } from "vue-router";
+import { getAuth } from "firebase/auth";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 export default {
   mounted() {
+    this.auth = getAuth();
+    this.db = getFirestore();
     this.game = initializePhaser();
     this.game.scene.start("MainScene");
     console.log(this.game.scene);
@@ -24,6 +28,8 @@ export default {
       game: null,
       router: null,
       doorAnimationCompleted: false,
+      auth: null,
+      db: null,
     };
   },
   //DESTROY GAME BEFORE ROUTE LEAVE ELSE WEBGL ERROR WILL APPEAR
@@ -149,6 +155,53 @@ export default {
           bakeryDoor.anims.play("bakeryDoor-open", false);
         }
       });
+    },
+    handlePreloadAssets() {
+
+    },
+    handleGetSelectedOptions(db, collectionName, documentId) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          if (doc.data().equippedCat) {
+            this.equippedCat = doc.data().equippedCat;
+          } else {
+            console.log("No equippedCats data!");
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
+
+    },
+    async getPurchasedCatsAndEquippedCat(db, collectionName, documentId) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          if (doc.data().purchasedCats) {
+            this.cats = doc.data().purchasedCats;
+          } else {
+            console.log("No purchasedCats data!");
+          }
+          if (doc.data().equippedCat) {
+            this.equippedCat = doc.data().equippedCat;
+          } else {
+            console.log("No equippedCats data!");
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
     },
   },
 };
