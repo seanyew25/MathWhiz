@@ -3,17 +3,16 @@
 </template>
 <script>
 import { onMounted } from "vue";
-import MainScene, { initializePhaser } from "./Environment.js";
+import MainScene, { initializePhaser } from "../components/Environment.js";
 import { useRouter } from "vue-router";
+import { getAuth } from "firebase/auth";
+import { getFirestore, getDoc, doc } from "firebase/firestore";
 export default {
   mounted() {
-    this.game = initializePhaser();
-    this.game.scene.start("MainScene");
-    console.log(this.game.scene);
-    this.getSceneStatus().then(() => {
-      console.log(`scene: ${this.game.scene.getScene("MainScene")}`);
-      this.handleDoorCollision();
-    });
+    this.auth = getAuth();
+    this.db = getFirestore();
+    // this.handleGetSelectedOptions(this.db, "users", this.auth.currentUser.uid);
+    this.gameSetup();
     this.router = useRouter();
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -24,6 +23,8 @@ export default {
       game: null,
       router: null,
       doorAnimationCompleted: false,
+      auth: null,
+      db: null,
     };
   },
   //DESTROY GAME BEFORE ROUTE LEAVE ELSE WEBGL ERROR WILL APPEAR
@@ -33,6 +34,33 @@ export default {
     }
   },
   methods: {
+    async gameSetup() {
+      const docRef = doc(this.db, "users", this.auth.currentUser.uid);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          if (doc.data().equippedCat) {
+            this.equippedCat = doc.data().equippedCat;
+            console.log(this.equippedCat);
+            this.game = initializePhaser(this.equippedCat.name);
+            this.game.scene.start("MainScene");
+            console.log(this.game.scene);
+            this.getSceneStatus().then(() => {
+              console.log(`scene: ${this.game.scene.getScene("MainScene")}`);
+              this.handleDoorCollision();
+            });
+          } else {
+            console.log("No equippedCats data!");
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
+    },
     getSceneStatus() {
       let game = this.game;
       function getSceneStatus(gameObj) {

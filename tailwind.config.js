@@ -5,6 +5,7 @@ export default {
     extend: {
       fontFamily: {
         "press-start": ['"Press Start 2P"', "cursive"],
+        "russo-one": ['"Russo One"', "sans-serif"],
       },
     },
   },

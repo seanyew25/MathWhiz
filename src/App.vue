@@ -32,7 +32,9 @@ router.beforeEach(async (to, from) => {
 
 <template>
   <Navbar />
-  <RouterView></RouterView>
+  <div class="tw-bg-[#B7E0FF]">
+    <RouterView></RouterView>
+  </div>
 </template>
 
 <style></style>

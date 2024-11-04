@@ -103,6 +103,16 @@
               >Story</RouterLink
             >
           </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
+              to="/shop"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Shop</RouterLink
+            >
+          </li>
         </ul>
       </div>
     </div>
@@ -272,6 +282,7 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { ref, onMounted } from "vue";
 import * as bootstrap from "bootstrap";
 import { useRouter } from "vue-router";
@@ -288,6 +299,7 @@ const usernameCheck = ref("");
 const userData = ref("");
 const isAuthenticated = ref(false);
 const auth = getAuth();
+const db = getFirestore();
 
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
@@ -340,6 +352,7 @@ const handleSignup = () => {
       user["displayName"] = username.value.trim();
       userData.value = user;
       console.log(userData.value);
+      createUserProfile(user.uid);
       updateProfile(user, {
         displayName: username.value.trim(),
       })
@@ -374,4 +387,15 @@ const handleLogout = () => {
       // An error happened.
     });
 };
+
+async function createUserProfile(userId) {
+  const userRef = doc(db, "users", userId);
+  await setDoc(
+    userRef,
+    {
+      currency: 0, // Initialize currency to 0
+    },
+    { merge: true }
+  ); // Merge to avoid overwriting existing data
+}
 </script>
