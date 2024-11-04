@@ -201,6 +201,7 @@ const generateQuestion = () => {
 
 export default {
   setup() {
+    // Initiatilise Game Completion trigger to false.
     const gameOver = ref(false);
     const completionMessage = ref("");
     const colors = [
@@ -448,6 +449,8 @@ export default {
       isBonusRound,
       gameOver,
       completionMessage,
+      money,
+      incrementMoney,
       // Multiplication Game taken out
       // multiplicationGrid
     };
