@@ -218,6 +218,11 @@ const generateQuestion = () => {
 
 export default {
   setup() {
+    //Global money variable here
+    const incrementMoney = () => {
+      money += 10; // Add 10 coins after user finishes game.
+    };
+
     // Initiatilise Game Completion trigger to false.
     const gameOver = ref(false);
 
@@ -497,6 +502,8 @@ export default {
       isBonusRound,
       gameOver,
       completionMessage,
+      money,
+      incrementMoney,
       // Multiplication Game taken out
       // multiplicationGrid
     };
