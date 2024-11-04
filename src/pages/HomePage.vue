@@ -11,13 +11,8 @@ export default {
   mounted() {
     this.auth = getAuth();
     this.db = getFirestore();
-    this.game = initializePhaser();
-    this.game.scene.start("MainScene");
-    console.log(this.game.scene);
-    this.getSceneStatus().then(() => {
-      console.log(`scene: ${this.game.scene.getScene("MainScene")}`);
-      this.handleDoorCollision();
-    });
+    // this.handleGetSelectedOptions(this.db, "users", this.auth.currentUser.uid);
+    this.gameSetup();
     this.router = useRouter();
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -39,6 +34,33 @@ export default {
     }
   },
   methods: {
+    async gameSetup() {
+      const docRef = doc(this.db, "users", this.auth.currentUser.uid);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          if (doc.data().equippedCat) {
+            this.equippedCat = doc.data().equippedCat;
+            console.log(this.equippedCat);
+            this.game = initializePhaser(this.equippedCat.name);
+            this.game.scene.start("MainScene");
+            console.log(this.game.scene);
+            this.getSceneStatus().then(() => {
+              console.log(`scene: ${this.game.scene.getScene("MainScene")}`);
+              this.handleDoorCollision();
+            });
+          } else {
+            console.log("No equippedCats data!");
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
+    },
     getSceneStatus() {
       let game = this.game;
       function getSceneStatus(gameObj) {
@@ -155,53 +177,6 @@ export default {
           bakeryDoor.anims.play("bakeryDoor-open", false);
         }
       });
-    },
-    handlePreloadAssets() {
-
-    },
-    handleGetSelectedOptions(db, collectionName, documentId) {
-      const docRef = doc(db, collectionName, documentId);
-      try {
-        const doc = await getDoc(docRef);
-        console.log(doc);
-        if (doc.exists()) {
-          console.log("Document data:", doc.data());
-          if (doc.data().equippedCat) {
-            this.equippedCat = doc.data().equippedCat;
-          } else {
-            console.log("No equippedCats data!");
-          }
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.error("Error getting document:", error);
-      }
-
-    },
-    async getPurchasedCatsAndEquippedCat(db, collectionName, documentId) {
-      const docRef = doc(db, collectionName, documentId);
-      try {
-        const doc = await getDoc(docRef);
-        console.log(doc);
-        if (doc.exists()) {
-          console.log("Document data:", doc.data());
-          if (doc.data().purchasedCats) {
-            this.cats = doc.data().purchasedCats;
-          } else {
-            console.log("No purchasedCats data!");
-          }
-          if (doc.data().equippedCat) {
-            this.equippedCat = doc.data().equippedCat;
-          } else {
-            console.log("No equippedCats data!");
-          }
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.error("Error getting document:", error);
-      }
     },
   },
 };

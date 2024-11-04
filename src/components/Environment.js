@@ -59,10 +59,16 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
-    this.load.spritesheet("cat", `${basePath}/calico.png`, {
-      frameWidth: 32,
-      frameHeight: 32,
-    });
+    const initialData = this.registry.get("initialData");
+    console.log(initialData.equippedCat);
+    this.load.spritesheet(
+      "cat",
+      `${basePath}/sprites/cats/${initialData.equippedCat}.png`,
+      {
+        frameWidth: 32,
+        frameHeight: 32,
+      }
+    );
   }
 
   create() {
@@ -772,7 +778,7 @@ export default class MainScene extends Phaser.Scene {
   }
 }
 
-export function initializePhaser() {
+export function initializePhaser(equippedCat) {
   const config = {
     type: Phaser.CANVAS, // Which renderer to use
     width: window.innerWidth, // Canvas width in pixels
@@ -790,6 +796,12 @@ export function initializePhaser() {
     scale: {
       mode: Phaser.Scale.RESIZE, // Makes the game responsive
       autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game in the window
+    },
+    callbacks: {
+      preBoot: (game) => {
+        // Set initial data here if needed
+        game.registry.set("initialData", { equippedCat: equippedCat });
+      },
     },
   };
   const game = new Phaser.Game(config);
