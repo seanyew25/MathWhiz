@@ -31,7 +31,7 @@
           </div>
 
           <!-- Innovation 1 -->
-          <!--NES.css hint button to allow users to better visualise division questions in chunks.  -->
+          <!--NES.css hint button to allow users to better visualise division questions in chunks. -->
           <div>
             <section>
               <button
