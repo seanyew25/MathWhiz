@@ -303,7 +303,7 @@ export default class MainScene extends Phaser.Scene {
     MainScene.player.body.onWorldBounds = true;
     this.physics.world.on("worldbounds", (body) => {
       console.log("worldbounds");
-      if (body.gameObject === this.player) {
+      if (body.gameObject === MainScene.player) {
         this.cat.body.setVelocity(0);
         this.cat.x = MainScene.player.x + this.catOffsetX;
         this.cat.y = MainScene.player.y + this.catOffsetY;
@@ -389,6 +389,13 @@ export default class MainScene extends Phaser.Scene {
       this.cat.x = MainScene.player.x + this.catOffsetX;
       this.cat.y = MainScene.player.y + this.catOffsetY;
     });
+    this.physics.add.collider(this.cat, MainScene.player, () => {
+      console.log("cat collided with player");
+    });
+
+    // this.physics.add.collider(this.cat, collisionLayer, () => {
+    //   console.log("cat collided");
+    // });
     //CREATE ANIMATIONS FOR DOORS
     this.anims.create({
       key: "homeDoor-open",
@@ -588,6 +595,42 @@ export default class MainScene extends Phaser.Scene {
       );
     });
 
+    this.collisionBlocks = [];
+    collisionLayer.forEachTile((tile) => {
+      // let tileBounds = new Phaser.Geom.Rectangle(
+      //   tile.pixelX,
+      //   tile.pixelY,
+      //   tile.width,
+      //   tile.height
+      // );
+      this.collisionBlocks.push(tile);
+    });
+    // console.log(this.collisionBlocks);
+
+    // this.collisionBlocks.forEach((tile) => {
+    //   console.log(tile);
+    // });
+
+    this.events.on("catOverlapWithCollisionBlocks", (cat) => {
+      console.log("cat is overlapping with collision blocks");
+      cat.setVisible(false);
+    });
+
+    this.events.on("catIsFreeToMove", (cat) => {
+      cat.setVisible(true);
+    });
+
+    // Set line color to red and full opacity
+    const graphics = this.add.graphics();
+    graphics.lineStyle(2, 0xff0000, 1); // Set line color to red and full opacity
+
+    // Loop through each collision block and draw its rectangle
+    // this.collisionBlocks.forEach((obj) => {
+    //   // graphics.strokeRect(obj.x, obj.y, obj.width, obj.height);
+    //   // graphics.setDepth(10000);
+    //   // console.log(obj);
+    // });
+
     // eventEmitter.on("playerMovement", () => {
     //   const playerY = MainScene.player.y;
     //   const playerDepth = MainScene.player.depth;
@@ -721,6 +764,7 @@ export default class MainScene extends Phaser.Scene {
       currentDirection.x !== this.prevDirection.x ||
       currentDirection.y !== this.prevDirection.y
     ) {
+      console.log("direction changed");
       this.directionChanged = true; // Set flag if direction has changed
       // console.log("Direction changed");
     }
@@ -758,19 +802,15 @@ export default class MainScene extends Phaser.Scene {
       }
     });
 
-    //   });
-    // });
-
-    // if (child.name === "collisionLayer") {
-    //   let catBounds = this.cat.getBounds();
-    //   let childBounds = child.getBounds();
-    //   if (
-    //     Phaser.Geom.Intersects.RectangleToRectangle(catBounds, childBounds)
-    //   ) {
-    //     console.log("cat collision");
-    //   }
-    // }
-    // });
+    let catPositionTile = this.collisionLayer.getTileAt(
+      Math.floor(this.cat.x / 16),
+      Math.floor(this.cat.y / 16)
+    );
+    if (catPositionTile != null) {
+      this.events.emit("catOverlapWithCollisionBlocks", this.cat);
+    } else {
+      this.events.emit("catIsFreeToMove", this.cat);
+    }
 
     // MainScene.objects.forEach((doorObject) => {
     //   if (
