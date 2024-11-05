@@ -45,7 +45,7 @@ export default {
             this.equippedCat = doc.data().equippedCat;
             console.log(this.equippedCat);
             this.game = initializePhaser(this.equippedCat.name);
-            this.game.scene.start("MainScene");
+            // this.game.scene.start("MainScene");
             console.log(this.game.scene);
             this.getSceneStatus().then(() => {
               console.log(`scene: ${this.game.scene.getScene("MainScene")}`);
