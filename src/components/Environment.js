@@ -280,8 +280,8 @@ export default class MainScene extends Phaser.Scene {
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     // PLAYER CREATION AND SPAWN POINT
-    MainScene.player = this.physics.add.sprite(736, 768, "player", 3);
-    this.cat = this.physics.add.sprite(736, 752, "cat", 44);
+    MainScene.player = this.physics.add.sprite(736, 780, "player", 3);
+    this.cat = this.physics.add.sprite(736, 760, "cat", 44);
     // this.catOffsetX = 0;
     // this.catOffsetY = -20;
     this.cat.setSize(20, 20);
@@ -383,7 +383,7 @@ export default class MainScene extends Phaser.Scene {
     // In your create function or similar initialization method
     // this.physics.world.createDebugGraphic(); // Create debug graphics for the physics world
     // this.debugGraphics = this.add.graphics().setAlpha(0.75); // Set up graphics for displaying debug information
-
+    this.catOutBounds = false;
     this.physics.add.collider(MainScene.player, collisionLayer, () => {
       this.cat.body.setVelocity(0);
       this.cat.x = MainScene.player.x + this.catOffsetX;
@@ -391,6 +391,33 @@ export default class MainScene extends Phaser.Scene {
     });
     this.physics.add.collider(this.cat, MainScene.player, () => {
       console.log("cat collided with player");
+      // this.cat.setVisible(false);
+      let catTeleportLocationX = MainScene.player.x + this.catOffsetX;
+      let catTeleportLocationY = MainScene.player.y + this.catOffsetY;
+      // console.log("cat", catTeleportLocationX, catTeleportLocationY);
+      // console.log(
+      //   "world",
+      //   this.physics.world.bounds.x,
+      //   this.physics.world.bounds.y + this.physics.world.bounds.height
+      // );
+
+      if (
+        catTeleportLocationX <=
+          this.physics.world.bounds.x + this.physics.world.bounds.width &&
+        catTeleportLocationX >= this.physics.world.bounds.x &&
+        catTeleportLocationY <=
+          this.physics.world.bounds.y + this.physics.world.bounds.height &&
+        catTeleportLocationY >= this.physics.world.bounds.y
+      ) {
+        this.catOutBounds = false;
+        // console.log("cat teleport");
+        this.cat.x = catTeleportLocationX;
+        this.cat.y = catTeleportLocationY;
+      } else {
+        this.catOutBounds = true;
+        // console.log("cat out of bounds");
+        // this.cat.setVisible(false);
+      }
     });
 
     // this.physics.add.collider(this.cat, collisionLayer, () => {
@@ -617,7 +644,13 @@ export default class MainScene extends Phaser.Scene {
     });
 
     this.events.on("catIsFreeToMove", (cat) => {
-      cat.setVisible(true);
+      if (!this.catOutBounds) {
+        // console.log("cat is free to move");
+        // console.log("cat is in bounds");
+        cat.setVisible(true);
+      } else {
+        cat.setVisible(false);
+      }
     });
 
     // Set line color to red and full opacity
@@ -747,7 +780,7 @@ export default class MainScene extends Phaser.Scene {
         MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
         this.cat.setDepth(MainScene.player.y + MainScene.player.height);
         this.catOffsetX = 0;
-        this.catOffsetY = -20;
+        this.catOffsetY = -23;
         if (!this.setCatPosition) {
           // console.log("cat teleported");
           this.cat.x = MainScene.player.x + this.catOffsetX;
@@ -809,6 +842,7 @@ export default class MainScene extends Phaser.Scene {
     if (catPositionTile != null) {
       this.events.emit("catOverlapWithCollisionBlocks", this.cat);
     } else {
+      // console.log("cat is free to move");
       this.events.emit("catIsFreeToMove", this.cat);
     }
 
