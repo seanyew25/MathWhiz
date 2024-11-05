@@ -29,6 +29,8 @@
             <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
           </div>
 
+          <!-- Innovation 1 -->
+          <!--NES.css hint button to allow users to better visualise division questions in chunks. -->
           <div>
             <section>
               <button
