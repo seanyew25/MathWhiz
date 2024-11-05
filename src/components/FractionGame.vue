@@ -1,46 +1,59 @@
 <template>
-    <div :class="['wrapper container-fluid', { 'align-items-start': showChat }]">
-        <!-- Phone Section -->
-        <div v-if="showPhone" class="row justify-content-center">
-            <div class="col-12">
-                <div class="iphone">
-                    <div class="display">
-                        <div class="name">MewTwo calling...</div>
-                        <div class="contact-type">iPhone</div>
-                        <div class="avatar"></div>
-                    </div>
-                    <div class="buttons">
-                        <div @click="rejectCall" class="button decline">Decline</div>
-                        <div @click="acceptCall" class="button accept">Accept</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Game Content -->
-        <div class="row d-flex justify-content-center">
-            <!-- Chat and Question -->
-            <div v-if="showChat" class="col-12 col-lg-6 m-0 d-flex justify-content-center">
-                <div class="chat-container justify-content-center">
-                    <div class="chat-bubble text-wrap">{{ chatText }}</div>
-                    <div v-for="(message, index) in messages" 
-                         :key="index" 
-                         class="chat-bubble text-wrap"
-                         :class="{ 'correct': message.type === 'correct', 'incorrect': message.type === 'incorrect' }">
-                        {{ message.text }}
-                    </div>
-                    <div class="fraction-input"
-                         :class="{ correct: correctAnswer, incorrect: incorrectAnswer, 'input-vibrate': inputVibrate }">
-                        <span :class="{ 'blink': activeInput === 'numerator' }">{{ numerator || '?' }}</span> /
-                        <span :class="{ 'blink': activeInput === 'denominator' }">{{ denominator || '?' }}</span>
+    <div class="wrapper min-vh-100 py-3">
+        <div class="container-lg px-lg-0">
+            <!-- Phone Section -->
+            <div v-if="showPhone" class="row justify-content-center mb-4">
+                <div class="col-auto">
+                    <div class="iphone">
+                        <div class="display">
+                            <div class="name">MewTwo calling...</div>
+                            <div class="contact-type">iPhone</div>
+                            <div class="avatar"></div>
+                        </div>
+                        <div class="buttons">
+                            <div @click="rejectCall" class="button decline">Decline</div>
+                            <div @click="acceptCall" class="button accept">Accept</div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Cake Display -->
-            <div v-if="showCakes" class="col-12 col-lg-6 d-flex align-items-center justify-content-center">
-                <div class="cake-container">
-                    <img v-for="cake in cakes" :src="cake.image" :alt="cake.type" class="cake">
+            <!-- Game Content -->
+            <div class="row d-flex justify-content-center">
+                <!-- Chat and Question -->
+                <div v-if="showChat" class="col-12 col-lg-6 m-0 d-flex justify-content-center">
+                    <div class="chat-container justify-content-center">
+                        <div class="chat-bubble text-wrap pinned-message">{{ chatText }}</div>
+                        <div class="scrollable-messages justify-content-center" ref="scrollableMessages">
+                        <div v-for="(message, index) in messages" :key="index" class="chat-bubble text-wrap"
+                            :class="{ 'correct': message.type === 'correct', 'incorrect': message.type === 'incorrect' }">
+                            {{ message.text }}
+                        </div>
+                        </div>
+                        <div class="fraction-input"
+                            :class="{ correct: correctAnswer, incorrect: incorrectAnswer, 'input-vibrate': inputVibrate }">
+                            <span :class="{ 'blink': activeInput === 'numerator' }">{{ numerator || '?' }}</span> /
+                            <span :class="{ 'blink': activeInput === 'denominator' }">{{ denominator || '?' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cake Display -->
+                <div v-if="showCakes" class="col-12 col-lg-6 d-flex align-items-center justify-content-center">
+                    <!-- to change from here -->
+                    <div class="cake-display">
+                        <img :src="shelf" alt="Wooden shelf" class="shelf-image">
+                        <div class="cakes-grid">
+                            <div v-for="(row, rowIndex) in 3" :key="`row-${rowIndex}`" class="shelf-row"
+                                :style="{ '--row-offset': rowIndex === 0 ? '5px' : rowIndex === 1 ? '20px' : rowIndex === 2 ? '30px' : '0' }">
+                                <div v-for="(cake, colIndex) in cakesMatrix[rowIndex]"
+                                    :key="`cake-${rowIndex}-${colIndex}`" class="cake-slot">
+                                    <img :src="cake.image" :alt="cake.type" class="cake">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- to change ending here -->
                 </div>
             </div>
         </div>
@@ -67,15 +80,10 @@ export default {
             activeInput: 'numerator',
             numerator: '',
             denominator: '',
-            inputVibrate:false,
-            correctFraction: { numerator: 3, denominator: 5 },
-            cakes: [
-                { type: 'vanilla', image: vanilla },
-                { type: 'vanilla', image: vanilla },
-                { type: 'vanilla', image: shelf },
-                { type: 'chocolate', image: strawberry },
-                { type: 'hazelnut', image: hazelnut }
-            ]
+            inputVibrate: false,
+            shelf,
+            cakesMatrix: [], // Will hold the 3x3 matrix of cakes
+            correctFraction: { numerator: 0, denominator: 9 } // Will be set during initialization
         }
     },
     methods: {
@@ -87,6 +95,31 @@ export default {
         },
         rejectCall() {
             this.showPhone = false;
+        },
+        generateRandomCakes() {
+            const cakeTypes = [
+                { type: 'vanilla', image: vanilla },
+                { type: 'strawberry', image: strawberry },
+                { type: 'hazelnut', image: hazelnut }
+            ]
+
+            // Create array of 9 random cakes
+            let cakes = []
+            for (let i = 0; i < 9; i++) {
+                const randomType = cakeTypes[Math.floor(Math.random() * cakeTypes.length)]
+                cakes.push({ ...randomType })
+            }
+
+            // Count vanilla cakes for fraction
+            const vanillaCakes = cakes.filter(cake => cake.type === 'vanilla').length
+            this.correctFraction.numerator = vanillaCakes
+
+            // Convert to 3x3 matrix
+            this.cakesMatrix = [
+                cakes.slice(0, 3),
+                cakes.slice(3, 6),
+                cakes.slice(6, 9)
+            ]
         },
         typeChat() {// synchronous control, I don't want anything to be happening in the background
             let i = 0;
@@ -121,6 +154,11 @@ export default {
             // if (type === 'initial') {
             this.isInputActive = true;
             // }
+            this.$nextTick(() => {
+                if (this.$refs.scrollableMessages) {
+                    this.$refs.scrollableMessages.scrollTop = this.$refs.scrollableMessages.scrollHeight;
+                }
+            });
         },
         handleInput(event) {
             if (!this.isInputActive) return;
@@ -139,11 +177,11 @@ export default {
             if (parseInt(this.numerator) === this.correctFraction.numerator && parseInt(this.denominator) === this.correctFraction.denominator) {
                 // alert("Correct! Let's celebrate with vanilla cupcakes!");
                 this.activeInput = null;
-                this.inputVibrate=true;
-                this.correctAnswer=true;
+                this.inputVibrate = true;
+                this.correctAnswer = true;
                 this.addMessage("Yay! I will take that amount. You can move on!", 'correct');
                 setTimeout(() => {
-                    this.inputVibrate=false;
+                    this.inputVibrate = false;
                 }, 1500);
             } else {
                 // await this.addMessage("Please retry! My friends and I want the cake badly!", 'incorrect');
@@ -151,18 +189,18 @@ export default {
                 // this.denominator = '';
                 // this.activeInput = 'numerator';
                 this.incorrectAnswer = true; // Trigger incorrect style
-                this.inputVibrate=true;
+                this.inputVibrate = true;
                 this.isInputActive = false; // Disable input temporarily
                 this.activeInput = null;
                 await this.addMessage("Please retry! My friends and I want the cake badly!", "incorrect");
-// waits for addMessage to fully render then pause the effect
+                // waits for addMessage to fully render then pause the effect
                 // setTimeout(() => {
-                    this.incorrectAnswer = false; // Remove incorrect style
-                    this.inputVibrate=false;
-                    this.isInputActive = true; // Re-enable input
-                    this.numerator = '';
-                    this.denominator = '';
-                    this.activeInput = 'numerator';
+                this.incorrectAnswer = false; // Remove incorrect style
+                this.inputVibrate = false;
+                this.isInputActive = true; // Re-enable input
+                this.numerator = '';
+                this.denominator = '';
+                this.activeInput = 'numerator';
                 // }, 1500);
             }
         },
@@ -170,6 +208,7 @@ export default {
     },
     mounted() {
         document.addEventListener('keydown', this.handleInput);
+        this.generateRandomCakes();
     },
     beforeDestroy() {
         document.removeEventListener('keydown', this.handleInput);
@@ -187,6 +226,7 @@ export default {
     height: 100vh;
     margin: 0;
 }
+
 .wrapper.container-fluid {
     padding-top: 0 !important;
     margin-top: 0 !important;
@@ -329,6 +369,7 @@ export default {
     align-items: center;
     width: 100%;
     max-width: 600px;
+    height: 400px;
     margin-top: 20px;
 }
 
@@ -340,6 +381,11 @@ export default {
     margin-top: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
+.pinned-message {
+  /* background-color: #e8f5e9; */
+  /* border-left: 4px solid #4caf50; */
+  /* margin-bottom: 10px; */
+}
 
 .chat-bubble.correct {
     background-color: #e8f5e9;
@@ -349,6 +395,11 @@ export default {
 .chat-bubble.incorrect {
     background-color: #ffebee;
     border-left: 4px solid #f44336;
+}
+.scrollable-messages {
+  width: 100%;
+  flex-grow: 1;
+  overflow-y: auto;
 }
 
 .blink {
@@ -384,12 +435,29 @@ export default {
 
 @keyframes input-vibrate {
 
-  0% { transform: rotate(0deg) translateX(0); }
-  20% { transform: rotate(-2deg) translateX(-2px); }
-  40% { transform: rotate(2deg) translateX(2px); }
-  60% { transform: rotate(-1deg) translateX(-1px); }
-  80% { transform: rotate(1deg) translateX(1px); }
-  100% { transform: rotate(0deg) translateX(0); }
+    0% {
+        transform: rotate(0deg) translateX(0);
+    }
+
+    20% {
+        transform: rotate(-2deg) translateX(-2px);
+    }
+
+    40% {
+        transform: rotate(2deg) translateX(2px);
+    }
+
+    60% {
+        transform: rotate(-1deg) translateX(-1px);
+    }
+
+    80% {
+        transform: rotate(1deg) translateX(1px);
+    }
+
+    100% {
+        transform: rotate(0deg) translateX(0);
+    }
 }
 
 .input-vibrate {
@@ -400,18 +468,54 @@ export default {
     margin: 0 5px;
 }
 
-.cake-container {
+.cake-display {
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    aspect-ratio: 4/3;
+}
+
+.shelf-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.cakes-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 5% 10%;
+}
+
+.shelf-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 30%;
+    transform: translateY(var(--row-offset, 0));
+}
+
+.cake-slot {
+    width: 50%;
+    height: 100%;
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
+    align-items: center;
 }
 
 .cake {
-    width: 80px;
-    height: 80px;
-    margin: 10px;
-    border-radius: 10%;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
 }
 </style>
