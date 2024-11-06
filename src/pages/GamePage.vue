@@ -3,17 +3,22 @@
 </template>
 <script>
 import { onMounted } from "vue";
-import MainScene, { initializePhaser } from "../components/Environment.js";
+import MainScene, { initializePhaser } from "../game/MainScene.js";
 import { useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
 import { getFirestore, getDoc, doc } from "firebase/firestore";
+import { eventEmitter } from "../game/Events.js";
+import { globalState } from "../components/globalState.js";
+
 export default {
   mounted() {
+    this.router = useRouter();
     this.auth = getAuth();
     this.db = getFirestore();
+    // this.setSpawnPoint();
     // this.handleGetSelectedOptions(this.db, "users", this.auth.currentUser.uid);
+    console.log(globalState.playerPosition);
     this.gameSetup();
-    this.router = useRouter();
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
     });
@@ -25,6 +30,8 @@ export default {
       doorAnimationCompleted: false,
       auth: null,
       db: null,
+      prevRoute: null,
+      spawnPoint: null,
     };
   },
   //DESTROY GAME BEFORE ROUTE LEAVE ELSE WEBGL ERROR WILL APPEAR
@@ -34,6 +41,10 @@ export default {
     }
   },
   methods: {
+    setSpawnPoint() {},
+    getFromPage() {
+      console.log(this.prevRoute);
+    },
     async gameSetup() {
       const docRef = doc(this.db, "users", this.auth.currentUser.uid);
       try {
@@ -44,7 +55,10 @@ export default {
           if (doc.data().equippedCat) {
             this.equippedCat = doc.data().equippedCat;
             console.log(this.equippedCat);
-            this.game = initializePhaser(this.equippedCat.name);
+            this.game = initializePhaser(
+              this.equippedCat.name,
+              globalState.playerPosition
+            );
             // this.game.scene.start("MainScene");
             console.log(this.game.scene);
             this.getSceneStatus().then(() => {
@@ -96,6 +110,11 @@ export default {
       }
       console.log(scene);
 
+      eventEmitter.on("playerMovement", (playerObj) => {
+        // console.log(`player: ${playerObj.x}, ${playerObj.y}`);
+        globalState.setPlayerPosition(playerObj.x, playerObj.y);
+      });
+
       scene.events.on("doorCollision", (doorObj) => {
         console.log(`door: ${doorObj.name}`);
         const name = doorObj.name;
@@ -113,7 +132,7 @@ export default {
         } else if (name === "bankDoor" && !this.doorAnimationCompleted) {
           this.doorAnimationCompleted = true;
           const bankDoor = scene.add.sprite(264, 192, "bankDoor", 0);
-          // console.log(`player = ${MainScene.player.depth}`);
+          // console.log(`player = ${this.game.player.depth}`);
           // console.log(bankDoor.depth);
           bankDoor.anims.play("bankDoor-open", false);
           bankDoor.once("animationcomplete", (animation, frame) => {
@@ -140,7 +159,7 @@ export default {
               0
             );
           }
-          shoppingCentreDoor.setDepth(MainScene.player.depth - 2);
+          shoppingCentreDoor.setDepth(0);
           shoppingCentreDoor.anims.play("shoppingCentreDoor-open", false);
           shoppingCentreDoor.once("animationcomplete", (animation, frame) => {
             this.router.push("/shoppingcentre");
