@@ -673,4 +673,11 @@ export default {
   background-color: #4CAF50;
   border: 1px solid #45a049;
 } */
+
+.math-game .multiplication-cell {
+  width: 20px;
+  height: 20px;
+  background-color: #4CAF50;
+  border: 1px solid #45a049;
+} */
 </style>
