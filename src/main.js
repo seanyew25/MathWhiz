@@ -51,11 +51,6 @@ const routes = [
   { path: "/school", component: SchoolPage },
   { path: "/bakery", component: BakeryPage },
   { path: "/bank", component: BankPage },
-  { path: "/profile", component: ProfilePage },
-  { path: "/shoppingcentre", component: ShoppingCentrePage },
-  { path: "/school", component: SchoolPage },
-  { path: "/bakery", component: BakeryPage },
-  { path: "/bank", component: BankPage },
 ];
 
 const router = createRouter({

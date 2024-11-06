@@ -1,4 +1,4 @@
-<script setup>
+<script>
 import Navbar from "./components/Navbar.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -30,9 +30,6 @@ onMounted(() => {
 //     return { path: "/" };
 //   }
 // });
-import HomePage from "./components/HomePage.vue";
-import { onMounted } from "vue";
-import { initializePhaser } from "./components/Environment.js";
 export default {
   setup() {
     onMounted(() => {
