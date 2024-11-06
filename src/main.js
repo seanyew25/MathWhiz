@@ -23,6 +23,7 @@ import BakeryPage from "./pages/BakeryPage.vue";
 import BankPage from "./pages/BankPage.vue";
 import StoryPage from "./pages/StoryPage.vue";
 import GameComponent from "./pages/GameComponent.vue";
+import ShopPage from "./pages/ShopPage.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
