@@ -634,32 +634,15 @@ export default class MainScene extends Phaser.Scene {
     // this.collisionBlocks.forEach((tile) => {
     //   console.log(tile);
     // });
-
+    this.catOverlapStatus = false;
     this.events.on("catOverlapWithCollisionBlocks", (cat) => {
       console.log("cat is overlapping with collision blocks");
-      cat.setVisible(false);
-    });
-
-    this.events.on("catIsFreeToMove", (cat) => {
-      if (!this.catOutBounds) {
-        // console.log("cat is free to move");
-        // console.log("cat is in bounds");
-        cat.setVisible(true);
-      } else {
-        cat.setVisible(false);
-      }
+      this.catOverlapStatus = true;
     });
 
     // Set line color to red and full opacity
     const graphics = this.add.graphics();
     graphics.lineStyle(2, 0xff0000, 1); // Set line color to red and full opacity
-
-    // Loop through each collision block and draw its rectangle
-    // this.collisionBlocks.forEach((obj) => {
-    //   // graphics.strokeRect(obj.x, obj.y, obj.width, obj.height);
-    //   // graphics.setDepth(10000);
-    //   // console.log(obj);
-    // });
 
     // eventEmitter.on("playerMovement", () => {
     //   const playerY = this.player.y;
@@ -836,11 +819,21 @@ export default class MainScene extends Phaser.Scene {
       Math.floor(this.cat.x / 16),
       Math.floor(this.cat.y / 16)
     );
+
     if (catPositionTile != null) {
       this.events.emit("catOverlapWithCollisionBlocks", this.cat);
+      console.log(catPositionTile);
     } else {
-      // console.log("cat is free to move");
-      this.events.emit("catIsFreeToMove", this.cat);
+      this.catOverlapStatus = false;
+    }
+    if (this.catOverlapStatus || this.catOutBounds) {
+      this.cat.setVisible(false);
+      // console.log("cat invisible");
+    } else {
+      // console.log(this.catOutBounds);
+      // console.log(`overlap:${this.catOverlapStatus}`);
+      // console.log("cat visible");
+      this.cat.setVisible(true);
     }
 
     MainScene.objects.forEach((doorObject) => {
