@@ -46,6 +46,7 @@ const db = getFirestore(app);
 const routes = [
   { path: "/home", component: HomePage },
   { path: "/", component: LandingPage },
+  { path: "/operations", component: GameComponent },
   { path: "/profile", component: ProfilePage },
   { path: "/shoppingcentre", component: ShoppingCentrePage },
   { path: "/school", component: SchoolPage },
