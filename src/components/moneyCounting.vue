@@ -32,7 +32,7 @@
       <div class="col-lg-6 mb-4">
         <div class="piggy-bank-container p-3 rounded" @dragover.prevent @drop="onDrop($event, 'piggyBank')">
           <!-- <h2>Piggy Bank</h2> -->
-          <img src="../assets/piggybank2.png" alt="Piggy Bank" class="piggy-bank">
+          <img src="../../public/assets/piggybank2.png" alt="Piggy Bank" class="piggy-bank">
           <div class="coin-container d-flex flex-wrap justify-content-center align-items-center">
             <div v-for="coin in piggyBankCoins" :key="coin.uniqueId" class="col-auto m-1 p-1">
               <img :src="coin.image" :alt="coin.value" class="coin" 
@@ -61,11 +61,11 @@
 </template>
 
 <script>
-import oneDollarImage from '../assets/1dollar.png';
-import fiftyCentsImage from '../assets/50cents.png';
-import twentyCentsImage from '../assets/20cents.png';
-import tenCentsImage from '../assets/10cents.png';
-import fiveCentsImage from '../assets/5cents.png';
+import oneDollarImage from '../../public/assets/1dollar.png';
+import fiftyCentsImage from '../../public/assets/50cents.png';
+import twentyCentsImage from '../../public/assets/20cents.png';
+import tenCentsImage from '../../public/assets/10cents.png';
+import fiveCentsImage from '../../public/assets/5cents.png';
 
 export default {
   data() {
