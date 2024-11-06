@@ -1,6 +1,4 @@
 <script setup>
-import Login from "./components/Login.vue";
-import HomePage from "./components/OldHomePage.vue";
 import Navbar from "./components/Navbar.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -33,9 +31,10 @@ router.beforeEach(async (to, from) => {
 </script>
 
 <template>
-  <!--<Login />-->
-  <!-- <HomePage /> -->
-  <div id="phaser-container"></div>
+  <Navbar />
+  <div class="tw-bg-[#B7E0FF]">
+    <RouterView></RouterView>
+  </div>
 </template>
 
 <style></style>
