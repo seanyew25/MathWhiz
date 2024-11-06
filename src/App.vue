@@ -16,20 +16,18 @@ onMounted(() => {
   });
 });
 
-// Commented out the below. When below is commented
-// the routerview works
-// router.beforeEach(async (to, from) => {
-//   // console.log(isAuthenticated.value);
-//   if (
-//     // make sure the user is authenticated
-//     !isAuthenticated.value &&
-//     // ❗️ Avoid an infinite redirect
-//     to.path !== "/"
-//   ) {
-//     // redirect the user to the landing page
-//     return { path: "/" };
-//   }
-// });
+router.beforeEach(async (to, from) => {
+  // console.log(isAuthenticated.value);
+  if (
+    // make sure the user is authenticated
+    !isAuthenticated.value &&
+    // ❗️ Avoid an infinite redirect
+    to.path !== "/"
+  ) {
+    // redirect the user to the landing page
+    return { path: "/" };
+  }
+});
 </script>
 
 <template>
