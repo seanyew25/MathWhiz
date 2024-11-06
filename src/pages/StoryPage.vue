@@ -63,7 +63,10 @@
               <div class="nes-balloon from-right tw-font-press-start">
                 <p>There're so much problems in the city today😭😭</p>
               </div>
-              <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+              <img
+                src="/assets/mainassets/hairless_morgana.png"
+                class="tw-h-[80px]"
+              />
             </section>
 
             <section class="message -right">
@@ -71,7 +74,10 @@
               <div class="nes-balloon from-right tw-font-press-start">
                 <p>Something happened in the bank, bakery and school</p>
               </div>
-              <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+              <img
+                src="/assets/mainassets/hairless_morgana.png"
+                class="tw-h-[80px]"
+              />
             </section>
 
             <section class="message -right">
@@ -79,7 +85,10 @@
               <div class="nes-balloon from-right tw-font-press-start">
                 <p>I got so stressed and all my fur fell off😭😭</p>
               </div>
-              <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+              <img
+                src="/assets/mainassets/hairless_morgana.png"
+                class="tw-h-[80px]"
+              />
             </section>
           </section>
         </section>
@@ -117,7 +126,10 @@
               <div class="nes-balloon from-right tw-font-press-start">
                 <p>Omg thanks~ 🥺🥺</p>
               </div>
-              <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+              <img
+                src="/assets/mainassets/hairless_morgana.png"
+                class="tw-h-[80px]"
+              />
             </section>
           </section>
         </section>

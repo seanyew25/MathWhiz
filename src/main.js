@@ -16,15 +16,13 @@ import { getFirestore } from "firebase/firestore";
 
 import HomePage from "./pages/HomePage.vue";
 import LandingPage from "./pages/LandingPage.vue";
-import ProfilePage from "./pages/profile/ProfilePage.vue";
+import ProfilePage from "./pages/ProfilePage.vue";
 import ShoppingCentrePage from "./pages/ShoppingCentrePage.vue";
 import SchoolPage from "./pages/SchoolPage.vue";
 import BakeryPage from "./pages/BakeryPage.vue";
 import BankPage from "./pages/BankPage.vue";
 import StoryPage from "./pages/StoryPage.vue";
 import GameComponent from "./pages/GameComponent.vue";
-import ShopPage from "./pages/ShopPage.vue";
-import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -55,7 +53,6 @@ const routes = [
   { path: "/bank", component: BankPage },
   { path: "/story", component: StoryPage },
   { path: "/shop", component: ShopPage },
-  { path: "/catchangingroom", component: CatChangingRoom },
 ];
 
 const router = createRouter({
