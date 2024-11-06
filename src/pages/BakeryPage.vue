@@ -384,7 +384,9 @@ export default {
 .pinned-message {
 /* background-color: #e8f5e9; */
 /* border-left: 4px solid #4caf50; */
-/* margin-bottom: 10px; */
+margin-bottom: 10px;
+margin-top: 30px;
+box-shadow: 0 4px 2px -2px gray;
 }
 
 .chat-bubble.correct {
@@ -397,9 +399,14 @@ export default {
   border-left: 4px solid #f44336;
 }
 .scrollable-messages {
-width: 100%;
+/* width: 100%;
 flex-grow: 1;
-overflow-y: auto;
+overflow-y: auto; */
+width: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .blink {
