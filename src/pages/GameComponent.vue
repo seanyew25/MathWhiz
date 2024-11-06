@@ -20,6 +20,7 @@
             }}
           </h1>
 
+          <!--Timer Bar Logic-->
           <div class="progress-container">
             <progress
               class="nes-progress is-success"
@@ -56,6 +57,8 @@
             </section>
           </div>
 
+          <!-- Fever / Streak feature after a series of questions are correctly answered. -->
+          <!-- 04Nov24: Adapt to global points score to link with cat perk usage, after discussion with Sean. -->
           <transition name="fade">
             <div
               v-if="isBonusRound && !gameOver"
@@ -74,8 +77,10 @@
           </div>
 
           <div class="text-center tw-mb-6">
+            <!-- Current Question Display -->
             <div class="tw-text-4xl tw-mb-4" v-if="currentQuestion">
               <transition-group name="bounce" tag="div">
+                <!-- Background Colour when users hover on denominator.-->
                 <span
                   v-for="(item, index) in currentQuestion.leftItems"
                   :key="'left-' + index"
@@ -88,6 +93,7 @@
 
               <div class="tw-text-4xl">{{ currentQuestion.operator }}</div>
 
+              <!-- Emoji Group Transition effect (Added to make changes in emoji representation of variable less stiff.) -->
               <transition-group name="bounce" tag="div">
                 <span
                   v-for="(item, index) in currentQuestion.rightItems"
@@ -104,6 +110,7 @@
             </div>
           </div>
 
+          <!-- Input Field for Users to key in answer.-->\
           <div class="nes-field is-inline">
             <input
               type="number"
@@ -124,6 +131,7 @@
             </div>
           </div> -->
 
+          <!-- Submit Answer button -->
           <div class="tw-text-center">
             <button
               @click="checkAnswer"
@@ -134,10 +142,12 @@
             </button>
           </div>
 
+          <!-- When user answers 5 correct questions in a row, this is triggered.-->
           <div class="tw-text-center tw-mt-6" v-if="hasCorrectStreak">
             <p class="tw-text-xl" :class="streakClass">
               Streak Count: {{ correctStreak }} Good Job! Medals earned:
             </p>
+            <!-- Medal grid of 2 rows, 5 columns.-->
             <div class="medals-grid">
               <span v-for="n in medals" :key="n">
                 <i class="nes-icon coin is-medium"></i>
@@ -145,11 +155,13 @@
             </div>
           </div>
 
+          <!-- Score and High Score records of the users (past) attempts.-->
           <div class="tw-text-center mt-4">
             <p class="tw-text-xl">Score: {{ score }}</p>
             <p class="tw-text-xl">High Score: {{ highScore }}</p>
           </div>
 
+          <!-- NES.css adapted Exit and Restart Game buttons.-->
           <div v-if="gameOver" class="game-over-overlay">
             <div class="game-over-content">
               <h2>{{ completionMessage }}</h2>
@@ -170,13 +182,13 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
-import confetti from "canvas-confetti";
+import confetti from "canvas-confetti"; // Confetti effect after 3 correct answers in a row.
 
 const emojiSet = ["😀", "🐶", "🍕", "🚗", "🎉", "🏀", "🌍", "💡", "📚", "💻"];
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
-const tables = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+const tables = [2, 3, 4, 5, 6, 7, 8, 9, 10]; // Number pool when crafting questions.
 
 const generateQuestion = () => {
   const operators = ["×", "÷"];
@@ -186,15 +198,18 @@ const generateQuestion = () => {
   selectedEmoji = getRandomEmoji();
 
   if (operator === "×") {
+    // When multiplication question
     leftNumber = tables[Math.floor(Math.random() * tables.length)];
     rightNumber = Math.floor(Math.random() * 8) + 2;
     correct = leftNumber * rightNumber;
   } else {
+    // When division question
     rightNumber = tables[Math.floor(Math.random() * tables.length)];
     leftNumber = rightNumber * (Math.floor(Math.random() * 4) + 2);
     correct = leftNumber / rightNumber;
   }
 
+  // Visual representation of selected number from number pool. i.e. 3 is chosen, 3 emojis will represent number.
   leftItems = Array(leftNumber).fill(selectedEmoji);
   rightItems = Array(rightNumber).fill(selectedEmoji);
 
@@ -203,9 +218,18 @@ const generateQuestion = () => {
 
 export default {
   setup() {
+    //Global money variable here
+    const incrementMoney = () => {
+      money += 10; // Add 10 coins after user finishes game.
+    };
+
     // Initiatilise Game Completion trigger to false.
     const gameOver = ref(false);
+
+    // Initialise Empty Completion Message.
     const completionMessage = ref("");
+    
+    // Hover Colours
     const colors = [
       "hover-red",
       "hover-blue",
@@ -213,17 +237,38 @@ export default {
       "hover-green",
       "hover-purple",
     ];
+
+    // Initialise Medals earned to false until consecutive questions are answered correctly.
     const earnedMedal = ref(false);
+
+    // Initialise Current Attmept's Score.
     const score = ref(0);
+
+    // Locate and print highest attemp's score.
     const highScore = ref(localStorage.getItem("highScore") || 0);
+
+    // Initialise "Fever" to false until user answers consecutive questions correctly.
     const isBonusRound = ref(false);
 
+    //Direct to current question and execute function.
     const currentQuestion = ref(generateQuestion());
+
+    // Initialise streak count to 0
     const correctStreak = ref(0);
+
+    // Initialise medals to 0
     const medals = ref(0);
+
+    // Initialise timer bar to 100%
     const timerWidth = ref(100);
+
+    // Initialise Input Field to be empty.
     const userInput = ref("");
+
+    // Hover indexes are not shown by default. Will require user to hover over denominator with cursor.
     const hoverIndex = ref(null);
+
+    // Timer Interval to work with const startTimer, edit depletion rate @ timerWidth.value [ I PUT ANOTHER LINE BELOW FOR REFERENCE, PLEASE LOOK FOR IT.]
     let timerInterval = null;
 
     const hasCorrectStreak = computed(() => correctStreak.value >= 3); // Streak value shifted down here
@@ -233,6 +278,7 @@ export default {
       "streak-animation": medals.value > 0 && earnedMedal.value,
     }));
 
+    // Timer bar deplete once game starts (aka once page loads.)
     const startTimer = () => {
       if (gameOver.value) return;
       timerWidth.value = 100;
@@ -243,7 +289,7 @@ export default {
           clearInterval(timerInterval);
           return;
         }
-        timerWidth.value = Math.max(0, timerWidth.value - 1.25);
+        timerWidth.value = Math.max(0, timerWidth.value - 1.25); // [ HI IM HERE EDIT THE FLOAT VALUE TO PLAY AROUND WITH DEPLETION RATES OF TIMER BAR.]
 
         if (timerWidth.value <= 0) {
           clearInterval(timerInterval);
@@ -253,33 +299,34 @@ export default {
     };
 
     const getEmojiClass = (index) => {
-      if (currentQuestion.value.operator === "÷" && hoverIndex.value !== null) {
-        const groupSize = currentQuestion.value.rightNumber;
-        const groupIndex = Math.floor(index / groupSize);
-        return colors[groupIndex % colors.length];
+      if (currentQuestion.value.operator === "÷" && hoverIndex.value !== null) { // Check it is a division question
+        const groupSize = currentQuestion.value.rightNumber; // Group size is dependent on denominator value.
+        const groupIndex = Math.floor(index / groupSize); // Decides chunks and its respective colours
+        return colors[groupIndex % colors.length]; // Returns the chunks into numerator.
       }
       return "";
     };
 
-    const hoverDivisor = (index) => {
-      if (currentQuestion.value.operator === "÷") {
+    const hoverDivisor = (index) => { // Check it is a division question
+      if (currentQuestion.value.operator === "÷") { // While hovering, group all the different values calculated above and show user.
         hoverIndex.value = index;
       }
     };
-    const clearHover = () => {
+    const clearHover = () => { // Once user removes cursor from denominator, remove the groupings.
       hoverIndex.value = null;
     };
 
-    const playSound = (correct) => {
+    const playSound = (correct) => { // Audio cues to let user know if answer is right or wrong
       const audio = new Audio(
         correct
           ? "https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"
           : "https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"
       );
+      audio.volume = 1.0 // At 100%, tweak accordingly once other components are finalised. - 04NOV24
       audio.play();
     };
 
-    const triggerConfetti = () => {
+    const triggerConfetti = () => { // Confetti related tweaks.
       confetti({
         particleCount: 100,
         spread: 70,
@@ -287,16 +334,16 @@ export default {
       });
     };
 
-    const handleCorrectAnswer = () => {
+    const handleCorrectAnswer = () => { // Answer handling.
       playSound(true);
       correctStreak.value += 1;
       score.value += isBonusRound.value ? 20 : 10;
 
-      if (correctStreak.value % 3 === 0) {
+      if (correctStreak.value % 3 === 0) { // Streak starts after 3 correct answers.
         triggerConfetti();
       }
 
-      if (correctStreak.value % 10 === 0) {
+      if (correctStreak.value % 10 === 0) { // "Fever" / Bonus round triggered upon 10 consecutive questions answered correctly. 
         isBonusRound.value = true;
         setTimeout(() => {
           isBonusRound.value = false;
@@ -304,14 +351,14 @@ export default {
       }
 
       if (medals.value < 10) {
-        if (correctStreak.value > 5 && correctStreak.value % 1 === 0) {
+        if (correctStreak.value > 5 && correctStreak.value % 1 === 0) { // Every subsequent question answered correctly after 5th, 1 additional medal is given per correct answer.
           medals.value += 1;
-        } else if (correctStreak.value === 5) {
+        } else if (correctStreak.value === 5) { // 1 Medal given on the 5th correct question answered correctly.
           medals.value += 1;
         }
       }
 
-      if (medals.value === 10) {
+      if (medals.value === 10) { // End game once 10 medals are collected. Record score and scope to global points system 04NOV24
         endGame();
       }
 
@@ -327,7 +374,7 @@ export default {
 
     const handleIncorrectAnswer = () => {
       playSound(false);
-      correctStreak.value = 0;
+      correctStreak.value = 0; // Remove streak if question is answered wrongly.
     };
 
     const checkAnswer = () => {
@@ -344,7 +391,7 @@ export default {
 
     const generatedQuestions = new Set(); // Set to store unique questions
 
-    const generateUniqueQuestion = () => {
+    const generateUniqueQuestion = () => { // Added on 01NOV24 due to duplicate questions appearing while still awarding points.
       let question;
       let attempts = 0;
       const maxAttempts = 100; // Prevent infinite loop
@@ -379,6 +426,7 @@ export default {
       isBonusRound.value = false;
     };
 
+    // 1/2 RestartGame accounted for.
     const restartGame = () => {
       gameOver.value = false;
       completionMessage.value = "";
@@ -390,6 +438,12 @@ export default {
       currentQuestion.value = generateQuestion();
       startTimer();
     };
+
+    // 2/2 EndGame to be added below once directories are sorted 04NOV24
+    const exitGame = () => {
+      console.log("Exiting game");
+    };
+    // END EndGame
 
     // Multiplication Game taken out
     // const generateMultiplicationGrid = (left, right) => {
@@ -412,10 +466,7 @@ export default {
     //   return null;
     // });
 
-    const exitGame = () => {
-      console.log("Exiting game");
-    };
-
+    // Compare current attempt to highest recorded score on local storage, if higher then replace.
     watch(score, (newScore) => {
       if (newScore > highScore.value) {
         highScore.value = newScore;
@@ -423,7 +474,7 @@ export default {
       }
     });
 
-    onMounted(() => {
+    onMounted(() => { // Timer bar starts depleting once page is loaded.
       startTimer();
     });
 
@@ -460,12 +511,12 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped> /* Scope to local variable*/ 
 /* @import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"); */
 /* @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
 /* @import url("https://unpkg.com/nes.css/css/nes.min.css"); */
 
-.math-game {
+.math-game { /* README: Should you add extra CSS, please add .math-game infront as this is the multiplication/division game specific CSS. */
   font-family: "Press Start 2P", cursive;
 }
 
