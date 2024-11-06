@@ -4,128 +4,53 @@
     <video autoplay muted loop>
       <source src="../media/final_background_video.mp4" type="video/mp4">
     </video>
-    <h1 class="text-over-video tw-text-6xl tw-font-bold tw-text-white-600">
+    <h1 class="text-over-video-h1 tw-text-8xl tw-font-bold tw-text-white-600">
         Welcome to Mathwhiz!
     </h1>
   </div>
   <div class="background-container">
-    <h3>We Gamify Primary School Math</h3>
+    <h1>Bringing Math to Life!</h1>
+    <p class="tw-text-2xl">At Mathwhiz, we believe in unlocking the magic of math.</p>
   </div>
-  <div class="tw-min-h-screen tw-bg-gray-100 tw-p-4 tw-sm:p-8">
-    <div class="tw-max-w-7xl tw-mx-auto">
-      <h1 class="tw-text-3xl tw-sm:text-4xl tw-font-bold tw-text-gray-800 tw-mb-8">Bento Dashboard</h1>
-      <div class="tw-grid tw-grid-cols-2 tw-sm:grid-cols-4 tw-lg:grid-cols-6 tw-gap-4 tw-sm:gap-6">
-        <!-- Welcome Card -->
-        <div class="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-md tw-col-span-2 tw-sm:col-span-4 tw-lg:col-span-3 tw-flex tw-items-center tw-justify-between">
-          <div>
-            <h2 class="tw-text-2xl tw-font-semibold tw-text-gray-800">Welcome back, User!</h2>
-            <p class="tw-text-gray-600 tw-mt-2">Here's what's happening with your projects.</p>
-          </div>
+
+  <div class="tw-min-h-fit tw-bg-blue-300 tw-p-8">
+    <div class="tw-max-w-4xl tw-mx-auto">
+      <h1 class="tw-text-3xl tw-font-bold tw-text-gray-800 tw-mb-8 tw-text-center">Your Mathwhiz Experience:</h1>
+      <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4">
+
+        <!-- Explore a city -->
+        <div class="tw-bg-blue-100 tw-p-6 tw-rounded-xl tw-shadow-md">
+          <h2 class="tw-text-2xl tw-font-semibold tw-text-blue-800 tw-mb-4">Explore a City</h2>
+          <p class="tw-text-blue-700">Embark on virtual tours of famous cities around the world. Discover landmarks, learn about local culture, and complete exciting challenges along the way!</p>
+        </div>        
+
+        <!-- Speak to different characters -->
+        <div class="tw-bg-green-100 tw-p-6 tw-rounded-xl tw-shadow-md">
+          <h2 class="tw-text-2xl tw-font-semibold tw-text-green-800 tw-mb-4">Interactive Scenarios</h2>
+          <p class="tw-text-green-700">Engage in conversations with diverse characters in various game scenarios. Practice language skills, decision-making, and problem-solving in immersive environments.</p>
         </div>
 
-        <!-- Stats Card -->
-        <div class="tw-bg-indigo-600 tw-p-6 tw-rounded-xl tw-shadow-md tw-text-white tw-col-span-2 tw-lg:col-span-3">
-          <h3 class="tw-text-xl tw-font-semibold tw-mb-4">Quick Stats</h3>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <p class="text-2xl font-bold">28</p>
-              <p class="text-sm opacity-80">Active Projects</p>
-            </div>
-            <div>
-              <p class="text-2xl font-bold">5.2k</p>
-              <p class="text-sm opacity-80">Total Tasks</p>
-            </div>
-            <div>
-              <p class="text-2xl font-bold">18</p>
-              <p class="text-sm opacity-80">Team Members</p>
-            </div>
-            <div>
-              <p class="text-2xl font-bold">92%</p>
-              <p class="text-sm opacity-80">Task Completion</p>
-            </div>
-          </div>
+        <!-- Practice math -->
+        <div class="tw-bg-purple-100 tw-p-6 tw-rounded-xl tw-shadow-md">
+          <h2 class="tw-text-2xl tw-font-semibold tw-text-purple-800 tw-mb-4">Math Adventures</h2>
+          <p class="tw-text-purple-700">Dive into exciting math challenges! Practice arithmetic, geometry, and problem-solving skills through interactive games, puzzles, and real-world applications.</p>
         </div>
 
-        <!-- Chart Card -->
-        <div class="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-md tw-col-span-2 tw-sm:col-span-4 tw-lg:col-span-3 tw-row-span-2">
-          <h3 class="tw-text-xl tw-font-semibold tw-text-gray-800 tw-mb-4">Weekly Activity</h3>
-          <div class="tw-h-64 tw-flex tw-items-end tw-justify-between">
-            <div v-for="day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="day" class="w-1/7">
-              <div 
-                class="tw-bg-indigo-500 tw-rounded-t"
-                :style="{ height: `${Math.random() * 100}%` }"
-              ></div>
-              <p class="tw-text-xs tw-text-center tw-mt-2 tw-text-gray-600">{{ day }}</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tasks Card -->
-        <div class="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-md tw-col-span-2 tw-lg:col-span-3">
-          <h3 class="tw-text-xl tw-font-semibold tw-text-gray-800 tw-mb-4">Recent Tasks</h3>
-          <ul class="tw-space-y-3">
-            <li v-for="task in ['Design new landing page', 'Fix navigation bug', 'Update user profile', 'Optimize database queries']" :key="task" class="tw-flex tw-items-center">
-              <span class="tw-w-3 tw-h-3 tw-bg-indigo-500 tw-rounded-full tw-mr-3"></span>
-              <span class="tw-text-gray-700">{{ task }}</span>
-            </li>
-          </ul>
-        </div>
-
-        <!-- Calendar Card -->
-        <div class="tw-bg-white tw-p-6 tw-rounded-xl tw-shadow-md tw-col-span-2 tw-sm:col-span-4 tw-lg:col-span-2 tw-row-span-2">
-          <h3 class="tw-text-xl tw-font-semibold tw-text-gray-800 tw-mb-4">Upcoming Deadlines</h3>
-          <div class="tw-grid tw-grid-cols-7 tw-gap-2 tw-text-center">
-            <div v-for="day in ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']" :key="day" class="tw-text-xs tw-font-semibold tw-text-gray-600">
-              {{ day }}
-            </div>
-            <div v-for="date in 31" :key="date" 
-                 :class="[
-                   'tw-p-2 tw-rounded-full tw-text-sm',
-                   date === 15 ? 'tw-bg-indigo-600 tw-text-white' : 'tw-hover:bg-gray-100'
-                 ]">
-              {{ date }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Notes Card -->
-        <div class="tw-bg-yellow-100 tw-p-6 tw-rounded-xl tw-shadow-md tw-col-span-2 tw-lg:col-span-1">
-          <h3 class="tw-text-xl tw-font-semibold tw-text-gray-800 tw-mb-4">Quick Notes</h3>
-          <textarea 
-            class="tw-w-full tw-h-32 tw-bg-yellow-50 tw-border-yellow-200 tw-rounded tw-p-2 tw-text-sm"
-            placeholder="Type your notes here..."
-          ></textarea>
-        </div>
-
-        <!-- Project Progress Card -->
-        <div class="tw-bg-green-100 tw-p-6 tw-rounded-xl tw-shadow-md tw-col-span-2 tw-lg:col-span-1">
-          <h3 class="tw-text-xl tw-font-semibold tw-text-gray-800 tw-mb-4">Project Progress</h3>
-          <div class="tw-space-y-4">
-            <div v-for="project in ['Website Redesign', 'Mobile App', 'API Integration']" :key="project">
-              <div class="tw-flex tw-justify-between tw-text-sm tw-text-gray-600 tw-mb-1">
-                <span>{{ project }}</span>
-                <span>{{ Math.floor(Math.random() * 100) }}%</span>
-              </div>
-              <div class="tw-w-full tw-bg-green-200 tw-rounded-full tw-h-2">
-                <div class="tw-bg-green-500 tw-h-2 tw-rounded-full" :style="{ width: `${Math.random() * 100}%` }"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Team Card -->
-        <div class="tw-bg-purple-100 tw-p-6 tw-rounded-xl tw-shadow-md tw-col-span-2 tw-lg:col-span-2">
-          <h3 class="tw-text-xl tw-font-semibold tw-text-gray-800 tw-mb-4">Team Members</h3>
-          <div class="tw-flex tw-flex-wrap tw-m-1">
-            <div v-for="n in 5" :key="n" class="m-1">
-            </div>
-            <div class="tw-w-10 tw-h-10 tw-bg-purple-200 tw-rounded-full tw-flex tw-items-center tw-justify-center tw-m-1">
-              <span class="tw-text-purple-600 tw-font-semibold">+3</span>
-            </div>
-          </div>
+        <div class="tw-bg-orange-100 tw-p-6 tw-rounded-xl tw-shadow-md">
+          <h2 class="tw-text-2xl tw-font-semibold tw-text-orange-800 tw-mb-4">Cat Collection Quest</h2>
+          <p class="tw-text-orange-700">Embark on a delightful journey to collect virtual cats! Each unique feline comes with its own story and special abilities to help you in your learning adventures.</p>
         </div>
 
       </div>
+    </div>
+  </div>
+
+  <div class="tw-min-h-500px tw-bg-yellow-50 tw-p-4">
+    <div class="tw-max-w-4xl tw-mx-auto tw-p-5">
+      <h1 class="tw-text-center tw-p-6">Join Mathwhiz today! Sign up now!</h1>
+      <div class="tw-bg-pink-200 tw-p-6 tw-rounded-xl tw-shadow-md">
+        <h2 class="tw-text-center">&copy;2024 Mathwhiz.</h2>
+      </div> 
     </div>
   </div>
 
@@ -159,7 +84,7 @@
   justify-content: center;
 }
 
-.text-over-video {
+.text-over-video-h1 {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -194,12 +119,4 @@ video {
 </style>
 
 <script setup>
-import { ref } from 'vue'
-
-// Tailwind CSS in JS
-const tailwindCSS = ref(`
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-`)
 </script>
