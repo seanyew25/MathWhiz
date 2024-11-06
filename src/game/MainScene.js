@@ -1,5 +1,6 @@
 import Phaser from "phaser";
-
+import { eventEmitter } from "./Events";
+import GameOverlayScene from "./GameOverlay";
 // import { preload, create, update } from "phaser";
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -59,11 +60,11 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
-    const initialData = this.registry.get("initialData");
-    console.log(initialData.equippedCat);
+    this.initialData = this.registry.get("initialData");
+    console.log(this.initialData.equippedCat);
     this.load.spritesheet(
       "cat",
-      `${basePath}/sprites/cats/${initialData.equippedCat}.png`,
+      `${basePath}/sprites/cats/${this.initialData.equippedCat}.png`,
       {
         frameWidth: 32,
         frameHeight: 32,
@@ -73,6 +74,7 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     // Runs once, after all assets in preload are loaded
+    this.scene.launch("GameOverlayScene");
     const map = this.make.tilemap({
       key: "map",
       tileWidth: 16,
@@ -275,25 +277,31 @@ export default class MainScene extends Phaser.Scene {
     MainScene.controls = new Phaser.Cameras.Controls.FixedKeyControl({
       camera: camera,
     });
-
     // Constrain the camera so that it isn't allowed to move outside the width/height of tilemap
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    // Help text that has a "fixed" position on the screen
-    this.add
-      .text(16, 16, "Arrow keys to scroll", {
-        font: "18px monospace",
-        fill: "#ffffff",
-        padding: { x: 20, y: 10 },
-        backgroundColor: "#000000",
-      })
-      .setScrollFactor(0);
-
-    // this.cursors = this.input.keyboard.createCursorKeys();
-
     // PLAYER CREATION AND SPAWN POINT
-    MainScene.player = this.physics.add.sprite(736, 768, "player", 3);
-    this.cat = this.physics.add.sprite(736, 752, "cat", 44);
+    // this.player = this.physics.add.sprite(736, 780, "player", 3);
+    console.log(`initial = ${JSON.stringify(this.initialData.spawnLocation)}`);
+    let playerX = this.initialData.spawnLocation.x;
+    let playerY = this.initialData.spawnLocation.y;
+    let playerPositionTile = "test";
+    for (let i = 0; i < 10; i++) {
+      playerPositionTile = this.collisionLayer.getTileAt(
+        Math.floor(playerX / 16),
+        Math.floor(playerY / 16)
+      );
+      //IF PLAYER IS NOT STANDING ON A COLLIDING TILE
+      if (playerPositionTile === null) {
+        break;
+      } else {
+        //IF PLAYER STANDING ON COLLIDING TILE, SHIFT PLAYER DOWN
+        console.log("player shift down");
+        playerY += 10;
+      }
+    }
+    this.player = this.physics.add.sprite(playerX, playerY, "player", 3);
+    this.cat = this.physics.add.sprite(playerX, playerY - 20, "cat", 44);
     // this.catOffsetX = 0;
     // this.catOffsetY = -20;
     this.cat.setSize(20, 20);
@@ -310,8 +318,18 @@ export default class MainScene extends Phaser.Scene {
       true,
       true
     );
-    MainScene.player.body.setCollideWorldBounds(true);
+    this.player.body.setCollideWorldBounds(true);
     this.cat.body.setCollideWorldBounds(true);
+    this.player.body.onWorldBounds = true;
+    this.physics.world.on("worldbounds", (body) => {
+      console.log("worldbounds");
+      if (body.gameObject === this.player) {
+        this.cat.body.setVelocity(0);
+        this.cat.x = this.player.x + this.catOffsetX;
+        this.cat.y = this.player.y + this.catOffsetY;
+      }
+    });
+
     // In your create function or similar initialization method
     // this.physics.world.createDebugGraphic(); // Create debug graphics for the physics world
     // this.debugGraphics = this.add.graphics().setAlpha(0.75); // Set up graphics for displaying debug information
@@ -330,14 +348,11 @@ export default class MainScene extends Phaser.Scene {
 
     //TO ALLOW HEAD TO OVERLAP WITH THE BORDERS
     // Adjust the player's body size
-    MainScene.player.body.setSize(
-      MainScene.player.width,
-      MainScene.player.height * 0.75
-    ); // Make the player shorter for head overlap
-    MainScene.player.body.setOffset(0, MainScene.player.height * 0.25); // Adjust the offset so the player appears correctly on the screen
+    this.player.body.setSize(this.player.width, this.player.height * 0.75); // Make the player shorter for head overlap
+    this.player.body.setOffset(0, this.player.height * 0.25); // Adjust the offset so the player appears correctly on the screen
 
     // Set up the camera to follow the player
-    this.cameras.main.startFollow(MainScene.player);
+    this.cameras.main.startFollow(this.player);
     this.cameras.main.setZoom(2.5);
 
     // Optional: Set camera deadzone (to avoid excessive camera movement)
@@ -385,12 +400,46 @@ export default class MainScene extends Phaser.Scene {
     // In your create function or similar initialization method
     // this.physics.world.createDebugGraphic(); // Create debug graphics for the physics world
     // this.debugGraphics = this.add.graphics().setAlpha(0.75); // Set up graphics for displaying debug information
-
-    this.physics.add.collider(MainScene.player, collisionLayer, () => {
+    this.catOutBounds = false;
+    this.physics.add.collider(this.player, collisionLayer, () => {
       this.cat.body.setVelocity(0);
-      this.cat.x = MainScene.player.x + this.catOffsetX;
-      this.cat.y = MainScene.player.y + this.catOffsetY;
+      this.cat.x = this.player.x + this.catOffsetX;
+      this.cat.y = this.player.y + this.catOffsetY;
     });
+    this.physics.add.collider(this.cat, this.player, () => {
+      console.log("cat collided with player");
+      // this.cat.setVisible(false);
+      let catTeleportLocationX = this.player.x + this.catOffsetX;
+      let catTeleportLocationY = this.player.y + this.catOffsetY;
+      // console.log("cat", catTeleportLocationX, catTeleportLocationY);
+      // console.log(
+      //   "world",
+      //   this.physics.world.bounds.x,
+      //   this.physics.world.bounds.y + this.physics.world.bounds.height
+      // );
+
+      if (
+        catTeleportLocationX <=
+          this.physics.world.bounds.x + this.physics.world.bounds.width &&
+        catTeleportLocationX >= this.physics.world.bounds.x &&
+        catTeleportLocationY <=
+          this.physics.world.bounds.y + this.physics.world.bounds.height &&
+        catTeleportLocationY >= this.physics.world.bounds.y
+      ) {
+        this.catOutBounds = false;
+        // console.log("cat teleport");
+        this.cat.x = catTeleportLocationX;
+        this.cat.y = catTeleportLocationY;
+      } else {
+        this.catOutBounds = true;
+        // console.log("cat out of bounds");
+        // this.cat.setVisible(false);
+      }
+    });
+
+    // this.physics.add.collider(this.cat, collisionLayer, () => {
+    //   console.log("cat collided");
+    // });
     //CREATE ANIMATIONS FOR DOORS
     this.anims.create({
       key: "homeDoor-open",
@@ -577,14 +626,63 @@ export default class MainScene extends Phaser.Scene {
     // });
 
     this.setCatPosition = false;
-    this.prevPosition = { x: MainScene.player.x, y: MainScene.player.y };
+    this.prevPosition = { x: this.player.x, y: this.player.y };
+
+    this.depthAdjustableChildren = this.children.getAll().filter((child) => {
+      return !(
+        child.name === "baseLayer" ||
+        child.name === "roadLayer" ||
+        child.name === "pavementLayer" ||
+        child.name === "groundDecorLayer" ||
+        child.name === "bankSchoolFieldLayer" ||
+        ("texture" in child && child.texture.key.includes("Door"))
+      );
+    });
+
+    this.collisionBlocks = [];
+    collisionLayer.forEachTile((tile) => {
+      // let tileBounds = new Phaser.Geom.Rectangle(
+      //   tile.pixelX,
+      //   tile.pixelY,
+      //   tile.width,
+      //   tile.height
+      // );
+      this.collisionBlocks.push(tile);
+    });
+    // console.log(this.collisionBlocks);
+
+    // this.collisionBlocks.forEach((tile) => {
+    //   console.log(tile);
+    // });
+    this.catOverlapStatus = false;
+    this.events.on("catOverlapWithCollisionBlocks", (cat) => {
+      console.log("cat is overlapping with collision blocks");
+      this.catOverlapStatus = true;
+    });
+
+    // Set line color to red and full opacity
+    const graphics = this.add.graphics();
+    graphics.lineStyle(2, 0xff0000, 1); // Set line color to red and full opacity
+
+    // eventEmitter.on("playerMovement", () => {
+    //   const playerY = this.player.y;
+    //   const playerDepth = this.player.depth;
+
+    //   // Iterate only over filtered depth-adjustable children
+    //   this.depthAdjustableChildren.forEach((child) => {
+    //     // Update depth only if the player is below the child
+    //     if (playerY > child.y && child.depth <= playerDepth) {
+    //       child.setDepth(playerDepth + 1);
+    //     }
+    //   });
+    // });
   }
 
   update(time, delta) {
     // Apply the controls to the camera each update tick of the game
     // Automatically set depth based on the Y position
     MainScene.controls.update(delta);
-    MainScene.player.body.setVelocity(0);
+    this.player.body.setVelocity(0);
     let moving = false;
     //CHECK IF CAT OVERLAP ANY BARRIERS
 
@@ -614,10 +712,11 @@ export default class MainScene extends Phaser.Scene {
       //HORIZONTAL MOVEMENT
       if (MainScene.cursors.left.isDown) {
         currentDirection.x = -1;
-        MainScene.player.body.setVelocityX(-100);
-        MainScene.player.anims.play("walk-left", true);
-        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.player.body.setVelocityX(-100);
+        eventEmitter.emit("playerMovement", this.player);
+        this.player.anims.play("walk-left", true);
+        this.player.setDepth(this.player.y + this.player.height);
+        this.cat.setDepth(this.player.y + this.player.height);
         this.catOffsetX = 25;
         this.catOffsetY = 8;
         // only runs once upon keydown to teleport the cat behind/beside the player
@@ -625,28 +724,29 @@ export default class MainScene extends Phaser.Scene {
         if (!this.setCatPosition) {
           //cat position hasn't been set
           // console.log("cat teleported");
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.cat.x = this.player.x + this.catOffsetX;
+          this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true; //cat position has been set
         }
         this.cat.body.setVelocityX(-100);
         this.cat.anims.play("cat-walk-left", true);
         moving = true;
       } else if (MainScene.cursors.right.isDown) {
-        // console.log(MainScene.player.body.velocity.x);
+        // console.log(this.player.body.velocity.x);
         currentDirection.x = 1;
-        MainScene.player.body.setVelocityX(100);
-        // console.log(MainScene.player.body.velocity.x);
-        MainScene.player.anims.play("walk-right", true);
-        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.player.body.setVelocityX(100);
+        eventEmitter.emit("playerMovement", this.player);
+        // console.log(this.player.body.velocity.x);
+        this.player.anims.play("walk-right", true);
+        this.player.setDepth(this.player.y + this.player.height);
+        this.cat.setDepth(this.player.y + this.player.height);
         this.catOffsetX = -25;
         this.catOffsetY = 8;
         if (!this.setCatPosition) {
           // console.log("cat teleported");
           // console.log(this.setCatPosition);
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.cat.x = this.player.x + this.catOffsetX;
+          this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true;
         }
         this.cat.body.setVelocityX(100);
@@ -656,33 +756,35 @@ export default class MainScene extends Phaser.Scene {
       // VERTICAL MOVEMENT
       if (MainScene.cursors.up.isDown) {
         currentDirection.y = -1;
-        MainScene.player.body.setVelocityY(-100);
-        MainScene.player.anims.play("walk-up", true);
-        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.player.body.setVelocityY(-100);
+        eventEmitter.emit("playerMovement", this.player);
+        this.player.anims.play("walk-up", true);
+        this.player.setDepth(this.player.y + this.player.height);
+        this.cat.setDepth(this.player.y + this.player.height);
         this.cat.anims.play("cat-walk-up", true);
         this.catOffsetX = 0;
         this.catOffsetY = 30;
         if (!this.setCatPosition) {
           // console.log("cat teleported");
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.cat.x = this.player.x + this.catOffsetX;
+          this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true;
         }
         this.cat.body.setVelocityY(-100);
         moving = true;
       } else if (MainScene.cursors.down.isDown) {
         currentDirection.y = 1;
-        MainScene.player.body.setVelocityY(100);
-        MainScene.player.anims.play("walk-down", true);
-        MainScene.player.setDepth(MainScene.player.y + MainScene.player.height);
-        this.cat.setDepth(MainScene.player.y + MainScene.player.height);
+        this.player.body.setVelocityY(100);
+        eventEmitter.emit("playerMovement", this.player);
+        this.player.anims.play("walk-down", true);
+        this.player.setDepth(this.player.y + this.player.height);
+        this.cat.setDepth(this.player.y + this.player.height);
         this.catOffsetX = 0;
-        this.catOffsetY = -20;
+        this.catOffsetY = -23;
         if (!this.setCatPosition) {
           // console.log("cat teleported");
-          this.cat.x = MainScene.player.x + this.catOffsetX;
-          this.cat.y = MainScene.player.y + this.catOffsetY;
+          this.cat.x = this.player.x + this.catOffsetX;
+          this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true;
         }
         this.cat.body.setVelocityY(100);
@@ -695,6 +797,7 @@ export default class MainScene extends Phaser.Scene {
       currentDirection.x !== this.prevDirection.x ||
       currentDirection.y !== this.prevDirection.y
     ) {
+      console.log("direction changed");
       this.directionChanged = true; // Set flag if direction has changed
       // console.log("Direction changed");
     }
@@ -704,11 +807,11 @@ export default class MainScene extends Phaser.Scene {
 
     if (!moving) {
       this.setCatPosition = false;
-      MainScene.player.anims.stop();
+      this.player.anims.stop();
       if (this.cat.anims.isPlaying) {
         const currentAnimationName = this.cat.anims.currentAnim.key;
         if (currentAnimationName.includes("walk")) {
-          this.cat.setVelocity(0);
+          this.cat.body.setVelocity(0);
           this.cat.anims.stop();
         }
       }
@@ -716,43 +819,42 @@ export default class MainScene extends Phaser.Scene {
 
     if (this.directionChanged) {
       this.setCatPosition = false;
-      this.cat.setVelocity(0);
+      this.cat.body.setVelocity(0);
     }
 
-    const playerBounds = MainScene.player.getBounds();
+    const playerBounds = this.player.getBounds();
 
-    // DEPTH SORTING
-    this.children.each((child) => {
-      // console.log(JSON.stringify(child));
-      // console.log(child.depth);
-      // if player is above the child, set the child's depth to be higher than the player
+    this.depthAdjustableChildren.forEach((child) => {
       if (
-        child.name === "baseLayer" ||
-        child.name === "roadLayer" ||
-        child.name === "pavementLayer" ||
-        child.name === "groundDecorLayer" ||
-        child.name === "bankSchoolFieldLayer" ||
-        ("texture" in child && child.texture.key.includes("Door")) //exclude doors to ensure character appears on top of door sprites when they open
+        this.player.y > child.y && //player is above map object
+        !("texture" in child && child.texture.key.includes("Door"))
       ) {
-        ("");
-      } else {
-        if (MainScene.player.y > child.y) {
-          child.depth = MainScene.player.depth + 1;
-          // console.log(`player depth: ${MainScene.player.depth}`);
-          // console.log(`child depth: ${child.depth}`);
-        }
+        child.depth = this.player.depth + 1; //make the map object appear in front of the player
+        // console.log(`player depth: ${this.player.depth}`);
+        // console.log(`child depth: ${child.depth}`);
       }
-
-      // if (child.name === "collisionLayer") {
-      //   let catBounds = this.cat.getBounds();
-      //   let childBounds = child.getBounds();
-      //   if (
-      //     Phaser.Geom.Intersects.RectangleToRectangle(catBounds, childBounds)
-      //   ) {
-      //     console.log("cat collision");
-      //   }
-      // }
     });
+
+    let catPositionTile = this.collisionLayer.getTileAt(
+      Math.floor(this.cat.x / 16),
+      Math.floor(this.cat.y / 16)
+    );
+
+    if (catPositionTile != null) {
+      this.events.emit("catOverlapWithCollisionBlocks", this.cat);
+      console.log(catPositionTile);
+    } else {
+      this.catOverlapStatus = false;
+    }
+    if (this.catOverlapStatus || this.catOutBounds) {
+      this.cat.setVisible(false);
+      // console.log("cat invisible");
+    } else {
+      // console.log(this.catOutBounds);
+      // console.log(`overlap:${this.catOverlapStatus}`);
+      // console.log("cat visible");
+      this.cat.setVisible(true);
+    }
 
     MainScene.objects.forEach((doorObject) => {
       if (
@@ -774,11 +876,11 @@ export default class MainScene extends Phaser.Scene {
         // );
       }
     });
-    this.prevPosition = { x: MainScene.player.x, y: MainScene.player.y };
+    this.prevPosition = { x: this.player.x, y: this.player.y };
   }
 }
 
-export function initializePhaser(equippedCat) {
+export function initializePhaser(equippedCat, playerCoords) {
   const config = {
     type: Phaser.CANVAS, // Which renderer to use
     width: window.innerWidth, // Canvas width in pixels
@@ -793,6 +895,7 @@ export function initializePhaser(equippedCat) {
         gravity: { y: 0 }, // Top down game, so no gravity
       },
     },
+    scene: [MainScene],
     scale: {
       mode: Phaser.Scale.RESIZE, // Makes the game responsive
       autoCenter: Phaser.Scale.CENTER_BOTH, // Center the game in the window
@@ -800,10 +903,14 @@ export function initializePhaser(equippedCat) {
     callbacks: {
       preBoot: (game) => {
         // Set initial data here if needed
-        game.registry.set("initialData", { equippedCat: equippedCat });
+        game.registry.set("initialData", {
+          equippedCat: equippedCat,
+          spawnLocation: playerCoords,
+        });
       },
     },
   };
   const game = new Phaser.Game(config);
+  game.scene.add("GameOverlayScene", GameOverlayScene);
   return game;
 }

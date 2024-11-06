@@ -46,7 +46,7 @@
                 d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"
               />
             </svg>
-            {{ userData.displayName }}
+            {{ userData.displayName ? userData.displayName : username }}
           </button>
           <ul class="dropdown-menu">
             <li>
@@ -77,20 +77,10 @@
             <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
-              to="/home"
+              to="/game"
               aria-current="page"
               style="text-decoration: none; color: black"
-              >Home</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <!-- <a>Test</a> -->
-            <RouterLink
-              class="nav-link"
-              to="/operations"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Operations</RouterLink
+              >Game</RouterLink
             >
           </li>
           <li class="nav-item">
@@ -300,6 +290,19 @@ const userData = ref("");
 const isAuthenticated = ref(false);
 const auth = getAuth();
 const db = getFirestore();
+const defaultCat = ref([
+  {
+    name: "Furless",
+    cuteness: 70,
+    fluffiness: 10,
+    coolness: 85,
+    color: "Pale Pink",
+    imgLocation: "/assets/shopassets/furless.png",
+    description: "It takes a furless cat to be fearless!",
+    rarity: "Super Rare",
+    price: 150,
+  },
+]);
 
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
@@ -325,7 +328,7 @@ const handleLogin = () => {
       const modalElement = document.getElementById("getStartedModal");
       const modal = bootstrap.Modal.getInstance(modalElement);
       // userData.value = user;
-      router.push("/home");
+      router.push("/story");
       modal.hide();
 
       // Here you can add logic to redirect the user or update the UI
@@ -363,7 +366,8 @@ const handleSignup = () => {
         .catch((error) => {
           console.log(error);
         });
-      router.push("/home");
+      router.push("/story");
+
       const modalElement = document.getElementById("getStartedModal");
       const modal = bootstrap.Modal.getInstance(modalElement);
       modal.hide();
@@ -393,9 +397,11 @@ async function createUserProfile(userId) {
   await setDoc(
     userRef,
     {
-      currency: 0, // Initialize currency to 0
+      currency: 0,
+      equippedCat: defaultCat.value[0],
+      purchasedCats: defaultCat.value,
     },
     { merge: true }
-  ); // Merge to avoid overwriting existing data
+  );
 }
 </script>

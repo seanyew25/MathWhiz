@@ -1,5 +1,5 @@
 <template>
-  <div class="tw-h-[95vh]">
+  <div id="parent" class="tw-h-[95vh]">
     <div class="tw-flex tw-justify-center tw-items-center tw-flex-col">
       <h3 class="tw-font-press-start tw-p-6 tw-mt-10">Welcome home!</h3>
       <h3 class="tw-font-press-start tw-mb-14 tw-px-6 tw-text-center">
@@ -22,7 +22,11 @@
     </div>
   </div>
 </template>
-<style scoped></style>
+<style scoped>
+#parent {
+  overflow: hidden;
+}
+</style>
 <script>
 import ShadowBox from "../../components/profile/ShadowBox.vue";
 import { useRouter } from "vue-router";
