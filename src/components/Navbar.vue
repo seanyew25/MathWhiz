@@ -77,7 +77,7 @@
             <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
-              to="/home"
+              to="/game"
               aria-current="page"
               style="text-decoration: none; color: black"
               >Game</RouterLink
@@ -328,7 +328,7 @@ const handleLogin = () => {
       const modalElement = document.getElementById("getStartedModal");
       const modal = bootstrap.Modal.getInstance(modalElement);
       // userData.value = user;
-      router.push("/home");
+      router.push("/story");
       modal.hide();
 
       // Here you can add logic to redirect the user or update the UI

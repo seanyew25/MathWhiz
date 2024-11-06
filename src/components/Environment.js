@@ -59,11 +59,11 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
-    const initialData = this.registry.get("initialData");
-    console.log(initialData.equippedCat);
+    this.initialData = this.registry.get("initialData");
+    console.log(this.initialData.equippedCat);
     this.load.spritesheet(
       "cat",
-      `${basePath}/sprites/cats/${initialData.equippedCat}.png`,
+      `${basePath}/sprites/cats/${this.initialData.equippedCat}.png`,
       {
         frameWidth: 32,
         frameHeight: 32,
@@ -280,8 +280,27 @@ export default class MainScene extends Phaser.Scene {
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     // PLAYER CREATION AND SPAWN POINT
-    this.player = this.physics.add.sprite(736, 780, "player", 3);
-    this.cat = this.physics.add.sprite(736, 760, "cat", 44);
+    // this.player = this.physics.add.sprite(736, 780, "player", 3);
+    console.log(`initial = ${JSON.stringify(this.initialData.spawnLocation)}`);
+    let playerX = this.initialData.spawnLocation.x;
+    let playerY = this.initialData.spawnLocation.y;
+    let playerPositionTile = "test";
+    for (let i = 0; i < 10; i++) {
+      playerPositionTile = this.collisionLayer.getTileAt(
+        Math.floor(playerX / 16),
+        Math.floor(playerY / 16)
+      );
+      //IF PLAYER IS NOT STANDING ON A COLLIDING TILE
+      if (playerPositionTile === null) {
+        break;
+      } else {
+        //IF PLAYER STANDING ON COLLIDING TILE, SHIFT PLAYER DOWN
+        console.log("player shift down");
+        playerY += 10;
+      }
+    }
+    this.player = this.physics.add.sprite(playerX, playerY, "player", 3);
+    this.cat = this.physics.add.sprite(playerX, playerY - 20, "cat", 44);
     // this.catOffsetX = 0;
     // this.catOffsetY = -20;
     this.cat.setSize(20, 20);
@@ -953,7 +972,9 @@ class GameOverlayScene extends Phaser.Scene {
 
       //REPOSITION PLAYER
       this.playerPosition.clear();
-      this.playerPosition = this.add.graphics();
+      if (!this.playerPosition) {
+        this.playerPosition = this.add.graphics();
+      }
       this.playerPosition.fillStyle(0xff0000, 1);
       const circleX = minimap.x + this.playerX / 10 - radius; // X position in top-right corner
       const circleY = minimap.y + this.playerY / 10 - radius;
@@ -963,7 +984,7 @@ class GameOverlayScene extends Phaser.Scene {
   }
 }
 
-export function initializePhaser(equippedCat) {
+export function initializePhaser(equippedCat, playerCoords) {
   const config = {
     type: Phaser.CANVAS, // Which renderer to use
     width: window.innerWidth, // Canvas width in pixels
@@ -986,7 +1007,10 @@ export function initializePhaser(equippedCat) {
     callbacks: {
       preBoot: (game) => {
         // Set initial data here if needed
-        game.registry.set("initialData", { equippedCat: equippedCat });
+        game.registry.set("initialData", {
+          equippedCat: equippedCat,
+          spawnLocation: playerCoords,
+        });
       },
     },
   };

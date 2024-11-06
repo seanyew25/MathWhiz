@@ -14,7 +14,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-import HomePage from "./pages/HomePage.vue";
+import GamePage from "./pages/GamePage.vue";
 import LandingPage from "./pages/LandingPage.vue";
 import ProfilePage from "./pages/profile/ProfilePage.vue";
 import ShoppingCentrePage from "./pages/ShoppingCentrePage.vue";
@@ -22,7 +22,6 @@ import SchoolPage from "./pages/SchoolPage.vue";
 import BakeryPage from "./pages/BakeryPage.vue";
 import BankPage from "./pages/BankPage.vue";
 import StoryPage from "./pages/StoryPage.vue";
-import GameComponent from "./pages/GameComponent.vue";
 import ShopPage from "./pages/ShopPage.vue";
 import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
 // import AboutView from "./AboutView.vue";
@@ -45,7 +44,7 @@ const db = getFirestore(app);
 
 //Initialize Vue Router
 const routes = [
-  { path: "/home", component: HomePage },
+  { path: "/game", component: GamePage },
   { path: "/", component: LandingPage },
   { path: "/profile", component: ProfilePage },
   { path: "/shoppingcentre", component: ShoppingCentrePage },
