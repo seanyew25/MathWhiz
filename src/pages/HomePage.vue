@@ -113,7 +113,7 @@ export default {
         } else if (name === "bankDoor" && !this.doorAnimationCompleted) {
           this.doorAnimationCompleted = true;
           const bankDoor = scene.add.sprite(264, 192, "bankDoor", 0);
-          // console.log(`player = ${this.game.player.depth}`);
+          // console.log(`player = ${MainScene.player.depth}`);
           // console.log(bankDoor.depth);
           bankDoor.anims.play("bankDoor-open", false);
           bankDoor.once("animationcomplete", (animation, frame) => {
@@ -140,7 +140,7 @@ export default {
               0
             );
           }
-          shoppingCentreDoor.setDepth(0);
+          shoppingCentreDoor.setDepth(MainScene.player.depth - 2);
           shoppingCentreDoor.anims.play("shoppingCentreDoor-open", false);
           shoppingCentreDoor.once("animationcomplete", (animation, frame) => {
             this.router.push("/shoppingcentre");
