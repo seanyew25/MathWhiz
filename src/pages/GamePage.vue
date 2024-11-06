@@ -3,12 +3,12 @@
 </template>
 <script>
 import { onMounted } from "vue";
-import MainScene, { initializePhaser } from "../components/Environment.js";
+import MainScene, { initializePhaser } from "../game/MainScene.js";
 import { useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
 import { getFirestore, getDoc, doc } from "firebase/firestore";
-import { eventEmitter } from "../components/Events.js";
-import { store } from "../components/Store.js";
+import { eventEmitter } from "../game/Events.js";
+import { globalState } from "../components/globalState.js";
 
 export default {
   mounted() {
@@ -17,7 +17,7 @@ export default {
     this.db = getFirestore();
     // this.setSpawnPoint();
     // this.handleGetSelectedOptions(this.db, "users", this.auth.currentUser.uid);
-    console.log(store.playerPosition);
+    console.log(globalState.playerPosition);
     this.gameSetup();
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
@@ -57,7 +57,7 @@ export default {
             console.log(this.equippedCat);
             this.game = initializePhaser(
               this.equippedCat.name,
-              store.playerPosition
+              globalState.playerPosition
             );
             // this.game.scene.start("MainScene");
             console.log(this.game.scene);
@@ -112,7 +112,7 @@ export default {
 
       eventEmitter.on("playerMovement", (playerObj) => {
         // console.log(`player: ${playerObj.x}, ${playerObj.y}`);
-        store.setPlayerPosition(playerObj.x, playerObj.y);
+        globalState.setPlayerPosition(playerObj.x, playerObj.y);
       });
 
       scene.events.on("doorCollision", (doorObj) => {
