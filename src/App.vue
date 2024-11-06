@@ -1,6 +1,4 @@
 <script setup>
-import Login from "./components/Login.vue";
-import HomePage from "./components/OldHomePage.vue";
 import Navbar from "./components/Navbar.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -36,7 +34,9 @@ onMounted(() => {
 
 <template>
   <Navbar />
-  <RouterView></RouterView>
+  <div class="tw-bg-[#B7E0FF]">
+    <RouterView></RouterView>
+  </div>
 </template>
 
 <style></style>

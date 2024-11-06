@@ -1,9 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap");
 
+html,
 body {
   font-family: "Comic Neue", cursive;
   margin: 0;
   padding: 0;
+  height: 100vh;
+}
+
+#app {
+  height: inherit;
+  width: inherit;
 }
 
 @tailwind base;

@@ -12,10 +12,19 @@ import { initializeApp } from "firebase/app";
 // https://firebase.google.com/docs/web/setup#available-libraries
 import { createWebHistory, createRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
-import HomePage from "./components/HomePage.vue";
-import LandingPage from "./components/LandingPage.vue";
-import GameComponent from "./components/GameComponent.vue";
+import HomePage from "./pages/HomePage.vue";
+import LandingPage from "./pages/LandingPage.vue";
+import ProfilePage from "./pages/profile/ProfilePage.vue";
+import ShoppingCentrePage from "./pages/ShoppingCentrePage.vue";
+import SchoolPage from "./pages/SchoolPage.vue";
+import BakeryPage from "./pages/BakeryPage.vue";
+import BankPage from "./pages/BankPage.vue";
+import StoryPage from "./pages/StoryPage.vue";
+import GameComponent from "./pages/GameComponent.vue";
+import ShopPage from "./pages/ShopPage.vue";
+import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
 import moneyCounting from "./components/moneyCounting.vue";
 import FractionGame from "./components/FractionGame.vue";
 // import AboutView from "./AboutView.vue";
@@ -34,12 +43,21 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 //Initialize Vue Router
 const routes = [
   { path: "/home", component: HomePage },
   { path: "/", component: LandingPage },
   { path: "/operations", component: GameComponent },
+  { path: "/profile", component: ProfilePage },
+  { path: "/shoppingcentre", component: ShoppingCentrePage },
+  { path: "/school", component: SchoolPage },
+  { path: "/bakery", component: BakeryPage },
+  { path: "/bank", component: BankPage },
+  { path: "/story", component: StoryPage },
+  { path: "/shop", component: ShopPage },
+  { path: "/catchangingroom", component: CatChangingRoom },
   { path: "/moneyCounting", component: moneyCounting },
   { path: "/fractiongame", component: FractionGame },
 ];
