@@ -397,9 +397,14 @@ export default {
     border-left: 4px solid #f44336;
 }
 .scrollable-messages {
-  width: 100%;
+  /* width: 100%;
   flex-grow: 1;
+  overflow-y: auto; */
+  width: 100%;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .blink {

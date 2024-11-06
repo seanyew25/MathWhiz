@@ -1,6 +1,15 @@
 <template>
   <div class="container-fluid">
+    <div class="progress-container">
+            <progress
+              class="nes-progress is-success"
+              :value="timerWidth"
+              :max="100"
+            ></progress>
+            <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
+          </div>
     <h1 class="text-center">Mummy wants you to deposit ${{ targetAmount.toFixed(2) }}</h1>
+    
     <div class="row">
       <div class="col-lg-6 mb-4">
         <div class="counter bg-light p-3 rounded" @dragover.prevent @drop="onDrop($event, 'counter')">
