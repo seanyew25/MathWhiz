@@ -1,4 +1,4 @@
-<script>
+<script setup>
 import Navbar from "./components/Navbar.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -16,34 +16,25 @@ onMounted(() => {
   });
 });
 
-// Commented out the below. When below is commented
-// the routerview works
-// router.beforeEach(async (to, from) => {
-//   // console.log(isAuthenticated.value);
-//   if (
-//     // make sure the user is authenticated
-//     !isAuthenticated.value &&
-//     // ❗️ Avoid an infinite redirect
-//     to.path !== "/"
-//   ) {
-//     // redirect the user to the landing page
-//     return { path: "/" };
-//   }
-// });
-export default {
-  setup() {
-    onMounted(() => {
-      initializePhaser();
-    });
-  },
-};
+router.beforeEach(async (to, from) => {
+  // console.log(isAuthenticated.value);
+  if (
+    // make sure the user is authenticated
+    !isAuthenticated.value &&
+    // ❗️ Avoid an infinite redirect
+    to.path !== "/"
+  ) {
+    // redirect the user to the landing page
+    return { path: "/" };
+  }
+});
 </script>
 
 <template>
-  <!--<Login />-->
-  <!-- <HomePage /> -->
   <Navbar />
-  <RouterView></RouterView>
+  <div class="tw-bg-[#B7E0FF]">
+    <RouterView></RouterView>
+  </div>
 </template>
 
 <style></style>
