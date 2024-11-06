@@ -3,7 +3,7 @@
     <div class="tw-px-5 lg:tw-px-40 tw-py-20 tw-bg-[#B7E0FF] tw-flex-1">
       <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
         <p class="tw-font-press-start">
-          You live in Mathropolis with your cat Morgana
+          You live in Mathropolis with your cat Morgana.
         </p>
         <section class="nes-container">
           <section class="message-list">
