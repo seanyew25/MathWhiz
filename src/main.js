@@ -3,6 +3,7 @@ import { createApp } from "vue";
 import App from "./App.vue"; //can write as import App from "@/App.vue", the @ directs to source directory (for vue cli) https://www.youtube.com/watch?v=PciUq6HcUNc
 // Import our custom CSS
 import "./styles.scss";
+import './style.css'
 
 // Import all of Bootstrap's JS
 import * as bootstrap from "bootstrap";
