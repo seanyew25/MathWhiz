@@ -1,6 +1,6 @@
 <template>
   <div
-    class="min-h-screen bg-gray-100 flex flex-col"
+    class="math-game min-h-screen bg-gray-100 flex flex-col"
     style="background-color: #add8e6; position: relative"
   >
     <div class="flex-grow flex items-center justify-center p-4">
@@ -403,13 +403,12 @@ export default {
 };
 </script>
 
-<style>
-@import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css");
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+<style scoped>
+/* @import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css");
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
 
-html,
-body {
-  font-family: "Press Start 2P", sans-serif;
+.math-game {
+  font-family: "Press Start 2P", cursive;
   margin: 0;
   padding: 0;
   width: 100%;
