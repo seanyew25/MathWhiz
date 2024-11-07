@@ -21,7 +21,7 @@
         <!-- Explore a city -->
         <div class="tw-bg-blue-100 tw-p-6 tw-rounded-xl tw-shadow-md">
           <h2 class="tw-text-2xl tw-font-semibold tw-text-blue-800 tw-mb-4">Explore a City</h2>
-          <p class="tw-text-blue-700">Embark on virtual tours of famous cities around the world. Discover landmarks, learn about local culture, and complete exciting challenges along the way!</p>
+          <p class="tw-text-blue-700">Embark on a adventure in Math City. Explore different landmarks!</p>
         </div>        
 
         <!-- Speak to different characters -->
@@ -38,7 +38,7 @@
 
         <div class="tw-bg-orange-100 tw-p-6 tw-rounded-xl tw-shadow-md">
           <h2 class="tw-text-2xl tw-font-semibold tw-text-orange-800 tw-mb-4">Cat Collection Quest</h2>
-          <p class="tw-text-orange-700">Embark on a delightful journey to collect virtual cats! Each unique feline comes with its own story and special abilities to help you in your learning adventures.</p>
+          <p class="tw-text-orange-700">Embark on a delightful journey to collect virtual cats! Each unique feline provides a little boost to your fun in Mathwhiz.</p>
         </div>
 
       </div>
