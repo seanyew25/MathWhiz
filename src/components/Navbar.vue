@@ -77,16 +77,6 @@
             <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
-              to="/game"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Game</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <!-- <a>Test</a> -->
-            <RouterLink
-              class="nav-link"
               to="/story"
               aria-current="page"
               style="text-decoration: none; color: black"

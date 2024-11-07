@@ -15,14 +15,13 @@
             </div>
           </div>
           <div class="total mt-3">Total: ${{ total.toFixed(2) }}</div>
-          <div class="message" :class="{ 'text-success': isCorrect, 'text-danger': !isCorrect && total > 0 }">
+          <div class="message" :class="messageClass">
             {{ message }}
           </div>
         </div>
       </div>
       <div class="col-lg-6 mb-4">
         <div class="piggy-bank-container p-3 rounded" @dragover.prevent @drop="onDrop($event, 'piggyBank')">
-          <!-- <h2>Piggy Bank</h2> -->
           <img src="/assets/bankassets/piggybank2.png" alt="Piggy Bank" class="piggy-bank">
           <div class="coin-container d-flex flex-wrap justify-content-center align-items-center">
             <div v-for="coin in piggyBankCoins" :key="coin.uniqueId" class="col-auto m-1 p-1">
@@ -37,17 +36,14 @@
       </div>
     </div>
 
-<div class="row justify-content-evenly">
-  <div class="col-auto">
-    <div class="button-container">
-            <button class="btn btn-custom px-5" @click="resetGame">Reset</button>
-            <button class="btn btn-custom px-5">Next</button>
+    <div class="row justify-content-evenly">
+      <div class="col-auto">
+        <div class="button-container">
+          <button class="btn btn-custom px-5" @click="resetGame">Reset</button>
+          <button class="btn btn-custom px-5">Next</button>
         </div>
-  </div>
-  
-</div>
-    
-
+      </div>
+    </div>
   </div>
 </template>
 
@@ -71,7 +67,8 @@ export default {
       piggyBankCoins: [],
       counterCoins: [],
       targetAmount: 1.80,
-      draggedCoin: null
+      draggedCoin: null,
+      optimalCoinCount: 0
     };
   },
   computed: {
@@ -79,15 +76,27 @@ export default {
       return this.counterCoins.reduce((sum, coin) => sum + coin.value, 0);
     },
     isCorrect() {
-      return this.total === this.targetAmount;
+      return this.total === this.targetAmount && this.counterCoins.length === this.optimalCoinCount;
     },
     message() {
-      if (this.isCorrect) {
-        return "Correct! You've reached $1.80!";
-      } else if (this.total > 0) {
-        return this.total < this.targetAmount ? "Keep adding!" : "Too much! Try removing some coins.";
+      if (this.total < this.targetAmount) {
+        return "Keep adding!";
+      } else if (this.total > this.targetAmount) {
+        return "Too much! Try removing some coins.";
+      } else if (this.total === this.targetAmount) {
+        if (this.counterCoins.length > this.optimalCoinCount) {
+          return "Correct amount, but try using fewer coins to reach the target.";
+        } else {
+          return `Correct! You have deposited $${this.targetAmount.toFixed(2)}`;
+        }
       }
       return "";
+    },
+    messageClass() {
+      return {
+        'text-success': this.isCorrect,
+        'text-danger': !this.isCorrect && this.total > 0
+      };
     }
   },
   methods: {
@@ -128,15 +137,30 @@ export default {
         toArray.push(coin);
       }
     },
-    resetGame(){
-      this.counterCoins=[];
-      this.piggyBankCoins = [...this.coins, ...this.coins,...this.coins].map(coin => 
-      this.createCoin(coin.id, coin.value, coin.image)
-    );
+    resetGame() {
+      this.counterCoins = [];
+      this.piggyBankCoins = [...this.coins, ...this.coins, ...this.coins].map(coin => 
+        this.createCoin(coin.id, coin.value, coin.image)
+      );
+      this.calculateOptimalCoinCount();
+    },
+    calculateOptimalCoinCount() {
+      let remainingAmount = this.targetAmount;
+      let coinCount = 0;
+      const sortedCoins = [...this.coins].sort((a, b) => b.value - a.value);
+
+      for (const coin of sortedCoins) {
+        while (remainingAmount >= coin.value) {
+          remainingAmount = parseFloat((remainingAmount - coin.value).toFixed(2));
+          coinCount++;
+        }
+      }
+
+      this.optimalCoinCount = coinCount;
     }
   },
   created() {
-    this.resetGame()
+    this.resetGame();
   }
 };
 </script>
