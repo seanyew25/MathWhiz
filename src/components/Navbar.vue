@@ -77,6 +77,46 @@
             <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
+              to="/bakery"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Bakery</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
+              to="/bank"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Bank</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
+              to="/school"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >School</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
+              to="/game"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Game</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
               to="/story"
               aria-current="page"
               style="text-decoration: none; color: black"
