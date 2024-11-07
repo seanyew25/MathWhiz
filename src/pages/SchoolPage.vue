@@ -1,9 +1,15 @@
 <template>
   <div>
-    <GameComponent />
+    <SchoolASPage/>
+    <SchoolMDPage/>
   </div>
 </template>
 <style scoped></style>
 <script setup>
-import GameComponent from "./GameComponent.vue";
+import SchoolASPage from "ASComponent.vue";
+import SchoolMDPage from "MDComponent.vue";
+
+//rename GameComponent.vue to MDComponent.vue
+// my vue template will be under ASComponent.vue
+// your vue template will be under MDComponent.vue
 </script>
