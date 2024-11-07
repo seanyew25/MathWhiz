@@ -645,5 +645,5 @@ export default {
   height: 20px;
   background-color: #4CAF50;
   border: 1px solid #45a049;
-} */
+} 
 </style>
