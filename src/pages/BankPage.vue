@@ -217,6 +217,8 @@ export default {
       } else {
         alert("Congratulations! You've completed all 10 questions!");
         // Here you can add logic for what happens after all questions are answered
+        this.$router.push("/game");
+
       }
     }
   },

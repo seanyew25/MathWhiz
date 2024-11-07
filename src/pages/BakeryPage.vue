@@ -80,7 +80,7 @@ export default {
       chatText: '',
       fullMessage: "Hello ah, I want to have a cat party. But i can’t eat chocolate. We want only vanilla cupcakes. What fraction of the total cakes are vanilla?",
       messageCaps: {
-        small: 3,
+        small: 2,
         large: 5
       },
       messageHeight: 80,
@@ -193,6 +193,10 @@ export default {
         setTimeout(() => {
           this.inputVibrate = false;
         }, 1500);
+        setTimeout(()=>{
+          this.$router.push("/game");
+        },4000)
+        
       } else {
         // await this.addMessage("Please retry! My friends and I want the cake badly!", 'incorrect');
         // this.numerator = '';
