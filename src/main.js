@@ -1,8 +1,9 @@
 import { createApp } from "vue";
 // import "./style.css";
-import App from "./App.vue";
+import App from "./App.vue"; //can write as import App from "@/App.vue", the @ directs to source directory (for vue cli) https://www.youtube.com/watch?v=PciUq6HcUNc
 // Import our custom CSS
 import "./styles.scss";
+import './style.css'
 
 // Import all of Bootstrap's JS
 import * as bootstrap from "bootstrap";
@@ -14,7 +15,7 @@ import { createWebHistory, createRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-import HomePage from "./pages/HomePage.vue";
+import GamePage from "./pages/GamePage.vue";
 import LandingPage from "./pages/LandingPage.vue";
 import ProfilePage from "./pages/profile/ProfilePage.vue";
 import ShoppingCentrePage from "./pages/ShoppingCentrePage.vue";
@@ -22,9 +23,10 @@ import SchoolPage from "./pages/SchoolPage.vue";
 import BakeryPage from "./pages/BakeryPage.vue";
 import BankPage from "./pages/BankPage.vue";
 import StoryPage from "./pages/StoryPage.vue";
-import GameComponent from "./pages/GameComponent.vue";
 import ShopPage from "./pages/ShopPage.vue";
 import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
+// import BankPage from "./components/BankPage.vue";
+// import FractionGame from "./components/FractionGame.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration
@@ -45,7 +47,7 @@ const db = getFirestore(app);
 
 //Initialize Vue Router
 const routes = [
-  { path: "/home", component: HomePage },
+  { path: "/game", component: GamePage },
   { path: "/", component: LandingPage },
   { path: "/profile", component: ProfilePage },
   { path: "/shoppingcentre", component: ShoppingCentrePage },
