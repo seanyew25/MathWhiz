@@ -46,7 +46,7 @@
               Morgana likes to explore Mathropolis
             </p>
             <section class="nes-container">
-              <p>insert image of cat in city</p>
+              <p><img src="" alt=""></p>
             </section>
           </div>
         </div>
@@ -221,9 +221,10 @@
                     class="tw-h-[80px]"
                   />
                   <div class="nes-balloon tw-font-press-start">
-                    <p>Spot yourself on the minimap as a red dot!</p>
+                    <p>Spot yourself on the minimap as a yellow star!</p>
                   </div>
                 </section>
+                <img src="/assets/mainassets/Minimap.png" class="tw-h-[180px]">
 
                 <div>
                   <img
@@ -422,6 +423,7 @@ export default {
 }
 
 .carousel-inner {
+  height: 80%;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
