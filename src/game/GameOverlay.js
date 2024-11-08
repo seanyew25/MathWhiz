@@ -40,7 +40,7 @@ class GameOverlayScene extends Phaser.Scene {
       this.playerPosition = this.add.graphics();
     }
     this.playerPosition.clear(); // Clear previous drawings
-    this.playerPosition.fillStyle(0xff8c00, 1); // Red color with full opacity
+    this.playerPosition.fillStyle(0xff8c00, 1);
 
     // Define star parameters
     const radius = 6.4;
@@ -114,11 +114,6 @@ class GameOverlayScene extends Phaser.Scene {
       minimap.setScale(newScale);
 
       minimap.setPosition(this.scale.width - minimap.displayWidth - 10, 10);
-      // const minimapNewWidth = minimap.displayWidth;
-      // const minimapNewHeight = minimap.displayHeight;
-      //RESPOSITION BORDER
-      // border.clear();
-      // Create a Graphics object for the border
 
       //REPOSITION BORDER
       this.border.clear();
