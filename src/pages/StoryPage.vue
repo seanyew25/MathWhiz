@@ -14,8 +14,13 @@
               <section class="message-list">
                 <section class="message -left flex">
                   <div>
-                    <img src="/assets/mainassets/player.png" class="tw-h-20 md:tw-order-2" />
-                    <div class="nes-balloon tw-bg-inherit tw-font-press-start md:tw-order-1">
+                    <img
+                      src="/assets/mainassets/player.png"
+                      class="tw-h-20 md:tw-order-2"
+                    />
+                    <div
+                      class="nes-balloon tw-bg-inherit tw-font-press-start md:tw-order-1"
+                    >
                       <p>Hello Morgana! You're so cute!</p>
                     </div>
                   </div>
@@ -24,7 +29,10 @@
                   <div class="nes-balloon tw-font-press-start">
                     <p>Yeah, I know right</p>
                   </div>
-                  <img src="/assets/mainassets/morgana.png" class="tw-h-[80px] tw-justify-end" />
+                  <img
+                    src="/assets/mainassets/morgana.png"
+                    class="tw-h-[80px] tw-justify-end"
+                  />
                 </section>
               </section>
             </section>
@@ -34,7 +42,9 @@
         <!-- Carousel 2 -->
         <div class="carousel-item">
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
-            <p class="tw-font-press-start">Morgana likes to explore Mathropolis</p>
+            <p class="tw-font-press-start">
+              Morgana likes to explore Mathropolis
+            </p>
             <section class="nes-container">
               <p>insert image of cat in city</p>
             </section>
@@ -45,7 +55,8 @@
         <div class="carousel-item">
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
             <p class="tw-font-press-start">
-              However, one day, you find Morgana had shed all his fur after exploring the city
+              However, one day, you find Morgana had shed all his fur after
+              exploring the city
             </p>
             <section class="nes-container">
               <section class="message-list">
@@ -61,13 +72,19 @@
                   <div class="nes-balloon tw-font-press-start">
                     <p>There're so much problems in the city today😭😭</p>
                   </div>
-                  <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+                  <img
+                    src="/assets/shopassets/furless.png"
+                    class="tw-h-[80px]"
+                  />
                 </section>
                 <section class="message -right">
                   <div class="nes-balloon tw-font-press-start">
                     <p>I got so stressed and all my fur fell off😭😭</p>
                   </div>
-                  <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+                  <img
+                    src="/assets/shopassets/furless.png"
+                    class="tw-h-[80px]"
+                  />
                 </section>
               </section>
             </section>
@@ -78,7 +95,8 @@
         <div class="carousel-item">
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
             <p class="tw-font-press-start">
-              You decide to help Morgana solve the city's problems and get back his fur
+              You decide to help Morgana solve the city's problems and get back
+              his fur
             </p>
             <section class="nes-container">
               <section class="message-list">
@@ -102,7 +120,10 @@
                   <div class="nes-balloon tw-font-press-start">
                     <p>Omg thanks~ 🥺🥺</p>
                   </div>
-                  <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+                  <img
+                    src="/assets/shopassets/furless.png"
+                    class="tw-h-[80px]"
+                  />
                 </section>
               </section>
             </section>
@@ -112,7 +133,9 @@
         <!-- Carousel 5 -->
         <div class="carousel-item">
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
-            <p class="tw-font-press-start">Everything you need to get started!</p>
+            <p class="tw-font-press-start">
+              Everything you need to get started!
+            </p>
             <section class="nes-container">
               <section class="message-list">
                 <section class="message -left">
@@ -123,47 +146,63 @@
                     </div>
                   </div>
                 </section>
-                
+
                 <!-- Arrow Key Div-->
-                <div> 
-                  <button 
-                    @mousedown="toggleButtonState('up', true)" 
-                    @mouseup="toggleButtonState('up', false)" 
-                    @mouseleave="toggleButtonState('up', false)" 
-                    :class="buttonClass('up')">↑
-                  </button><br>
-                  <button 
-                    @mousedown="toggleButtonState('left', true)" 
-                    @mouseup="toggleButtonState('left', false)" 
-                    @mouseleave="toggleButtonState('left', false)" 
-                    :class="buttonClass('left')">←
+                <div>
+                  <button
+                    @mousedown="toggleButtonState('up', true)"
+                    @mouseup="toggleButtonState('up', false)"
+                    @mouseleave="toggleButtonState('up', false)"
+                    :class="buttonClass('up')"
+                  >
+                    ↑</button
+                  ><br />
+                  <button
+                    @mousedown="toggleButtonState('left', true)"
+                    @mouseup="toggleButtonState('left', false)"
+                    @mouseleave="toggleButtonState('left', false)"
+                    :class="buttonClass('left')"
+                  >
+                    ←
                   </button>
-                  <button 
-                    @mousedown="toggleButtonState('down', true)" 
-                    @mouseup="toggleButtonState('down', false)" 
-                    @mouseleave="toggleButtonState('down', false)" 
-                    :class="buttonClass('down')">↓
+                  <button
+                    @mousedown="toggleButtonState('down', true)"
+                    @mouseup="toggleButtonState('down', false)"
+                    @mouseleave="toggleButtonState('down', false)"
+                    :class="buttonClass('down')"
+                  >
+                    ↓
                   </button>
-                  <button 
-                    @mousedown="toggleButtonState('right', true)" 
-                    @mouseup="toggleButtonState('right', false)" 
-                    @mouseleave="toggleButtonState('right', false)" 
-                    :class="buttonClass('right')">→
+                  <button
+                    @mousedown="toggleButtonState('right', true)"
+                    @mouseup="toggleButtonState('right', false)"
+                    @mouseleave="toggleButtonState('right', false)"
+                    :class="buttonClass('right')"
+                  >
+                    →
                   </button>
                 </div>
 
-                <br>
+                <br />
                 <section class="message -right">
                   <div>
                     <div class="nes-balloon tw-font-press-start">
-                      <p>The caution sign will direct you to your challenges!</p>
+                      <p>
+                        The caution sign will direct you to your challenges!
+                      </p>
                     </div>
-                    <img src="/assets/mainassets/player.png" class="tw-h-[80px]" />
+                    <img
+                      src="/assets/mainassets/player.png"
+                      class="tw-h-[80px]"
+                    />
                   </div>
                 </section>
 
                 <div>
-                  <img src="/assets/mainassets/warning.png" class="tw-h-[100px]">
+                  <img
+                    src="/assets/mainassets/warning.png"
+                    class="tw-h-[100px]"
+                  />
                 </div>
               </section>
             </section>
@@ -176,36 +215,59 @@
             <p class="tw-font-press-start">Locate yourself!</p>
             <section class="nes-container">
               <section class="message-list">
-
                 <section class="message -left">
-                  <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+                  <img
+                    src="/assets/shopassets/furless.png"
+                    class="tw-h-[80px]"
+                  />
                   <div class="nes-balloon tw-font-press-start">
                     <p>Spot yourself on the minimap as a red dot!</p>
                   </div>
                 </section>
 
                 <div>
-                  <img src="/assets/mainassets/StoryPage_minimap.png" class="tw-h-[100px]">
+                  <img
+                    src="/assets/mainassets/minimap.png"
+                    class="tw-h-[100px]"
+                  />
                 </div>
 
-                <br>
+                <br />
                 <section class="message -right">
                   <div class="nes-balloon tw-font-press-start">
                     <p>Follow these signboards to your challenges!</p>
                   </div>
-                  <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
+                  <img
+                    src="/assets/shopassets/furless.png"
+                    class="tw-h-[80px]"
+                  />
                 </section>
 
                 <div>
-                  <img src="/assets/mainassets/DirectionalSignboards/LEFT.png" class="tw-h-[80px]">
+                  <img
+                    src="/assets/mainassets/DirectionalSignboards/LEFT.png"
+                    class="tw-h-[80px]"
+                  />
                   |
-                  <img src="/assets/mainassets/DirectionalSignboards/LEFTBEND.png" class="tw-h-[80px]">
+                  <img
+                    src="/assets/mainassets/DirectionalSignboards/LEFTBEND.png"
+                    class="tw-h-[80px]"
+                  />
                   |
-                  <img src="/assets/mainassets/DirectionalSignboards/LEFTDOWN.png" class="tw-h-[80px]">
+                  <img
+                    src="/assets/mainassets/DirectionalSignboards/LEFTDOWN.png"
+                    class="tw-h-[80px]"
+                  />
                   |
-                  <img src="/assets/mainassets/DirectionalSignboards/LEFTRIGHT.png" class="tw-h-[80px]">
+                  <img
+                    src="/assets/mainassets/DirectionalSignboards/LEFTRIGHT.png"
+                    class="tw-h-[80px]"
+                  />
                   |
-                  <img src="/assets/mainassets/DirectionalSignboards/RIGHT.png" class="tw-h-[80px]">
+                  <img
+                    src="/assets/mainassets/DirectionalSignboards/RIGHT.png"
+                    class="tw-h-[80px]"
+                  />
                 </div>
               </section>
             </section>
@@ -214,36 +276,42 @@
 
         <div class="carousel-item">
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
-                <section class="message">
-                  <i class="nes-icon trophy is-medium"></i>
-                  <div class="nes-balloon tw-font-press-start">
-                    <p>Are you ready?</p>
-                  </div>
-                  <i class="nes-icon trophy is-medium"></i>
-                </section>
+            <section class="message">
+              <i class="nes-icon trophy is-medium"></i>
+              <div class="nes-balloon tw-font-press-start">
+                <p>Are you ready?</p>
+              </div>
+              <i class="nes-icon trophy is-medium"></i>
+            </section>
 
-                <button type="button" @click="goToHome" class="nes-btn is-success">
-                <!-- Adding a span component here to make text nes, not sure why it doesnt work with class.-->
-                  <span class="nes-text">Let's get started!</span>
-                </button>
+            <button type="button" @click="goToHome" class="nes-btn is-success">
+              <!-- Adding a span component here to make text nes, not sure why it doesnt work with class.-->
+              <span class="nes-text">Let's get started!</span>
+            </button>
           </div>
         </div>
-
-
       </div>
 
-
-      <button class="carousel-control-prev" type="button" data-bs-target="#storyCarousel" data-bs-slide="prev">
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#storyCarousel"
+        data-bs-slide="prev"
+      >
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Previous</span>
       </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#storyCarousel" data-bs-slide="next">
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#storyCarousel"
+        data-bs-slide="next"
+      >
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
       </button>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -254,62 +322,62 @@ export default {
         up: false,
         left: false,
         down: false,
-        right: false
-      }
+        right: false,
+      },
     };
   },
   mounted() {
-    window.addEventListener('keydown', this.handleKeydown);
-    window.addEventListener('keyup', this.handleKeyup);
+    window.addEventListener("keydown", this.handleKeydown);
+    window.addEventListener("keyup", this.handleKeyup);
   },
   beforeDestroy() {
-    window.removeEventListener('keydown', this.handleKeydown);
-    window.removeEventListener('keyup', this.handleKeyup);
+    window.removeEventListener("keydown", this.handleKeydown);
+    window.removeEventListener("keyup", this.handleKeyup);
   },
   methods: {
-    goToHome(){
-      this.$router.push('/home');
+    goToHome() {
+      this.$router.push("/home");
     },
     toggleButtonState(direction, isPressed) {
       this.buttonPressed[direction] = isPressed;
     },
     handleKeydown(event) {
-      if (event.key === 'ArrowUp') {
-        this.toggleButtonState('up', true);
-      } else if (event.key === 'ArrowLeft') {
-        this.toggleButtonState('left', true);
-      } else if (event.key === 'ArrowDown') {
-        this.toggleButtonState('down', true);
-      } else if (event.key === 'ArrowRight') {
-        this.toggleButtonState('right', true);
+      if (event.key === "ArrowUp") {
+        this.toggleButtonState("up", true);
+      } else if (event.key === "ArrowLeft") {
+        this.toggleButtonState("left", true);
+      } else if (event.key === "ArrowDown") {
+        this.toggleButtonState("down", true);
+      } else if (event.key === "ArrowRight") {
+        this.toggleButtonState("right", true);
       }
     },
     handleKeyup(event) {
-      if (event.key === 'ArrowUp') {
-        this.toggleButtonState('up', false);
-      } else if (event.key === 'ArrowLeft') {
-        this.toggleButtonState('left', false);
-      } else if (event.key === 'ArrowDown') {
-        this.toggleButtonState('down', false);
-      } else if (event.key === 'ArrowRight') {
-        this.toggleButtonState('right', false);
+      if (event.key === "ArrowUp") {
+        this.toggleButtonState("up", false);
+      } else if (event.key === "ArrowLeft") {
+        this.toggleButtonState("left", false);
+      } else if (event.key === "ArrowDown") {
+        this.toggleButtonState("down", false);
+      } else if (event.key === "ArrowRight") {
+        this.toggleButtonState("right", false);
       }
     },
     buttonClass(direction) {
       return {
-        'nes-btn': true,
-        'is-primary': !this.buttonPressed[direction],
-        'is-success': this.buttonPressed[direction]
+        "nes-btn": true,
+        "is-primary": !this.buttonPressed[direction],
+        "is-success": this.buttonPressed[direction],
       };
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
 @import "../../node_modules/nes.css/css/nes.css";
 
-.nes-btn{
+.nes-btn {
   border-image-slice: 2;
   border-image-width: 2;
   border-image-repeat: stretch;
@@ -321,21 +389,23 @@ export default {
   margin: 4px;
   text-align: center;
   vertical-align: middle;
-  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC) 14 0, pointer;
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC)
+      14 0,
+    pointer;
   -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   color: #212529;
   background-color: #fff;
 }
 
 .nes-text {
-  font-family: "Press Start 2P", sans-serif; /* NES-style font added this here because inline doesnt work.*/ 
+  font-family: "Press Start 2P", sans-serif; /* NES-style font added this here because inline doesnt work.*/
 }
 
 .story-carousel-wrapper {
-  background-color: #B7E0FF;
+  background-color: #b7e0ff;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -348,9 +418,8 @@ export default {
 
 .carousel-item {
   transition: transform 0.5s ease;
-  padding:20px;
+  padding: 20px;
 }
-
 
 .carousel-inner {
   width: 100%;
@@ -366,7 +435,6 @@ export default {
   border-color: black;
   border-style: solid;
   border-width: 4px;
-
 }
 
 .nes-container.is-rounded {
