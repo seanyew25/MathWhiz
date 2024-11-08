@@ -6,52 +6,28 @@
     <div class="tw-flex-grow tw-flex tw-items-center tw-justify-center tw-p-4">
       <div
         class="tw-w-full tw-max-w-5xl tw-bg-white tw-rounded-lg tw-shadow-xl tw-overflow-hidden"
+        style="width: 1000px;"
       >
-        <!-- <div class="tw-p-6 tw-w-[400px] tw-h-[300px] tw-mx-auto"> -->
-        <!-- including width and heights cause the box to be too small to show everything -->
-        <div class="tw-p-6 tw-mx-auto">
+        <div class="tw-p-6 tw-w-full">
           <h1
-            class="tw-text-3xl tw-font-bold tw-text-center tw-align-center tw-mb-6"
+            class="tw-text-xl tw-font-bold tw-text-center tw-align-center tw-mb-6"
           >
             {{
               currentQuestion.operator === "×"
-                ? "Multiplication Game"
-                : "Division Game"
+                ? "Multiplication"
+                : "Division"
             }}
           </h1>
 
-          <div class="progress-container">
+          <div class="progress-container tw-relative tw-mb-4">
             <progress
-              class="nes-progress is-success"
+              class="nes-progress is-success tw-w-full"
               :value="timerWidth"
               :max="100"
             ></progress>
-            <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
-          </div>
-
-          <div>
-            <section>
-              <button
-                type="button"
-                class="nes-btn is-primary"
-                onclick="document.getElementById('dialog-default').showModal();"
-              >
-                Hint!
-              </button>
-              <dialog class="nes-dialog" id="dialog-default">
-                <form method="dialog">
-                  <p class="title">Hint</p>
-                  <p>
-                    Hover over the denominator in division questions to better
-                    understand the question!
-                  </p>
-                  <menu class="dialog-menu">
-                    <button class="nes-btn">Cancel</button>
-                    <button class="nes-btn is-success">Confirm</button>
-                  </menu>
-                </form>
-              </dialog>
-            </section>
+            <p class="nes-text tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw-translate-x-[-50%] tw-translate-y-[-50%] tw-text-center">
+              {{ Math.ceil(timerSeconds) }}s
+            </p>
           </div>
 
           <transition name="fade">
@@ -59,7 +35,7 @@
               v-if="isBonusRound && !gameOver"
               class="bonus-round text-center mb-4"
             >
-              Bonus Round! Double points for correct answers!
+              Bonus Round! Double coins for correct answers!
             </div>
           </transition>
 
@@ -102,56 +78,51 @@
             </div>
           </div>
 
-          <div class="nes-field is-inline">
+          <div class="nes-field tw-mb-4">
             <input
               type="number"
               v-model="userInput"
               @keyup.enter="checkAnswer"
               class="nes-input is-success"
               placeholder="Enter Your Answer"
-              :disabled="gameOver"
+              :disabled="gameOver || !gameStarted"
             />
           </div>
 
-          <!--Multiplication Game Taken Out -->
-          <!-- <div v-if="currentQuestion.operator === '×'" class="multiplication-grid" 
-              :style="{ gridTemplateColumns: 'repeat(' + currentQuestion.rightNumber + ', 1fr)' }">
-            <div v-for="(row, rowIndex) in multiplicationGrid" :key="'row-' + rowIndex">
-              <div v-for="(cell, cellIndex) in row" :key="'cell-' + rowIndex + '-' + cellIndex" 
-                  class="multiplication-cell"></div>
-            </div>
-          </div> -->
-
-          <div class="tw-text-center">
+          <div class="tw-text-center tw-mb-4">
             <button
               @click="checkAnswer"
-              :class="{ 'nes-btn': true, 'is-disabled': gameOver }"
-              :disabled="gameOver"
+              :class="{ 'nes-btn': true, 'is-disabled': gameOver || !gameStarted }"
+              :disabled="gameOver || !gameStarted"
             >
               Submit Answer
+            </button>
+            <button
+              type="button"
+              class="nes-btn is-primary center"
+              @click="showHintDialog"
+              :disabled="gameOver || !gameStarted"
+            >
+              Hint!
             </button>
           </div>
 
           <div class="tw-text-center tw-mt-6" v-if="hasCorrectStreak">
-            <p class="tw-text-xl" :class="streakClass">
-              Streak Count: {{ correctStreak }} Good Job! Medals earned:
-            </p>
-            <div class="medals-grid">
-              <span v-for="n in medals" :key="n">
-                <i class="nes-icon coin is-medium"></i>
-              </span>
-            </div>
-          </div>
+            <!-- <p class="tw-text-xl" :class="streakClass">
+              Streak Count: {{ correctStreak }} Good Job! 
+            </p> -->
 
-          <div class="tw-text-center mt-4">
-            <p class="tw-text-xl">Score: {{ score }}</p>
-            <p class="tw-text-xl">High Score: {{ highScore }}</p>
+            <p class="tw-text-xl">
+              <i class="nes-icon coin is-medium"></i>Coins earned: {{ medals }} / 15
+            </p>
           </div>
 
           <div v-if="gameOver" class="game-over-overlay">
             <div class="game-over-content">
               <h2>{{ completionMessage }}</h2>
-              <p>Your final score: {{ score }}</p>
+              <br>
+              <p>You're one step closer to regaining Morgana's fur!</p>
+              <p>Play again?</p>
               <button @click="exitGame" class="nes-btn is-primary">
                 Exit Game
               </button>
@@ -160,6 +131,32 @@
               </button>
             </div>
           </div>
+
+          <dialog class="nes-dialog" id="dialog-default">
+            <form method="dialog">
+              <p class="title">Hint</p>
+              <p>
+                Hovering over the denominator helps you visualise the question in chunks!
+              </p>
+              <menu class="dialog-menu center-button">
+                <button class="nes-btn is-primary" @click="closeHintDialog">I Understand!</button>
+              </menu>
+            </form>
+          </dialog>
+          
+          <dialog class="nes-dialog" id="instructions-dialog">
+            <form method="dialog">
+              <p class="title" style="text-align:center;">Welcome to the Multiplication and Division Game!</p>
+              <p style="text-align: center;">
+                Answer questions to earn Destress coins.<br><br>
+                Objective: Earn <strong>15</strong> Destress coins to return Morgana's fur!<br><br>
+                You have <strong>{{ initialTimerSeconds }}</strong> seconds for each question. Good luck!
+              </p>
+              <menu class="dialog-menu center-button">
+                <button class="nes-btn is-primary" style="text-align:center;" @click="startGame">Start Game</button>
+              </menu>
+            </form>
+          </dialog>
         </div>
       </div>
     </div>
@@ -202,6 +199,7 @@ const generateQuestion = () => {
 export default {
   setup() {
     const gameOver = ref(false);
+    const gameStarted = ref(false);
     const completionMessage = ref("");
     const colors = [
       "hover-red",
@@ -211,28 +209,23 @@ export default {
       "hover-purple",
     ];
     const earnedMedal = ref(false);
-    const score = ref(0);
-    const highScore = ref(localStorage.getItem("highScore") || 0);
     const isBonusRound = ref(false);
 
     const currentQuestion = ref(generateQuestion());
     const correctStreak = ref(0);
     const medals = ref(0);
     const timerWidth = ref(100);
+    const initialTimerSeconds = 10; // Change this value to set the initial timer duration
+    const timerSeconds = ref(initialTimerSeconds);
+    const pausedTimerSeconds = ref(0);
     const userInput = ref("");
     const hoverIndex = ref(null);
     let timerInterval = null;
 
-    const hasCorrectStreak = computed(() => correctStreak.value >= 3); // Streak value shifted down here
-
-    const streakClass = computed(() => ({
-      // Streak animation based on streak class
-      "streak-animation": medals.value > 0 && earnedMedal.value,
-    }));
-
+    const hasCorrectStreak = computed(() => correctStreak.value >= 0);
+    
     const startTimer = () => {
       if (gameOver.value) return;
-      timerWidth.value = 100;
       clearInterval(timerInterval);
 
       timerInterval = setInterval(() => {
@@ -240,13 +233,30 @@ export default {
           clearInterval(timerInterval);
           return;
         }
-        timerWidth.value = Math.max(0, timerWidth.value - 1.25);
+        timerWidth.value = Math.max(0, (timerSeconds.value / initialTimerSeconds) * 100);
+        timerSeconds.value = Math.max(0, timerSeconds.value - 0.1);
 
-        if (timerWidth.value <= 0) {
+        if (timerSeconds.value <= 0) {
           clearInterval(timerInterval);
-          nextQuestion();
+          handleTimerExpired();
+          playSound(false);
         }
       }, 100);
+    };
+
+    const pauseTimer = () => {
+      clearInterval(timerInterval);
+      pausedTimerSeconds.value = timerSeconds.value;
+    };
+
+    const resumeTimer = () => {
+      timerSeconds.value = pausedTimerSeconds.value;
+      startTimer();
+    };
+
+    const handleTimerExpired = () => {
+      correctStreak.value = 0;
+      nextQuestion();
     };
 
     const getEmojiClass = (index) => {
@@ -287,28 +297,28 @@ export default {
     const handleCorrectAnswer = () => {
       playSound(true);
       correctStreak.value += 1;
-      score.value += isBonusRound.value ? 20 : 10;
 
-      if (correctStreak.value % 3 === 0) {
+      if (correctStreak.value % 5 === 0) {
         triggerConfetti();
       }
 
-      if (correctStreak.value % 10 === 0) {
+      
+      if (correctStreak.value % 5 === 0) {
         isBonusRound.value = true;
         setTimeout(() => {
           isBonusRound.value = false;
         }, 30000);
       }
 
-      if (medals.value < 10) {
+      if (medals.value < 15) {
         if (correctStreak.value > 5 && correctStreak.value % 1 === 0) {
-          medals.value += 1;
-        } else if (correctStreak.value === 5) {
+          medals.value += 2;
+        } else if (correctStreak.value <= 5) {
           medals.value += 1;
         }
       }
 
-      if (medals.value === 10) {
+      if (medals.value === 15) {
         endGame();
       }
 
@@ -324,7 +334,7 @@ export default {
 
     const handleIncorrectAnswer = () => {
       playSound(false);
-      correctStreak.value = 0;
+      correctStreak.value = medals.value;
     };
 
     const checkAnswer = () => {
@@ -339,12 +349,12 @@ export default {
       }
     };
 
-    const generatedQuestions = new Set(); // Set to store unique questions
+    const generatedQuestions = new Set();
 
     const generateUniqueQuestion = () => {
       let question;
       let attempts = 0;
-      const maxAttempts = 100; // Prevent infinite loop
+      const maxAttempts = 100;
 
       do {
         question = generateQuestion();
@@ -365,63 +375,56 @@ export default {
       userInput.value = "";
       hoverIndex.value = null;
       currentQuestion.value = generateUniqueQuestion();
-      timerWidth.value = 100;
+      timerSeconds.value = initialTimerSeconds; // Reset timer to initial value for each new question
       startTimer();
     };
 
     const endGame = () => {
       gameOver.value = true;
-      completionMessage.value = "Congratulations! You've earned all 10 medals!";
+      completionMessage.value = "You've earned all 15 Destress coins!";
       clearInterval(timerInterval);
       isBonusRound.value = false;
     };
 
     const restartGame = () => {
       gameOver.value = false;
+      gameStarted.value = true;
       completionMessage.value = "";
       medals.value = 0;
       correctStreak.value = 0;
       userInput.value = "";
-      score.value = 0;
       isBonusRound.value = false;
       currentQuestion.value = generateQuestion();
+      timerSeconds.value = initialTimerSeconds;
       startTimer();
     };
-
-    // Multiplication Game taken out
-    // const generateMultiplicationGrid = (left, right) => {
-    //   const grid = [];
-    //   for (let i = 0; i < left; i++) {
-    //     const row = [];
-    //     for (let j = 0; j < right; j++) {
-    //       row.push(1);
-    //     }
-    //     grid.push(row);
-    //   }
-    //   return grid;
-    // };
-
-    // Multiplication Game taken out
-    // const multiplicationGrid = computed(() => {
-    //   if (currentQuestion.value.operator === '×') {
-    //     return generateMultiplicationGrid(currentQuestion.value.leftNumber, currentQuestion.value.rightNumber);
-    //   }
-    //   return null;
-    // });
 
     const exitGame = () => {
       console.log("Exiting game");
     };
 
-    watch(score, (newScore) => {
-      if (newScore > highScore.value) {
-        highScore.value = newScore;
-        localStorage.setItem("highScore", newScore);
-      }
-    });
+    const showHintDialog = () => {
+      pauseTimer();
+      document.getElementById('dialog-default').showModal();
+    };
+
+    const closeHintDialog = () => {
+      document.getElementById('dialog-default').close();
+      resumeTimer();
+    };
+
+    const showInstructions = () => {
+      document.getElementById('instructions-dialog').showModal();
+    };
+
+    const startGame = () => {
+      gameStarted.value = true;
+      document.getElementById('instructions-dialog').close();
+      nextQuestion();
+    };
 
     onMounted(() => {
-      startTimer();
+      showInstructions();
     });
 
     onUnmounted(() => {
@@ -430,12 +433,14 @@ export default {
 
     return {
       timerWidth,
+      timerSeconds,
+      initialTimerSeconds,
       currentQuestion,
       userInput,
       correctStreak,
       medals,
       hasCorrectStreak,
-      streakClass, // Streak related returned here.
+      // streakClass,
       checkAnswer,
       hoverDivisor,
       clearHover,
@@ -443,23 +448,19 @@ export default {
       earnedMedal,
       restartGame,
       exitGame,
-      score,
-      highScore,
       isBonusRound,
       gameOver,
+      gameStarted,
       completionMessage,
-      // Multiplication Game taken out
-      // multiplicationGrid
+      showHintDialog,
+      closeHintDialog,
+      startGame,
     };
   },
 };
 </script>
 
 <style scoped>
-/* @import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"); */
-/* @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
-/* @import url("https://unpkg.com/nes.css/css/nes.min.css"); */
-
 .math-game {
   font-family: "Press Start 2P", cursive;
 }
@@ -544,14 +545,6 @@ export default {
   }
 }
 
-.math-game .medals-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 0.5rem;
-  justify-items: center;
-  margin-top: 1rem;
-}
-
 .math-game .game-over-overlay {
   position: fixed;
   top: 0;
@@ -588,17 +581,8 @@ export default {
   background-color: lightcoral;
 }
 
-/* Taking out this part for demo to prof. Will fix this agn. */
-/* .math-game .multiplication-grid {
-  display: inline-grid;
-  gap: 2px;
-  margin: 10px 0;
+.center-button {
+  display: flex;
+  justify-content: center;
 }
-
-.math-game .multiplication-cell {
-  width: 20px;
-  height: 20px;
-  background-color: #4CAF50;
-  border: 1px solid #45a049;
-} */
 </style>
