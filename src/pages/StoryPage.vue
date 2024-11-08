@@ -227,13 +227,10 @@
                 <img src="/assets/mainassets/Minimap.png" class="tw-h-[180px]">
 
                 <div>
-                  <img
-                    src="/assets/mainassets/minimap.png"
-                    class="tw-h-[100px]"
-                  />
+                  <img src="/assets/mainassets/StoryPage_minimap.png" class="tw-h-[100px]">
                 </div>
 
-                <br />
+                <br>
                 <section class="message -right">
                   <div class="nes-balloon tw-font-press-start">
                     <p>Follow these signboards to your challenges!</p>
@@ -419,7 +416,8 @@ export default {
 
 .carousel-item {
   transition: transform 0.5s ease;
-  padding: 20px;
+  padding:20px;
+  height:60%;
 }
 
 .carousel-inner {
