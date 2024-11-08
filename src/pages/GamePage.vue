@@ -1,5 +1,35 @@
 <template>
-  <div id="phaser-container"></div>
+  <div class="tw-relative">
+    <div
+      id="checklist"
+      class="tw-absolute tw-left-[10px] tw-top-[10px] tw-p-2 tw-bg-[#B7E0FF] tw-max-w-[30%] border border-3 border-white"
+    >
+      <span
+        class="tw-font-press-start tw-text-xs tw-underline tw-cursor-pointer"
+        @click="handleToDoClick"
+      >
+        To Do List
+      </span>
+      <transition name="checklist-expand">
+        <ul
+          v-if="checklistToggled"
+          class="nes-list is-disc tw-mb-0 tw-overflow-hidden"
+        >
+          <transition-group name="list" tag="div">
+            <li
+              class="tw-font-press-start tw-text-[0.5rem] animate__animated animate__lightSpeedInLeft"
+              v-for="(task, key) in allTasks"
+              :key="key"
+              :class="checkCompletion"
+            >
+              {{ task.description }}
+            </li>
+          </transition-group>
+        </ul>
+      </transition>
+    </div>
+    <div id="phaser-container"></div>
+  </div>
 </template>
 <script>
 import { onMounted } from "vue";
@@ -32,6 +62,30 @@ export default {
       db: null,
       prevRoute: null,
       spawnPoint: null,
+      allTasks: {
+        ordering: {
+          description: "Help the supermarket count the apples",
+        },
+        additionAndSubtraction: {
+          description: "Help the school add the library items",
+        },
+        multiplicationAndDivision: {
+          description: "Help the school multiply the library items",
+        },
+        fractions: {
+          description: "Help the bakery customers with their orders",
+        },
+        counting: {
+          description: "Help the supermarket manage the queues",
+        },
+        orderingItems: {
+          description: "Help the supermarket order the apples",
+        },
+        countingMoney: {
+          description: "Help the bank customers count their money",
+        },
+      },
+      checklistToggled: false,
     };
   },
   //DESTROY GAME BEFORE ROUTE LEAVE ELSE WEBGL ERROR WILL APPEAR
@@ -41,9 +95,40 @@ export default {
     }
   },
   methods: {
-    setSpawnPoint() {},
-    getFromPage() {
-      console.log(this.prevRoute);
+    checkCompletion(task) {
+      return {
+        "tw-line-through": task.completed === true,
+      };
+    },
+    handleToDoClick() {
+      this.checklistToggled = !this.checklistToggled;
+    },
+    async checklistSetup() {
+      const docRef = doc(this.db, "users", this.auth.currentUser.uid);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          if (doc.data().completedTasks) {
+            const completedTasks = doc.data().completedTasks;
+            for (task in this.allTasks) {
+              if (completedTasks.includes(task)) {
+                this.allTasks[task].completed = true;
+              } else {
+                this.allTasks[task].completed = false;
+              }
+            }
+            console.log(this.completedTasks);
+          } else {
+            console.log("No completedTasks data!");
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
     },
     async gameSetup() {
       const docRef = doc(this.db, "users", this.auth.currentUser.uid);
@@ -201,6 +286,54 @@ export default {
 };
 </script>
 <style scoped>
+/* Smooth transition for checklist expansion */
+#checklist {
+  border-width: 10px;
+  border-color: black;
+  border-radius: 0.5rem;
+}
+.checklist-expand-enter-active,
+.checklist-expand-leave-active {
+  transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+.checklist-expand-enter-from,
+.checklist-expand-leave-to {
+  max-height: 0;
+  opacity: 0;
+}
+
+.checklist-expand-enter-to,
+.checklist-expand-leave-from {
+  max-height: 500px; /* Adjust based on content height */
+  opacity: 1;
+}
+
+/* Smooth transition for list items */
+.list-enter-active,
+.list-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.list-enter-from {
+  transform: translateX(-20px) scale(0.9);
+  opacity: 0;
+}
+
+.list-enter-to {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+}
+
+.list-leave-from {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+}
+
+.list-leave-to {
+  transform: translateX(-20px) scale(0.9);
+  opacity: 0;
+}
 #phaser-container {
   overflow: hidden;
   height: calc(100vh - 56px);
