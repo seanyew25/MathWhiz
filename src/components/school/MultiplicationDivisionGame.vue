@@ -1,6 +1,6 @@
 <template>
   <div
-    class="math-game tw-min-h-screen tw-bg-gray-100 tw-flex tw-flex-col"
+    class="math-game tw-min-h-screen tw-flex tw-flex-col"
     style="background-color: #add8e6"
   >
     <div class="tw-flex-grow tw-flex tw-items-center tw-justify-center tw-p-4">
@@ -9,14 +9,8 @@
         style="width: 1000px;"
       >
         <div class="tw-p-6 tw-w-full">
-          <h1
-            class="tw-text-xl tw-font-bold tw-text-center tw-align-center tw-mb-6"
-          >
-            {{
-              currentQuestion.operator === "×"
-                ? "Multiplication"
-                : "Division"
-            }}
+          <h1 class="tw-text-xl tw-font-bold tw-text-center tw-mb-6">
+            {{ currentQuestion.operator === "×" ? "Multiplication" : "Division" }}
           </h1>
 
           <div class="progress-container tw-relative tw-mb-4">
@@ -62,20 +56,53 @@
 
               <div class="tw-text-4xl">{{ currentQuestion.operator }}</div>
 
-              <transition-group name="bounce" tag="div">
-                <span
-                  v-for="(item, index) in currentQuestion.rightItems"
-                  :key="'right-' + index"
-                  class="emoji-group"
-                  @mouseover="hoverDivisor(index)"
-                  @mouseleave="clearHover"
-                >
-                  {{ item }}
-                </span>
-              </transition-group>
+              <div 
+                class="bottom-emojis" 
+                ref="bottomEmojis"
+                @mouseover="handleBottomEmojisHover"
+                @mouseleave="handleBottomEmojisLeave"
+              >
+                <transition-group name="bounce" tag="div">
+                  <span
+                    v-for="(item, index) in currentQuestion.rightItems"
+                    :key="'right-' + index"
+                    class="emoji-group"
+                  >
+                    {{ item }}
+                  </span>
+                </transition-group>
+              </div>
 
               <span>=</span>
             </div>
+
+            <transition name="fade">
+              <div v-if="showMultiplicationGrid && currentQuestion.operator === '×'" class="multiplication-grid">
+                <div class="grid-row grid-header">
+                  <div class="grid-cell"></div>
+                  <div v-for="col in currentQuestion.rightNumber" :key="'col-' + col" class="grid-cell">
+                    {{ col }}
+                  </div>
+                </div>
+                <div
+                  v-for="row in currentQuestion.leftNumber"
+                  :key="'row-' + row"
+                  class="grid-row"
+                >
+                  <div class="grid-cell grid-label">{{ row }}</div>
+                  <div
+                    v-for="col in currentQuestion.rightNumber"
+                    :key="'col-' + col"
+                    class="grid-cell"
+                    :class="{ 'highlighted': isHighlighted(row, col) }"
+                    @mouseover="highlightCell(row, col)"
+                    @mouseleave="clearHighlight"
+                  >
+                    {{ currentQuestion.leftItems[0] }}
+                  </div>
+                </div>
+              </div>
+            </transition>
           </div>
 
           <div class="nes-field tw-mb-4">
@@ -108,10 +135,6 @@
           </div>
 
           <div class="tw-text-center tw-mt-6" v-if="hasCorrectStreak">
-            <!-- <p class="tw-text-xl" :class="streakClass">
-              Streak Count: {{ correctStreak }} Good Job! 
-            </p> -->
-
             <p class="tw-text-xl">
               <i class="nes-icon coin is-medium"></i>Coins earned: {{ medals }} / 15
             </p>
@@ -136,7 +159,8 @@
             <form method="dialog">
               <p class="title">Hint</p>
               <p>
-                Hovering over the denominator helps you visualise the question in chunks!
+                Hover over the bottom row of emojis to visualize the question!
+                For multiplication, you'll see a grid. For division, you'll see colored groups.
               </p>
               <menu class="dialog-menu center-button">
                 <button class="nes-btn is-primary" @click="closeHintDialog">I Understand!</button>
@@ -164,12 +188,12 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, onUnmounted, watch } from "vue";
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import confetti from "canvas-confetti";
+import { useRouter } from 'vue-router';
 
 const emojiSet = ["😀", "🐶", "🍕", "🚗", "🎉", "🏀", "🌍", "💡", "📚", "💻"];
-const getRandomEmoji = () =>
-  emojiSet[Math.floor(Math.random() * emojiSet.length)];
+const getRandomEmoji = () => emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
 const tables = [2, 3, 4, 5, 6, 7, 8, 9, 10];
 
@@ -201,13 +225,7 @@ export default {
     const gameOver = ref(false);
     const gameStarted = ref(false);
     const completionMessage = ref("");
-    const colors = [
-      "hover-red",
-      "hover-blue",
-      "hover-yellow",
-      "hover-green",
-      "hover-purple",
-    ];
+    const colors = ["hover-red", "hover-blue", "hover-yellow", "hover-green", "hover-purple"];
     const earnedMedal = ref(false);
     const isBonusRound = ref(false);
 
@@ -215,7 +233,7 @@ export default {
     const correctStreak = ref(0);
     const medals = ref(0);
     const timerWidth = ref(100);
-    const initialTimerSeconds = 10; // Change this value to set the initial timer duration
+    const initialTimerSeconds = 10;
     const timerSeconds = ref(initialTimerSeconds);
     const pausedTimerSeconds = ref(0);
     const userInput = ref("");
@@ -224,6 +242,11 @@ export default {
 
     const hasCorrectStreak = computed(() => correctStreak.value >= 0);
     
+    const showMultiplicationGrid = ref(false);
+    const highlightedRow = ref(0);
+    const highlightedCol = ref(0);
+    const bottomEmojis = ref(null);
+
     const startTimer = () => {
       if (gameOver.value) return;
       clearInterval(timerInterval);
@@ -268,13 +291,18 @@ export default {
       return "";
     };
 
-    const hoverDivisor = (index) => {
-      if (currentQuestion.value.operator === "÷") {
-        hoverIndex.value = index;
-      }
+    const isHighlighted = (row, col) => {
+      return row <= highlightedRow.value && col <= highlightedCol.value;
     };
-    const clearHover = () => {
-      hoverIndex.value = null;
+
+    const highlightCell = (row, col) => {
+      highlightedRow.value = row;
+      highlightedCol.value = col;
+    };
+
+    const clearHighlight = () => {
+      highlightedRow.value = 0;
+      highlightedCol.value = 0;
     };
 
     const playSound = (correct) => {
@@ -302,7 +330,6 @@ export default {
         triggerConfetti();
       }
 
-      
       if (correctStreak.value % 5 === 0) {
         isBonusRound.value = true;
         setTimeout(() => {
@@ -318,7 +345,8 @@ export default {
         }
       }
 
-      if (medals.value === 15) {
+      if (medals.value >= 15) {
+        medals.value = 15;
         endGame();
       }
 
@@ -375,7 +403,7 @@ export default {
       userInput.value = "";
       hoverIndex.value = null;
       currentQuestion.value = generateUniqueQuestion();
-      timerSeconds.value = initialTimerSeconds; // Reset timer to initial value for each new question
+      timerSeconds.value = initialTimerSeconds;
       startTimer();
     };
 
@@ -399,8 +427,10 @@ export default {
       startTimer();
     };
 
+    const router = useRouter();
     const exitGame = () => {
       console.log("Exiting game");
+      router.push("/game");
     };
 
     const showHintDialog = () => {
@@ -423,6 +453,40 @@ export default {
       nextQuestion();
     };
 
+    const updateGridPosition = () => {
+      if (bottomEmojis.value && showMultiplicationGrid.value) {
+        const rect = bottomEmojis.value.getBoundingClientRect();
+        const grid = document.querySelector('.multiplication-grid');
+        if (grid) {
+          grid.style.position = 'absolute';
+          grid.style.top = `${rect.bottom + window.scrollY}px`;
+          grid.style.left = `${rect.left + window.scrollX}px`;
+          grid.style.width = `${rect.width}px`;
+        }
+      }
+    };
+
+    const handleBottomEmojisHover = () => {
+      if (currentQuestion.value.operator === '×') {
+        showMultiplicationGrid.value = true;
+      } else if (currentQuestion.value.operator === '÷') {
+        hoverIndex.value = 0;
+      }
+    };
+
+    const handleBottomEmojisLeave = () => {
+      showMultiplicationGrid.value = false;
+      hoverIndex.value = null;
+    };
+
+    watch(showMultiplicationGrid, (newValue) => {
+      if (newValue) {
+        nextTick(() => {
+          updateGridPosition();
+        });
+      }
+    });
+
     onMounted(() => {
       showInstructions();
     });
@@ -440,10 +504,7 @@ export default {
       correctStreak,
       medals,
       hasCorrectStreak,
-      // streakClass,
       checkAnswer,
-      hoverDivisor,
-      clearHover,
       getEmojiClass,
       earnedMedal,
       restartGame,
@@ -455,6 +516,15 @@ export default {
       showHintDialog,
       closeHintDialog,
       startGame,
+      showMultiplicationGrid,
+      isHighlighted,
+      highlightCell,
+      clearHighlight,
+      bottomEmojis,
+      updateGridPosition,
+      hoverIndex,
+      handleBottomEmojisHover,
+      handleBottomEmojisLeave,
     };
   },
 };
@@ -506,21 +576,11 @@ export default {
 }
 
 @keyframes math-game-shake {
-  0% {
-    transform: translate(1px, 1px) rotate(0deg);
-  }
-  25% {
-    transform: translate(-1px, -2px) rotate(-1deg);
-  }
-  50% {
-    transform: translate(-3px, 0px) rotate(1deg);
-  }
-  75% {
-    transform: translate(3px, 2px) rotate(0deg);
-  }
-  100% {
-    transform: translate(1px, -1px) rotate(-1deg);
-  }
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  25% { transform: translate(-1px, -2px) rotate(-1deg); }
+  50% { transform: translate(-3px, 0px) rotate(1deg); }
+  75% { transform: translate(3px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -1px) rotate(-1deg); }
 }
 
 .math-game .bonus-round {
@@ -534,15 +594,9 @@ export default {
 }
 
 @keyframes math-game-pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .math-game .game-over-overlay {
@@ -565,24 +619,62 @@ export default {
   text-align: center;
 }
 
-.math-game .hover-red {
-  background-color: lightpink;
-}
-.math-game .hover-blue {
-  background-color: lightblue;
-}
-.math-game .hover-yellow {
-  background-color: lightyellow;
-}
-.math-game .hover-green {
-  background-color: lightgreen;
-}
-.math-game .hover-purple {
-  background-color: lightcoral;
-}
+.math-game .hover-red { background-color: rgba(255, 182, 193, 0.7); }
+.math-game .hover-blue { background-color: rgba(173, 216, 230, 0.7); }
+.math-game .hover-yellow { background-color: rgba(255, 255, 224, 0.7); }
+.math-game .hover-green { background-color: rgba(144, 238, 144, 0.7); }
+.math-game .hover-purple { background-color: rgba(240, 128, 128, 0.7); }
 
 .center-button {
   display: flex;
   justify-content: center;
+}
+
+.multiplication-grid {
+  position: absolute;
+  z-index: 10;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 2px solid #000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.grid-row {
+  display: flex;
+  align-items: center;
+}
+
+.grid-cell {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.3s ease;
+}
+
+.grid-header .grid-cell,
+.grid-label {
+  font-weight: bold;
+  background-color: #f0f0f0;
+}
+
+.grid-cell.highlighted {
+  background-color: rgba(255, 255, 0, 0.5);
+}
+
+.bottom-emojis {
+  position: relative;
+  display: inline-block;
+}
+
+.fade-enter-active, .fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0;
 }
 </style>

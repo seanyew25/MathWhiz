@@ -224,10 +224,9 @@
                     <p>Spot yourself on the minimap as a yellow star!</p>
                   </div>
                 </section>
-                <img src="/assets/mainassets/Minimap.png" class="tw-h-[180px]">
 
                 <div>
-                  <img src="/assets/mainassets/StoryPage_minimap.png" class="tw-h-[100px]">
+                  <img src="/assets/mainassets/minimap.png" class="tw-h-[180px]">
                 </div>
 
                 <br>
@@ -334,7 +333,7 @@ export default {
   },
   methods: {
     goToHome() {
-      this.$router.push("/home");
+      this.$router.push("/game");
     },
     toggleButtonState(direction, isPressed) {
       this.buttonPressed[direction] = isPressed;
@@ -461,6 +460,11 @@ export default {
 
 .carousel-control-next {
   right: 10px;
+}
+
+.carousel-control-prev:focus,
+.carousel-control-next:focus {
+  outline: none; /* Ensures no outline appears on focus */
 }
 
 .carousel-control-prev-icon,
