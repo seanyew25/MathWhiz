@@ -36,7 +36,7 @@
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
             <p class="tw-font-press-start">Morgana likes to explore Mathropolis</p>
             <section class="nes-container">
-              <p>insert image of cat in city</p>
+              <p><img src="" alt=""></p>
             </section>
           </div>
         </div>
@@ -180,15 +180,12 @@
                 <section class="message -left">
                   <img src="/assets/shopassets/furless.png" class="tw-h-[80px]" />
                   <div class="nes-balloon tw-font-press-start">
-                    <p>Spot yourself on the minimap as a red dot!</p>
+                    <p>Spot yourself on the minimap as a yellow star!</p>
                   </div>
                 </section>
+                <img src="/assets/mainassets/Minimap.png" class="tw-h-[180px]">
 
-                <div>
-                  <img src="/assets/mainassets/StoryPage_minimap.png" class="tw-h-[100px]">
-                </div>
 
-                <br>
                 <section class="message -right">
                   <div class="nes-balloon tw-font-press-start">
                     <p>Follow these signboards to your challenges!</p>
@@ -349,10 +346,12 @@ export default {
 .carousel-item {
   transition: transform 0.5s ease;
   padding:20px;
+  height:60%;
 }
 
 
 .carousel-inner {
+  height: 80%;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
