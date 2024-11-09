@@ -1,33 +1,35 @@
 <template>
   <div class="tw-relative">
-    <div
-      id="checklist"
-      class="tw-absolute tw-left-[10px] tw-top-[10px] tw-p-2 tw-bg-[#B7E0FF] tw-max-w-[30%] border border-3 border-white"
-    >
-      <span
-        class="tw-font-press-start tw-text-xs tw-underline tw-cursor-pointer"
+    <div class="tw-absolute tw-left-[10px] tw-top-[10px]">
+      <button
+        class="nes-btn is-primary tw-font-press-start tw-text-xs"
         @click="handleToDoClick"
       >
-        To Do List
-      </span>
-      <transition name="checklist-expand">
-        <ul
-          v-if="checklistToggled"
-          class="nes-list is-disc tw-mb-0 tw-overflow-hidden"
-        >
-          <transition-group name="list" tag="div">
-            <li
-              class="tw-font-press-start tw-text-[0.5rem] animate__animated animate__lightSpeedInLeft"
-              v-for="(task, key) in allTasks"
-              :key="key"
-              :class="checkCompletion"
-            >
-              {{ task.description }}
-            </li>
-          </transition-group>
-        </ul>
-      </transition>
+        Click to {{ checklistToggled ? "hide" : "show" }} Quest Log
+      </button>
     </div>
+    <transition
+      name="checklist"
+      enter-active-class="animate__animated animate__slideInLeft"
+      leave-active-class="animate__animated animate__slideOutLeft"
+    >
+      <div
+        v-if="checklistToggled"
+        id="checklist"
+        class="tw-absolute tw-left-[10px] tw-top-[60px] tw-p-2 tw-bg-[#B7E0FF] tw-max-w-[30%] border border-3 border-white"
+      >
+        <ul class="nes-list is-circle tw-mb-0 tw-overflow-hidden">
+          <li
+            class="tw-font-russo-one tw-text-sm"
+            v-for="(task, key) in allTasks"
+            :key="key"
+            :class="checkCompletion(task)"
+          >
+            {{ task.description }}
+          </li>
+        </ul>
+      </div>
+    </transition>
     <div id="phaser-container"></div>
   </div>
 </template>
@@ -44,7 +46,9 @@ export default {
   mounted() {
     this.router = useRouter();
     this.auth = getAuth();
+    console.log(this.auth.uid);
     this.db = getFirestore();
+    this.checklistSetup();
     // this.setSpawnPoint();
     // this.handleGetSelectedOptions(this.db, "users", this.auth.currentUser.uid);
     console.log(globalState.playerPosition);
@@ -97,7 +101,7 @@ export default {
   methods: {
     checkCompletion(task) {
       return {
-        "tw-line-through": task.completed === true,
+        "tw-line-through custom-strikethrough": task.completed,
       };
     },
     handleToDoClick() {
@@ -112,7 +116,8 @@ export default {
           console.log("Document data:", doc.data());
           if (doc.data().completedTasks) {
             const completedTasks = doc.data().completedTasks;
-            for (task in this.allTasks) {
+            for (const task in this.allTasks) {
+              console.log(task);
               if (completedTasks.includes(task)) {
                 this.allTasks[task].completed = true;
               } else {
@@ -287,6 +292,63 @@ export default {
 </script>
 <style scoped>
 /* Smooth transition for checklist expansion */
+.custom-strikethrough {
+  text-decoration-color: white;
+}
+.nes-btn {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+  position: relative;
+  display: inline-block;
+  padding: 6px 8px;
+  margin: 4px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC)
+      14 0,
+    pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #212529;
+  background-color: #fff;
+}
+.nes-btn.is-primary {
+  color: #fff;
+  background-color: #209cee;
+}
+
+.nes-btn.is-primary::after {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  bottom: -4px;
+  left: -4px;
+  content: "";
+  box-shadow: inset -4px -4px #006bb3;
+}
+
+.nes-btn.is-primary:hover {
+  color: #fff;
+  text-decoration: none;
+  background-color: #108de0;
+}
+
+.nes-btn.is-primary:hover::after {
+  box-shadow: inset -6px -6px #006bb3;
+}
+
+.nes-btn.is-primary:focus {
+  box-shadow: 0 0 0 6px rgba(0, 107, 179, 0.3);
+}
+
+.nes-btn.is-primary:active:not(.is-disabled)::after {
+  box-shadow: inset 4px 4px #006bb3;
+}
 #checklist {
   border-width: 10px;
   border-color: black;
