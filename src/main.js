@@ -1,8 +1,9 @@
 import { createApp } from "vue";
 // import "./style.css";
-import App from "./App.vue";
+import App from "./App.vue"; //can write as import App from "@/App.vue", the @ directs to source directory (for vue cli) https://www.youtube.com/watch?v=PciUq6HcUNc
 // Import our custom CSS
 import "./styles.scss";
+import './style.css'
 
 // Import all of Bootstrap's JS
 import * as bootstrap from "bootstrap";
@@ -24,6 +25,8 @@ import BankPage from "./pages/BankPage.vue";
 import StoryPage from "./pages/StoryPage.vue";
 import ShopPage from "./pages/ShopPage.vue";
 import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
+// import BankPage from "./components/BankPage.vue";
+// import FractionGame from "./components/FractionGame.vue";
 // import AboutView from "./AboutView.vue";
 
 // Your web app's Firebase configuration

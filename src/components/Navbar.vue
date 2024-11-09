@@ -77,6 +77,36 @@
             <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
+              to="/bakery"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Bakery</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
+              to="/bank"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Bank</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
+              to="/school"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >School</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
               to="/game"
               aria-current="page"
               style="text-decoration: none; color: black"
@@ -193,18 +223,6 @@
               id="signup"
               @submit.prevent="handleLogin"
             >
-              <div class="mb-3">
-                <label for="inputSignupUsername" class="form-label"
-                  >Username</label
-                >
-                <input
-                  :class="'form-control ' + usernameCheck"
-                  id="inputSignupUsername"
-                  aria-describedby="emailHelp"
-                  v-model="username"
-                />
-                <div class="invalid-feedback">Kindly add a username.</div>
-              </div>
 
               <div class="mb-3">
                 <label for="inputSignupEmail" class="form-label"
@@ -246,6 +264,21 @@
                   v-model="confirmPassword"
                 /> -->
               <!-- </div> -->
+
+              <div class="mb-3">
+                <label for="inputSignupUsername" class="form-label"
+                  >Display Name</label
+                >
+                <input
+                  :class="'form-control ' + usernameCheck"
+                  id="inputSignupUsername"
+                  aria-describedby="emailHelp"
+                  v-model="username"
+                />
+                <div class="invalid-feedback">Kindly add a display name.</div>
+              </div>
+
+
               <div style="float: right">
                 <button
                   @click="handleSignup"
