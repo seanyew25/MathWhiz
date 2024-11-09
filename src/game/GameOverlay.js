@@ -6,7 +6,7 @@ class GameOverlayScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("minimap", `/assets/mainassets/minimap.png`);
+    this.load.image("minimap", `/assets/mainassets/gameMinimap.png`);
     this.load.image("marker", `/assets/mainassets/marker.png`);
   }
 
@@ -16,8 +16,6 @@ class GameOverlayScene extends Phaser.Scene {
       return;
     }
     // MINIMAP;
-    const minimapX = 100;
-    const minimapY = 200;
     const minimapWidthAsFractionOfScreen = 0.3;
     const minimap = this.add.image(0, 0, "minimap").setOrigin(0);
     const initialScale =
