@@ -4,7 +4,14 @@
     <div
       class="nes-container tw-bg-[#FFCFB3] tw-mb-6 tw-mx-auto tw-w-fit tw-text-center"
     >
-      <span class="tw-font-press-start tw-text-md"> Your Purchased Cats</span>
+      <span class="tw-font-press-start tw-text-2xl">
+        Welcome to the Cat Changing Room!</span
+      >
+      <br />
+      <br />
+      <span class="tw-font-press-start tw-text-md"
+        >What fur coat should Morgana wear today?</span
+      >
     </div>
     <div
       class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-m-auto tw-mb-10"

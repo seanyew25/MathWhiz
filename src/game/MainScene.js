@@ -11,7 +11,7 @@ export default class MainScene extends Phaser.Scene {
   static player;
   static cursors;
   static objects;
-  static speed = 80;
+  static speed = 100;
 
   preload() {
     // Runs once, loads up assets like images and audio
@@ -301,7 +301,9 @@ export default class MainScene extends Phaser.Scene {
       }
     }
     this.player = this.physics.add.sprite(playerX, playerY, "player", 3);
+    // this.player.setVisible(false);
     this.cat = this.physics.add.sprite(playerX, playerY - 20, "cat", 44);
+    this.cat.setDepth(this.player.depth);
     // this.catOffsetX = 0;
     // this.catOffsetY = -20;
     this.cat.setSize(20, 20);
@@ -715,8 +717,8 @@ export default class MainScene extends Phaser.Scene {
         this.player.body.setVelocityX(-100);
         eventEmitter.emit("playerMovement", this.player);
         this.player.anims.play("walk-left", true);
-        this.player.setDepth(this.player.y + this.player.height);
-        this.cat.setDepth(this.player.y + this.player.height);
+        this.player.setDepth(this.player.y);
+        this.cat.setDepth(this.player.y);
         this.catOffsetX = 25;
         this.catOffsetY = 8;
         // only runs once upon keydown to teleport the cat behind/beside the player
@@ -738,8 +740,8 @@ export default class MainScene extends Phaser.Scene {
         eventEmitter.emit("playerMovement", this.player);
         // console.log(this.player.body.velocity.x);
         this.player.anims.play("walk-right", true);
-        this.player.setDepth(this.player.y + this.player.height);
-        this.cat.setDepth(this.player.y + this.player.height);
+        this.player.setDepth(this.player.y);
+        this.cat.setDepth(this.player.y);
         this.catOffsetX = -25;
         this.catOffsetY = 8;
         if (!this.setCatPosition) {
@@ -759,8 +761,8 @@ export default class MainScene extends Phaser.Scene {
         this.player.body.setVelocityY(-100);
         eventEmitter.emit("playerMovement", this.player);
         this.player.anims.play("walk-up", true);
-        this.player.setDepth(this.player.y + this.player.height);
-        this.cat.setDepth(this.player.y + this.player.height);
+        this.player.setDepth(this.player.y);
+        this.cat.setDepth(this.player.y);
         this.cat.anims.play("cat-walk-up", true);
         this.catOffsetX = 0;
         this.catOffsetY = 30;
@@ -777,8 +779,8 @@ export default class MainScene extends Phaser.Scene {
         this.player.body.setVelocityY(100);
         eventEmitter.emit("playerMovement", this.player);
         this.player.anims.play("walk-down", true);
-        this.player.setDepth(this.player.y + this.player.height);
-        this.cat.setDepth(this.player.y + this.player.height);
+        this.player.setDepth(this.player.y);
+        this.cat.setDepth(this.player.y);
         this.catOffsetX = 0;
         this.catOffsetY = -23;
         if (!this.setCatPosition) {
@@ -807,12 +809,38 @@ export default class MainScene extends Phaser.Scene {
 
     if (!moving) {
       this.setCatPosition = false;
-      this.player.anims.stop();
+      // this.player.anims.stop();
       if (this.cat.anims.isPlaying) {
         const currentAnimationName = this.cat.anims.currentAnim.key;
         if (currentAnimationName.includes("walk")) {
           this.cat.body.setVelocity(0);
           this.cat.anims.stop();
+          if (currentAnimationName === "cat-walk-down") {
+            this.cat.setFrame(44);
+          } else if (currentAnimationName === "cat-walk-left") {
+            this.cat.setFrame(160);
+          } else if (currentAnimationName === "cat-walk-up") {
+            this.cat.setFrame(288);
+          } else if (currentAnimationName === "cat-walk-right") {
+            this.cat.setFrame(416);
+          }
+        }
+      }
+
+      if (this.player.anims.isPlaying) {
+        const currentAnimationName = this.player.anims.currentAnim.key;
+        if (currentAnimationName.includes("walk")) {
+          this.player.body.setVelocity(0);
+          this.player.anims.stop();
+          if (currentAnimationName === "walk-down") {
+            this.player.setFrame(3);
+          } else if (currentAnimationName === "walk-left") {
+            this.player.setFrame(2);
+          } else if (currentAnimationName === "walk-up") {
+            this.player.setFrame(1);
+          } else if (currentAnimationName === "walk-right") {
+            this.player.setFrame(0);
+          }
         }
       }
     }
