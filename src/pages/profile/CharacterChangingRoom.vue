@@ -1,0 +1,246 @@
+<template>
+  <div
+    class="tw-flex tw-flex-col tw-items-center tw-min-h-[calc(100vh-110.31px)]"
+  >
+    <br />
+    <div class="nes-container is-rounded tw-bg-[#FFCFB3]">
+      <h6 class="tw-font-press-start tw-text-2xl tw-p-4 tw-text-center">
+        Choose your character!
+      </h6>
+    </div>
+    <div
+      id="carouselExample"
+      class="carousel slide tw-h-fit tw-w-[100vw] md:tw-w-[50vw] tw-inline-block tw-mt-6"
+    >
+      <div class="carousel-inner">
+        <div
+          v-for="(character, index) in characters"
+          :key="index"
+          :class="index === 0 ? 'carousel-item active' : 'carousel-item'"
+        >
+          <div
+            class="card tw-w-full md:tw-w-[70%] tw-m-auto border border-4 border-dark"
+          >
+            <div class="img-wrapper tw-m-auto">
+              <img
+                class="img-crop tw-inline-block"
+                :src="character.imgLocation"
+                alt="Cropped Image"
+              />
+            </div>
+            <div class="card-body border-top border-dark border-3">
+              <h5 class="card-title tw-font-russo-one">{{ character.name }}</h5>
+              <p class="card-text tw-font-mono">
+                {{ character.description }}
+              </p>
+              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+              <button
+                type="button"
+                class="nes-btn is-primary tw-font-press-start tw-float-right"
+              >
+                Equip
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        class="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExample"
+        data-bs-slide="prev"
+      >
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button
+        class="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExample"
+        data-bs-slide="next"
+      >
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  data() {
+    return {
+      characters: [
+        {
+          name: "Default Outfit",
+          imgLocation: "/assets/mainassets/player.png",
+          description:
+            "Stylish, casual and good-looking, the default outfit is perfect for any occasion",
+        },
+        {
+          name: "Beanie Boy",
+          imgLocation: "/assets/profileassets/character/Beanie Boy.png",
+          description:
+            "A laid-back youth sporting his favorite knit beanie, ready for any casual adventure",
+        },
+        {
+          name: "Beanie Girl",
+          imgLocation: "/assets/profileassets/character/Beanie Girl.png",
+          description:
+            "A trendy girl with a cozy beanie, bringing street style to every scene",
+        },
+        {
+          name: "Bespectacled Boy 2",
+          imgLocation: "/assets/profileassets/character/Bespectacled Boy 2.png",
+          description:
+            "A clever young scholar with glasses, bringing a different perspective to challenges",
+        },
+        {
+          name: "Bespectacled Boy",
+          imgLocation: "/assets/profileassets/character/Bespectacled Boy.png",
+          description:
+            "An intelligent youngster with glasses, always ready to solve puzzles",
+        },
+        {
+          name: "Boy 2",
+          imgLocation: "/assets/profileassets/character/Boy 2.png",
+          description:
+            "A cheerful young lad with a bright personality and adventurous spirit",
+        },
+        {
+          name: "Boy Suit",
+          imgLocation: "/assets/profileassets/character/Boy Suit.png",
+          description:
+            "A dapper young gentleman in formal attire, bringing class to any occasion",
+        },
+        {
+          name: "Boy",
+          imgLocation: "/assets/profileassets/character/Boy.png",
+          description:
+            "A typical young boy with boundless energy and curiosity",
+        },
+        {
+          name: "Cap Boy",
+          imgLocation: "/assets/profileassets/character/Cap Boy.png",
+          description:
+            "A sporty kid wearing his favorite baseball cap, always ready for action",
+        },
+        {
+          name: "Coloured Hair Boy",
+          imgLocation: "/assets/profileassets/character/Coloured Hair Boy.png",
+          description:
+            "A bold youngster with vibrantly dyed hair, expressing his unique personality",
+        },
+        {
+          name: "Dress Girl",
+          imgLocation: "/assets/profileassets/character/Dress Girl.png",
+          description:
+            "A graceful young lady in a pretty dress, bringing elegance to every scene",
+        },
+        {
+          name: "Girl",
+          imgLocation: "/assets/profileassets/character/Girl.png",
+          description:
+            "A cheerful young girl with a bright smile and positive attitude",
+        },
+        {
+          name: "Goatee Boy",
+          imgLocation: "/assets/profileassets/character/Goatee Boy.png",
+          description:
+            "A teenage boy sporting a goatee, trying to look more mature than his years",
+        },
+        {
+          name: "Hoodie Boy",
+          imgLocation: "/assets/profileassets/character/Hoodie Boy.png",
+          description:
+            "A casual cool kid in his comfortable hoodie, ready for any relaxed adventure",
+        },
+        {
+          name: "Shirt Boy",
+          imgLocation: "/assets/profileassets/character/Shirt Boy.png",
+          description:
+            "A neat young man in a simple shirt, representing everyday charm",
+        },
+        {
+          name: "Spiky Boy",
+          imgLocation: "/assets/profileassets/character/Spiky Boy.png",
+          description:
+            "A energetic boy with spiky hair, bringing attitude and style wherever he goes",
+        },
+        {
+          name: "Suit Girl 2",
+          imgLocation: "/assets/profileassets/character/Suit Girl 2.png",
+          description:
+            "A professional young lady in formal attire, bringing sophistication to any situation",
+        },
+        {
+          name: "Suit Girl",
+          imgLocation: "/assets/profileassets/character/Suit Girl.png",
+          description:
+            "An elegant girl in a business suit, showing leadership and confidence",
+        },
+        {
+          name: "Twintails Girl",
+          imgLocation: "/assets/profileassets/character/Twintails Girl.png",
+          description:
+            "A playful girl with cute twintail hairstyle, full of youthful energy",
+        },
+      ],
+    };
+  },
+};
+</script>
+<style scoped>
+.img-wrapper {
+  /* width: 50%, */
+  width: 50%;
+  height: 50%; /* Desired height of the image container */
+  overflow: hidden;
+  display: block; /* Hides any overflow outside the container */
+}
+
+.img-crop {
+  width: 100%; /* Ensures the image fills the container width */
+  height: 100%; /* Makes the image fill the height of the container */
+  object-fit: cover; /* Ensures the image covers the container */
+  object-position: top; /* Aligns the image to the top, so only the top is cropped */
+  margin-top: -40%; /* Moves the image up to crop the top */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.nes-btn {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+  position: relative;
+  display: inline-block;
+  padding: 6px 8px;
+  margin: 4px;
+  text-align: center;
+  vertical-align: middle;
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC)
+      14 0,
+    pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #212529;
+  background-color: #fff;
+}
+.nes-btn.is-primary {
+  color: #fff;
+  background-color: #209cee;
+}
+.nes-container.is-rounded {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+  padding: 1rem 1.5rem;
+  margin: 4px;
+}
+</style>

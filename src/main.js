@@ -3,7 +3,7 @@ import { createApp } from "vue";
 import App from "./App.vue"; //can write as import App from "@/App.vue", the @ directs to source directory (for vue cli) https://www.youtube.com/watch?v=PciUq6HcUNc
 // Import our custom CSS
 import "./styles.scss";
-import './style.css'
+import "./style.css";
 
 // Import all of Bootstrap's JS
 import * as bootstrap from "bootstrap";
@@ -26,6 +26,8 @@ import StoryPage from "./pages/StoryPage.vue";
 import ShopPage from "./pages/ShopPage.vue";
 import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
 import TimerBar from "./pages/Timerbar.vue";
+import CharacterChangingRoom from "./pages/profile/CharacterChangingRoom.vue";
+
 // import BankPage from "./components/BankPage.vue";
 // import FractionGame from "./components/FractionGame.vue";
 // import AboutView from "./AboutView.vue";
@@ -50,7 +52,7 @@ const db = getFirestore(app);
 const routes = [
   { path: "/game", component: GamePage },
   { path: "/", component: LandingPage },
-  { path: "/profile", component: ProfilePage },
+  { path: "/profile", component: CharacterChangingRoom },
   { path: "/shoppingcentre", component: ShoppingCentrePage },
   { path: "/school", component: SchoolPage },
   { path: "/bakery", component: BakeryPage },

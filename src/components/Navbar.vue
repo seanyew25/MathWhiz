@@ -6,6 +6,7 @@
   background-color: #fff5cd;
   transition: transform 0.2s ease;
   transform: translateY(0);
+  width: 100vw;
 }
 
 .navbar.hidden {

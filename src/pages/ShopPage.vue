@@ -100,9 +100,9 @@ export default {
       cats: [
         {
           name: "Tuxedo",
-          cuteness: 92,
-          fluffiness: 85,
-          coolness: 90,
+          cuteness: 100,
+          fluffiness: 100,
+          coolness: 100,
           color: "Siamese",
           imgLocation: "/assets/shopassets/morgana.png",
           description:
@@ -113,80 +113,74 @@ export default {
         {
           name: "Peach",
           cuteness: 95,
-          fluffiness: 87,
-          coolness: 70,
+          fluffiness: 75,
+          coolness: 68,
           color: "Calico",
           imgLocation: "/assets/shopassets/peach.png",
           description: "Soft and sweet, just like a peach.",
           rarity: "Common",
           price: 20,
         },
-
         {
           name: "Midnight",
           cuteness: 85,
-          fluffiness: 78,
-          coolness: 95,
+          fluffiness: 97, // Adjusted for Rare rarity
+          coolness: 96, // Adjusted for Rare rarity
           color: "Black",
           imgLocation: "/assets/shopassets/midnight.png",
           description: "A sleek shadow that prowls through the night.",
-          rarity: "Super Rare",
-          price: 80,
+          rarity: "Rare",
+          price: 40,
         },
-
         {
           name: "Luminescent",
           cuteness: 85,
-          fluffiness: 80,
-          coolness: 95,
+          fluffiness: 97, // Adjusted for Rare rarity
+          coolness: 98, // Adjusted for Rare rarity
           color: "Silver",
           imgLocation: "/assets/shopassets/luminiscent.png",
           description: "A glowing beauty that lights up any room.",
           rarity: "Super Rare",
           price: 80,
         },
-
         {
           name: "Calico",
           cuteness: 88,
-          fluffiness: 84,
-          coolness: 85,
+          fluffiness: 78, //
+          coolness: 65, //
           color: "Calico",
           imgLocation: "/assets/shopassets/calico.png",
           description: "A colorful friend full of personality.",
           rarity: "Common",
           price: 20,
         },
-
         {
           name: "Cream",
           cuteness: 92,
-          fluffiness: 89,
-          coolness: 72,
+          fluffiness: 85, // Adjusted for Rare rarity
+          coolness: 78, // Adjusted for Rare rarity
           color: "Cream",
           imgLocation: "/assets/shopassets/cream.png",
           description: "Soft, creamy, and always ready to cuddle.",
           rarity: "Rare",
           price: 40,
         },
-
         {
           name: "Mocha",
           cuteness: 87,
-          fluffiness: 88,
-          coolness: 80,
+          fluffiness: 88, // Adjusted for Rare rarity
+          coolness: 80, // Adjusted for Rare rarity
           color: "Chocolate",
           imgLocation: "/assets/shopassets/mocha.png",
           description: "Warm and cozy, just like your favorite drink.",
           rarity: "Rare",
           price: 40,
         },
-
         {
           name: "Snowy",
           cuteness: 98,
-          fluffiness: 94,
-          coolness: 78,
+          fluffiness: 95, // Adjusted for Super Rare rarity
+          coolness: 95, // Adjusted for Super Rare rarity
           color: "White",
           imgLocation: "/assets/shopassets/snowy.png",
           description: "As pure and cool as freshly fallen snow.",
