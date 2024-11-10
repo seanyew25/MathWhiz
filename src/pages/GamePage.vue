@@ -67,9 +67,6 @@ export default {
       prevRoute: null,
       spawnPoint: null,
       allTasks: {
-        ordering: {
-          description: "Help the supermarket count the apples",
-        },
         additionAndSubtraction: {
           description: "Help the school add the library items",
         },
@@ -79,8 +76,11 @@ export default {
         fractions: {
           description: "Help the bakery customers with their orders",
         },
-        counting: {
+        ordering: {
           description: "Help the supermarket manage the queues",
+        },
+        counting: {
+          description: "Help the supermarket count the apples",
         },
         countingMoney: {
           description: "Help the bank customers count their money",
@@ -98,7 +98,7 @@ export default {
   methods: {
     checkCompletion(task) {
       return {
-        "tw-line-through custom-strikethrough": task.completed,
+        "tw-line-through custom-strikethrough tw-opacity-60": task.completed,
       };
     },
     handleToDoClick() {
