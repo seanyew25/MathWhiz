@@ -55,7 +55,7 @@
     </div>
   </div>
 
-  <div class="tw-min-h-500px tw-bg-yellow-50 tw-p-4">
+  <div v-if="!isAuthenticated" class="tw-min-h-500px tw-bg-yellow-50 tw-p-4">
     <div class="tw-max-w-4xl tw-mx-auto tw-p-5">
       <h1 class="tw-text-center tw-p-6">Join Mathwhiz today! Sign up now!</h1>
     </div>
