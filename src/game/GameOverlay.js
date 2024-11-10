@@ -6,7 +6,7 @@ class GameOverlayScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("minimap", `/assets/mainassets/minimap_small.png`);
+    this.load.image("minimap", `/assets/mainassets/gameMinimap.png`);
     this.load.image("marker", `/assets/mainassets/marker.png`);
   }
 
@@ -16,46 +16,67 @@ class GameOverlayScene extends Phaser.Scene {
       return;
     }
     // MINIMAP;
-    const minimapX = 100;
-    const minimapY = 200;
+    const minimapWidthAsFractionOfScreen = 0.3;
+    const minimap = this.add.image(0, 0, "minimap").setOrigin(0);
+    const initialScale =
+      (this.scale.width * minimapWidthAsFractionOfScreen) / minimap.width;
+    minimap.setScale(initialScale);
 
-    const minimap = this.add
-      .image(this.scale.width - 230, 10, "minimap")
-      .setOrigin(0);
+    minimap.setPosition(this.scale.width - minimap.displayWidth - 10, 10);
+    // Get the display size of the minimap for accurate border sizing
+    const minimapWidth = minimap.displayWidth;
+    const minimapHeight = minimap.displayHeight;
 
-    const bankMarker = this.add
-      .image(this.scale.width - 212, 14, "marker")
-      .setOrigin(0);
+    // Create a Graphics object for the border
+    this.border = this.add.graphics();
 
-    const shoppingCentreMarker = this.add
-      .image(this.scale.width - 164, 14, "marker")
-      .setOrigin(0);
+    // Set the line style: color and thickness
+    this.border.lineStyle(2, 0xffffff, 1); // White border with 2px thickness
+    this.border.strokeRect(minimap.x, minimap.y, minimapWidth, minimapHeight);
 
-    const bakeryMarker = this.add
-      .image(this.scale.width - 137, 14, "marker")
-      .setOrigin(0);
-
-    const schoolMarker = this.add
-      .image(this.scale.width - 70, 14, "marker")
-      .setOrigin(0);
-
-    const homeMarker = this.add
-      .image(this.scale.width - 160, 65, "marker")
-      .setOrigin(0);
-
-    const minimapWidth = minimap.width;
-    const minimapHeight = minimap.height;
     if (!this.playerPosition) {
       this.playerPosition = this.add.graphics();
     }
-    this.playerPosition.fillStyle(0xff0000, 1); // Red color with full opacity
-    const radius = 3.2;
-    // Draw the circle with a 3.2-pixel radius
+    this.playerPosition.clear(); // Clear previous drawings
+    this.playerPosition.fillStyle(0xff8c00, 1);
+
+    // Define star parameters
+    const radius = 6.4;
+    const points = 5; // 5-point star
+
+    // Player's position on the minimap
     this.playerX = 736;
     this.playerY = 768;
-    const circleX = minimap.x + this.playerX / 10 - radius; // X position in top-right corner
-    const circleY = minimap.y + this.playerY / 10 - radius;
-    this.playerPosition.fillCircle(circleX, circleY, radius);
+    this.minimapRatioToMap = minimap.displayWidth / minimap.width;
+    const centerX = minimap.x + this.playerX * this.minimapRatioToMap; // Center X of the star
+    const centerY = minimap.y + this.playerY * this.minimapRatioToMap; // Center Y of the star
+
+    // Function to calculate star points
+    function getStarPoints(centerX, centerY, outerRadius, innerRadius, points) {
+      const angle = Math.PI / points;
+      const path = [];
+
+      for (let i = 0; i < 2 * points; i++) {
+        const radius = i % 2 === 0 ? outerRadius : innerRadius;
+        const x = centerX + radius * Math.cos(i * angle);
+        const y = centerY + radius * Math.sin(i * angle);
+        path.push(new Phaser.Math.Vector2(x, y));
+      }
+
+      return path;
+    }
+
+    // Generate the points for the star
+    const starPoints = getStarPoints(
+      centerX,
+      centerY,
+      radius,
+      radius / 3,
+      points
+    );
+
+    // Draw the star shape on the minimap
+    this.playerPosition.fillPoints(starPoints, true); // Draws a filled star shape
 
     // minimap.setDisplaySize(minimapWidth, minimapHeight);
     minimap.setScrollFactor(0); // Make the minimap fixed in the camera view
@@ -72,34 +93,56 @@ class GameOverlayScene extends Phaser.Scene {
       if (!this.playerPosition) {
         this.playerPosition = this.add.graphics();
       }
-      this.playerPosition.fillStyle(0xff0000, 1);
-      const circleX = minimap.x + data.x / 10 - radius; // X position in top-right corner
-      const circleY = minimap.y + data.y / 10 - radius;
-      this.playerPosition.fillCircle(circleX, circleY, radius);
+      this.playerPosition.fillStyle(0xff8c00, 1);
+      const centerX = minimap.x + this.playerX * this.minimapRatioToMap; // Center X of the star
+      const centerY = minimap.y + this.playerY * this.minimapRatioToMap;
+      const starPoints = getStarPoints(
+        centerX,
+        centerY,
+        radius,
+        radius / 3,
+        points
+      );
+      this.playerPosition.fillPoints(starPoints, true); // Draws a filled star
     });
 
     function repositionMinimap() {
-      (minimap.x = this.scale.width - 230), (minimap.y = 10);
-      bankMarker.x = this.scale.width - 212;
-      bankMarker.y = 14;
-      shoppingCentreMarker.x = this.scale.width - 164;
-      shoppingCentreMarker.y = 14;
-      bakeryMarker.x = this.scale.width - 137;
-      bakeryMarker.y = 14;
-      schoolMarker.x = this.scale.width - 70;
-      schoolMarker.y = 14;
-      homeMarker.x = this.scale.width - 160;
-      homeMarker.y = 65;
+      const newScale =
+        (this.scale.width * minimapWidthAsFractionOfScreen) / minimap.width;
+      minimap.setScale(newScale);
+
+      minimap.setPosition(this.scale.width - minimap.displayWidth - 10, 10);
+
+      //REPOSITION BORDER
+      this.border.clear();
+      if (!this.border) {
+        this.border = this.add.graphics();
+      }
+      this.border.lineStyle(2, 0xffffff, 1); // White border with 2px thickness
+      this.border.strokeRect(
+        minimap.x,
+        minimap.y,
+        minimap.displayWidth,
+        minimap.displayHeight
+      );
 
       //REPOSITION PLAYER
       this.playerPosition.clear();
       if (!this.playerPosition) {
         this.playerPosition = this.add.graphics();
       }
-      this.playerPosition.fillStyle(0xff0000, 1);
-      const circleX = minimap.x + this.playerX / 10 - radius; // X position in top-right corner
-      const circleY = minimap.y + this.playerY / 10 - radius;
-      this.playerPosition.fillCircle(circleX, circleY, radius);
+      this.playerPosition.fillStyle(0xff8c00, 1);
+      // const circleX = minimap.x + this.playerX / 10 - radius; // X position in top-right corner
+      // const circleY = minimap.y + this.playerY / 10 - radius;
+      this.minimapRatioToMap = minimap.displayWidth / minimap.width;
+      const starPoints = getStarPoints(
+        minimap.x + this.playerX * this.minimapRatioToMap,
+        minimap.y + this.playerY * this.minimapRatioToMap,
+        radius,
+        radius / 3,
+        points
+      );
+      this.playerPosition.fillPoints(starPoints, true); // Draws a filled star
     }
     this.scale.on("resize", repositionMinimap, this);
   }

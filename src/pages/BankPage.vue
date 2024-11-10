@@ -1,24 +1,63 @@
 <template>
-  <div class="container-fluid">
-    <h1 class="text-center">Mummy wants you to deposit ${{ targetAmount.toFixed(2) }}</h1>
-    <h2 class="text-center">Question {{ currentQuestion }} of 10</h2>
+  <div class="container-fluid math-game">
+
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-8">
+        <TimerBar 
+          ref="timerBar"
+          :initial-time="10" 
+          :is-running="isTimerRunning" 
+          @timerExpired="handleTimerExpired"
+        />
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <h1 class="text-center nes-container is-rounded" style="background-color:#FFF5CD">Mummy wants you to
+          deposit ${{ targetAmount.toFixed(2) }}</h1>
+      </div>
+    </div>
+
+    <h2 class="text-center space-between">Question {{ currentQuestion }} of 10</h2>
     <div class="row">
-      <div class="col-lg-6 mb-4">
-        <div class="counter bg-light p-3 rounded" @dragover.prevent @drop="onDrop($event, 'counter')">
-          <h2>Counter</h2>
-          <div class="d-flex flex-wrap">
-            <div v-for="coin in counterCoins" :key="coin.uniqueId" class="m-2">
-              <img :src="coin.image" :alt="coin.value" class="coin" :data-coin-id="coin.uniqueId" draggable="true"
-                @dragstart="onDragStart($event, coin.uniqueId, 'counter')" @dragend="onDragEnd">
+      <div class="left-portion col-lg-6 d-flex justify-content-lg-end justify-content-center">
+        <div class="counter-container d-flex flex-column align-items-center">
+          <!-- Counter Frame Area (Droppable) -->
+          <div class="counter-frame-container" @dragover.prevent @drop="onDrop($event, 'counter')">
+            <div class="frame-pieces">
+              <img src="/assets/bankassets/Living_Room_Singles_Left-cropped.png" alt="Left frame">
+              <div class="frame-middle-container">
+                <img v-for="n in 3" :key="n" src="/assets/bankassets/Living_Room_Singles_Middle.png" alt="Middle frame">
+              </div>
+              <img src="/assets/bankassets/Living_Room_Singles_Right.png" alt="Right frame">
+            </div>
+            <!-- Coin display area -->
+            <div class="coins-area d-flex flex-wrap justify-content-start align-items-start">
+              <div v-for="coin in counterCoins" :key="coin.uniqueId" class="m-2">
+                <img :src="coin.image" 
+                     :alt="coin.value" 
+                     class="coin" 
+                     :data-coin-id="coin.uniqueId"
+                     draggable="true"
+                     @dragstart="onDragStart($event, coin.uniqueId, 'counter')"
+                     @dragend="onDragEnd">
+              </div>
             </div>
           </div>
-          <div class="total mt-3">Total: ${{ total.toFixed(2) }}</div>
+      
+
+        <!-- Counter Info Box -->
+        <div class="counter-info">
+          <h2>Counter</h2>
+          <div class="total">Total: ${{ total.toFixed(2) }}</div>
           <div v-if="showMessage" :class="['message', messageClass, { 'vibrate': isVibrating }]">
             {{ message }}
           </div>
         </div>
       </div>
-      <div class="col-lg-6 mb-4">
+      </div>
+      <div class="col-lg-6 d-flex justify-content-lg-start justify-content-md-center">
         <div class="piggy-bank-container p-3 rounded" @dragover.prevent @drop="onDrop($event, 'piggyBank')">
           <img src="/assets/bankassets/piggybank2.png" alt="Piggy Bank" class="piggy-bank">
           <div class="coin-container d-flex flex-wrap justify-content-center align-items-center">
@@ -40,6 +79,7 @@
       </div>
     </div>
   </div>
+  
 </template>
 
 <script>
@@ -48,10 +88,15 @@ import fiftyCentsImage from '/assets/bankassets/50cents.png';
 import twentyCentsImage from '/assets/bankassets/20cents.png';
 import tenCentsImage from '/assets/bankassets/10cents.png';
 import fiveCentsImage from '/assets/bankassets/5cents.png';
+import TimerBar from './Timerbar.vue';
 
 export default {
+  components: {
+    TimerBar
+  },
   data() {
     return {
+      isTimerRunning: false, //declaring that the timer dont run on default
       coins: [
         { id: 1, value: 1.00, image: oneDollarImage },
         { id: 2, value: 0.50, image: fiftyCentsImage },
@@ -66,7 +111,7 @@ export default {
       optimalCoinCount: 0,
       currentQuestion: 1,
       showMessage: false,
-      messageClass:'',
+      messageClass: '',
       message: '',
       isVibrating: false
     };
@@ -179,18 +224,16 @@ export default {
       this.targetAmount = parseFloat(this.targetAmount.toFixed(2));
     },
     submitAnswer() {
+      // this.isTimerRunning = false;
       this.showMessage = true;
       if (this.isCorrect && this.isOptimal) {
         this.message = `Correct! You have deposited $${this.targetAmount.toFixed(2)}`;
         this.setMessageClass('text-success');
-        // else if (this.isCorrect && !this.isOptimal) {
-        //   return 'text-warning';
-        // } 
         this.nextQuestion();
       } else {
-        this.setMessageClass( 'text-danger')
+        this.setMessageClass('text-danger')
         if (this.isCorrect && !this.isOptimal) {
-          this.message = "Correct amount, but try using fewer coins to reach the target.";
+          this.message = "Correct amount, but use fewer coins to reach the target.";
         } else if (this.total < this.targetAmount) {
           this.message = "Keep adding!";
         } else {
@@ -200,8 +243,8 @@ export default {
 
       this.vibrateMessage();
     },
-    setMessageClass(textColor){
-      this.messageClass=textColor
+    setMessageClass(textColor) {
+      this.messageClass = textColor
     },
     vibrateMessage() {
       this.isVibrating = true;
@@ -212,14 +255,23 @@ export default {
     nextQuestion() {
       if (this.currentQuestion < 10) {
         this.currentQuestion++;
+        this.resetTimer();
         this.generateTargetAmount();
         this.resetGame();
+        
       } else {
         alert("Congratulations! You've completed all 10 questions!");
         // Here you can add logic for what happens after all questions are answered
         this.$router.push("/game");
-
       }
+    },
+    handleTimerExpired() { //from Timerbar.vue, when the component recognised time ran out
+      console.log("expired")//we go to next question
+      this.nextQuestion();
+    },
+    resetTimer(){ //created method to access Timerbar.vue methods
+      this.$refs.timerBar.resetTimer();
+      this.isTimerRunning=true;
     }
   },
   created() {
@@ -227,33 +279,120 @@ export default {
       this.createCoin(coin.id, coin.value, coin.image)
     );
     this.generateTargetAmount();
+    this.isTimerRunning = true;
+    
   }
 };
 </script>
 <style scoped>
-.container-fluid {
-  background-color: #B7E0FF;
+.space-between{
+  padding-top: 30px;
+  padding-bottom: 30px;
 }
 
-.counter {
-  background: url('https://www.transparenttextures.com/patterns/wood.png');
-  /* Wood texture */
-  color: #333;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+.container-fluid {
+  min-height: 100vh;
+  padding-top: 30px;
+}
 
+.left-portion{
+  position: relative;
+}
+.counter-container {
+  width: 100%;
+  max-width: 500px;
+}
+.counter-frame-container {
+  /* width: 100%;
+  max-width: 500px;
+  aspect-ratio: 90/54;
+  position: relative;
+  margin-bottom: 20px; */
+  width: 100%;
+  aspect-ratio: 90/54;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.frame-pieces {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  pointer-events: none; /*DK  what this is for */
+}
+.frame-pieces img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.frame-piece {
+  height: 100%;
+  width: 48px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.frame-middle-container {
+  flex: 1;
+  display: flex;
+  /* justify-content: space-between; */
+}
+.frame-middle-container img {
+  flex: 1;
+}
+
+.coins-area {
+  /* position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  line-height: 0;
+  padding: 20px; */
+  position: absolute;
+    top: 41%;
+    left: 44%;
+    width: 100%;
+    /* Adjust to fit within the piggy bank area */
+    transform: translate(-40%, -40%); /*Shifting the vertical, horizontal alignment */
+    /*MUST HAVE--> to set the positioning of the coins */
+    /* padding:10px */
+}
+
+.counter-info {
+  /* position: absolute; */
+  background-color: #FFF5CD;
+  border-radius: 8px;
+  padding: 15px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ /* right:0; */
+}
+
+.counter-info h2 {
+  margin-bottom: 10px;
+  color: #333;
 }
 
 .piggy-bank-container {
   position: relative;
   width: 100%;
   max-width: 500px;
-  margin: 0 auto;
+  /* margin: 0 auto; */
   overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
 .piggy-bank {

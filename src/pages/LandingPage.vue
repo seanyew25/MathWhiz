@@ -1,13 +1,23 @@
 <template>
-  <!-- <h1 class="tw-bg-blue-500 tw-decoration-dashed tw-underline">Landing Page</h1> -->
-  <div class="video-container">
+  <div class="hero">
+      <video class="hero-video" autoplay muted loop playsinline>
+          <source src="../media/final_background_video.mp4" type="video/mp4">
+      </video>
+      <div class="hero-content">
+          <h1 class="hero-title tw-text-8xl tw-font-bold tw-text-black">Welcome to Mathwhiz!</h1>
+      </div>
+  </div>
+
+  <!-- <div class="video-container">
     <video autoplay muted loop>
       <source src="../media/final_background_video.mp4" type="video/mp4">
     </video>
     <h1 class="text-over-video-h1 tw-text-8xl tw-font-bold tw-text-white-600">
         Welcome to Mathwhiz!
     </h1>
-  </div>
+  </div> -->
+
+  
   <div class="background-container">
     <h1>Bringing Math to Life!</h1>
     <p class="tw-text-2xl">At Mathwhiz, we believe in unlocking the magic of math.</p>
@@ -48,11 +58,29 @@
   <div class="tw-min-h-500px tw-bg-yellow-50 tw-p-4">
     <div class="tw-max-w-4xl tw-mx-auto tw-p-5">
       <h1 class="tw-text-center tw-p-6">Join Mathwhiz today! Sign up now!</h1>
-      <div class="tw-bg-pink-200 tw-p-6 tw-rounded-xl tw-shadow-md">
-        <h2 class="tw-text-center">&copy;2024 Mathwhiz.</h2>
-      </div> 
     </div>
+    <div class=" tw-flex tw-flex-col tw-items-center">
+      <button
+          v-if="!isAuthenticated"
+          @click="openModal"
+          class="btn btn-outline-primary w-75 p-3"
+          type="submit"
+          data-bs-target="#getStartedModal"
+          data-bs-toggle="modal"
+        >
+          Get Started!
+        </button>
+        <button
+          v-else
+          class="btn btn-outline-secondary w-75 p-3 tw-opacity-50 tw-cursor-not-allowed"
+          disabled
+          title="You're already signed in!"
+        >
+          Already Signed In
+      </button>
+    </div> 
   </div>
+
 
 </template>
 
@@ -61,7 +89,57 @@
   --tw-content: '';
 }
 
-.hero-title{
+.hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    overflow: hidden;
+    text-align: center;
+    color: #fff;
+}
+
+.hero-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 50%;
+    width: auto;
+    height: auto;
+    z-index: 1; /* Keeps video behind the content */
+    object-fit: cover; /* Ensures video covers the hero area */
+}
+
+.hero-content {
+    z-index: 2;
+    max-width: 90%;
+    padding: 0 2rem;
+}
+
+
+.hero-title {
+    font-size: 6vw;
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 8vw;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-title {
+        font-size: 10vw;
+    }
+}
+
+.hero-title2{
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   margin: 0;
   padding: 0;
@@ -76,7 +154,7 @@
 .background-container{
   background-image: linear-gradient(to right, #B7E0FF, #95e3ff);
   /* background-color: #B7E0FF; */
-  min-height: 100vh;
+  min-height: 40vh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -97,7 +175,7 @@
   top: 0;
   bottom: 0;
   width: 100%;
-  height: 100%; 
+  height: 80%; 
   overflow: hidden;
   margin: 0;
 }
@@ -105,7 +183,7 @@
 video {
   /* Make video to at least 100% wide and tall */
   min-width: 100%; 
-  min-height: 100%; 
+  min-height: 80%; 
 
   /* Setting width & height to auto prevents the browser from stretching or squishing the video */
   width: auto;
@@ -119,4 +197,17 @@ video {
 </style>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+const auth = getAuth();
+const isAuthenticated = ref("");
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      isAuthenticated.value = true;
+    } else {
+      isAuthenticated.value = false;
+    }
+  });
+});
 </script>
