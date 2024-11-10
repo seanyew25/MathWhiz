@@ -15,7 +15,6 @@
 // import SchoolASPage from "./ASComponent.vue";
 // import SchoolMDPage from "./MDComponent.vue";
 
-<script setup>
 import MuliplicationDivisionGame from "../components/school/MultiplicationDivisionGame.vue";
 import AdditionSubtractGame from "../components/school/AdditionSubtractGame.vue";
 import { ref, onMounted } from "vue";
@@ -48,4 +47,5 @@ onMounted(() => {
   showAdditionSubtraction.value = false;
   showMultiplicationDivision.value = false;
 });
+
 </script>
