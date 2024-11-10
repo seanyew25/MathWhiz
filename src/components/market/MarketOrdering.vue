@@ -1,75 +1,91 @@
 <template>
-    <div class="tw-absolute tw-inset-0 tw-top-[var(--navbar-height)]">
-        <h2 class="tw-text-2xl tw-font-bold tw-text-gray-800 tw-mb-6 tw-text-center">Label the items in order!</h2>
+    <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
 
-        <!-- Timer Bar Logic -->
-        <div class="progress-container tw-w-1/2 tw-mx-auto">
-            <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="100"></progress>
-            <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
-        </div>
+        <!-- White Container -->
+        <div class="nes-container is-rounded is-centered with-title tw-bg-white tw-max-w-3xl">
+            <p class="title">Ordering</p>
+            <div class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center">
 
-        <h2 class="tw-text-2xl tw-font-bold tw-text-gray-800 tw-mb-6 tw-text-center">
-          Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}
-        </h2>
+                <!-- Question and Coins Display -->
+                <h2 class="tw-text-sm tw-font-bold tw-text-gray-800 tw-text-center">
+                Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+                </h2>
 
-        <!-- Conveyor Belts and Groceries -->
-        <div class="tw-space-y-8 tw-mb-8 tw-px-6">
-            <div
-                v-for="(conveyor, index) in conveyors"
-                :key="index"
-                class="tw-conveyor tw-mx-auto"
-                @dragover="allowDrop"
-                @drop="drop($event, index)"
-                @click="resetLabel(index)"
-            >
-                <img src="/assets/MarketImages/conveyor start.png" alt="Conveyor Start" />
-                <img src="/assets/MarketImages/conveyor middle.png" alt="Conveyor Middle" v-for="n in 13" />
-                <img src="/assets/MarketImages/conveyor end.png" alt="Conveyor End" />
-                
-                <div class="tw-grocery-container" :id="'grocery-' + index">
-                    <img :src="conveyor.image" class="tw-grocery" :alt="'Basket ' + (index + 1)" />
-                    <div v-if="!conveyor.showCross && conveyor.assignedOrdinal" 
-                        :class="['tw-label-circle', conveyor.labelClass]" 
-                        @click="resetLabel(index)">
-                        {{ conveyor.assignedOrdinal }}
+                <!-- Instructions -->
+                <h2 class="tw-text-2    xl tw-font-bold tw-text-gray-800 tw-mb-2 tw-text-center">Label the items in order!</h2>
+
+                <!-- Timer Bar Logic -->
+                <div class="progress-container tw-w-full">
+                    <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
+                    <p class="nes-text is-primary">{{ Math.round(timerWidth) }}s</p>
+                </div>
+
+                <!-- Conveyor Belts and Groceries -->
+                <div class="tw-mb-2">
+                    <div
+                        v-for="(conveyor, index) in conveyors"
+                        :key="index"
+                        class="tw-conveyor tw-mx-auto tw-scale-75"
+                        @dragover="allowDrop"
+                        @drop="drop($event, index)"
+                        @click="resetLabel(index)"
+                    >   
+                        <div class="tw-conveyor conveyor-start">
+                        <img src="/assets/marketassets/conveyor start.png">
+                        </div>
+
+                        <img src="/assets/marketassets/conveyor middle.png" alt="Conveyor Middle" v-for="n in 10" />
+
+                        <div class="tw-conveyor conveyor-end">
+                        <img src="/assets/marketassets/conveyor end.png"/>
+                        </div>
+                        
+                        <div class="tw-grocery-container" :id="'grocery-' + index">
+                            <img :src="conveyor.image" class="tw-grocery" :alt="'Basket ' + (index + 1)" />
+                            <div v-if="!conveyor.showCross && conveyor.assignedOrdinal" 
+                                :class="['tw-label-circle', conveyor.labelClass]" 
+                                @click="resetLabel(index)">
+                                {{ conveyor.assignedOrdinal }}
+                            </div>
+                            <span v-else-if="submitted && (!conveyor.assignedOrdinal || conveyor.showCross)" 
+                                class="tw-text-red-500 tw-text-5xl tw-font-bold tw-absolute" style="top: 20px;" @click="resetLabel(index)">❌</span>
+                        </div>
                     </div>
-                    <span v-else-if="submitted && (!conveyor.assignedOrdinal || conveyor.showCross)" 
-                        class="tw-text-red-500 tw-text-5xl tw-font-bold tw-absolute" style="top: 20px;" @click="resetLabel(index)">❌</span>
+                </div>
+
+                <!-- Ordinal Labels to Drag -->
+                <div class="tw-flex tw-justify-center tw-mb-6 tw-gap-10">
+                    <div
+                        v-for="(label, index) in ordinalNumbers"
+                        :key="index"
+                        class="tw-draggable nes-btn tw-font-bold"
+                        :class="[label.disabled ? 'is error' : 'is-primary']"
+                        :draggable="!label.disabled"
+                        @dragstart="!label.disabled && dragStart($event, label.text)"
+                    >
+                        {{ label.text }}
+                    </div>
+                </div>
+
+                <div class="tw-text-center">
+                    <button class="nes-btn" @click="checkAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
                 </div>
             </div>
         </div>
 
-        <!-- Ordinal Labels to Drag -->
-        <div class="tw-flex tw-justify-center tw-space-x-4 tw-mb-4">
-            <div
-                v-for="(label, index) in ordinalNumbers"
-                :key="index"
-                class="tw-draggable tw-text-xl tw-font-bold tw-py-2 tw-px-4 tw-rounded tw-cursor-move tw-w-20 tw-h-12 tw-flex tw-items-center tw-justify-center"
-                :class="[label.disabled ? 'tw-bg-gray-400 tw-cursor-not-allowed' : 'tw-bg-yellow-400', 'tw-text-black']"
-                :draggable="!label.disabled"
-                @dragstart="!label.disabled && dragStart($event, label.text)"
-            >
-                {{ label.text }}
-            </div>
-        </div>
-
-        <div class="tw-text-center tw-mt-6">
-            <button class="nes-btn" @click="checkAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
-        </div>
-    </div>
-
-    <!-- Game Over Modal -->
-    <div v-if="gameOver" class="game-over-overlay">
-        <div class="game-over-content">
-            <h2>{{ completionMessage }}</h2>
-            <p>Coins Earned: {{ coins }}</p>
-            <div class="button-container">
-                <button @click="exitGame" class="nes-btn is-primary">
-                    Exit
-                </button>
-                <button @click="restartGame" class="nes-btn is-success">
-                    Restart
-                </button>
+        <!-- Game Over Modal -->
+        <div v-if="gameOver" class="game-over-overlay">
+            <div class="game-over-content  nes-container is-rounded">
+                <h2>{{ completionMessage }}</h2>
+                <p>Coins Earned: {{ coins }}</p>
+                <div class="button-container">
+                    <button @click="exitGame" class="nes-btn is-primary">
+                        Exit
+                    </button>
+                    <button @click="restartGame" class="nes-btn is-success">
+                        Restart
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -100,7 +116,7 @@ export default {
 
         const draggedOrdinal = ref(null);
         const submitted = ref(false);
-        const basketImages = Array.from({ length: 8 }, (_, i) => `/assets/MarketImages/basket${i + 1}.png`);
+        const basketImages = Array.from({ length: 8 }, (_, i) => `/assets/marketassets/basket${i + 1}.png`);
         const coins = ref(0); 
         const questionNumber = ref(1);
         const totalQuestions = 10;
@@ -119,13 +135,19 @@ export default {
             });
         };
 
+        // Modified to calculate start and end positions more dynamically
+
         const resetGroceries = () => {
             conveyors.forEach((conveyor, index) => {
                 const grocery = document.getElementById(`grocery-${conveyor.id - 1}`);
-                const conveyorStartImage = document.querySelectorAll('.tw-conveyor')[index].querySelector('img');
+                const conveyorStartImage = document.querySelector('div.conveyor-start');
                 grocery.style.transition = "none";
-                grocery.style.left = `${conveyorStartImage.getBoundingClientRect().left}px`;
-                grocery.offsetHeight;
+
+                // Calculate start position more precisely based on the start image position and offset
+                const startPos = conveyorStartImage.getBoundingClientRect().left;
+                grocery.style.left = `${startPos}px`;
+                
+                grocery.offsetHeight; // Force reflow to apply the immediate positioning
                 grocery.style.transition = "left 3s linear";
             });
         };
@@ -140,14 +162,16 @@ export default {
             let cumulativeDelay = 0;
             shuffledConveyors.forEach((conveyor, index) => {
                 const grocery = document.getElementById(`grocery-${conveyor.id - 1}`);
-                const conveyorEndImage = document.querySelectorAll('.tw-conveyor')[index].querySelector('img:last-of-type');
-                const endPos = conveyorEndImage.getBoundingClientRect().left - 40;
+                const conveyorEndImage = document.querySelector('div.conveyor-end');
+                
+                // Calculate end position based on the end image position and offset
+                const endPos = conveyorEndImage.getBoundingClientRect().left;
 
                 setTimeout(() => {
                     grocery.style.left = `${endPos}px`;
                 }, cumulativeDelay);
 
-                cumulativeDelay += Math.random() * 800 + 200;
+                cumulativeDelay += Math.random() * 800 + 200; // Introduce random delays for each item
             });
         };
 
@@ -232,8 +256,8 @@ export default {
             });
 
             assignRandomImages();
-            resetGroceries();
-            startRace();
+            setTimeout(resetGroceries, 200);
+            setTimeout(startRace, 1000);
             resetTimer();
             loadingNextQuestion.value = false;
         };
@@ -251,22 +275,22 @@ export default {
         };
 
         const navbarHeight = ref(0);
-        const timerWidth = ref(100);
+        const timerWidth = ref(20);
         const timerInterval = ref(null);
 
         const startTimer = () => {
-            timerWidth.value = 100;
+            timerWidth.value = 20;
             timerFrozen.value = false;
 
             timerInterval.value = setInterval(() => {
                 if (!timerFrozen.value) {
-                    timerWidth.value = Math.max(0, timerWidth.value - 0.5);
+                    timerWidth.value = Math.max(0, timerWidth.value - 0.1);
 
                     if (timerWidth.value <= 0) {
                         handleTimeOut();
                     }
                 }
-            }, 50);
+            }, 100);
         };
 
         const resetTimer = () => {
@@ -284,13 +308,9 @@ export default {
         };
 
         onMounted(() => {
-            const navbar = document.querySelector(".navbar");
-            if (navbar) {
-                navbarHeight.value = navbar.offsetHeight;
-                document.documentElement.style.setProperty("--navbar-height", `${navbarHeight.value}px`);
-            }
             assignRandomImages();
             resetGroceries();
+            setTimeout(resetGroceries, 200);
             setTimeout(startRace, 1000);
             startTimer();
         });
@@ -307,7 +327,6 @@ export default {
             allowDrop,
             drop,
             checkAnswer,
-            navbarHeight,
             timerWidth,
             startTimer,
             questionNumber,
@@ -352,8 +371,6 @@ export default {
         background: #fff;
         padding: 40px;
         width: 500px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         text-align: center;
     }
 

@@ -1,68 +1,82 @@
 <template>
-    <div class="tw-absolute tw-inset-0 tw-top-[var(--navbar-height)]">
-        <!-- Heading and Hint Button -->
-        <h3 class="tw-text-2xl tw-font-bold tw-mb-6 tw-flex tw-justify-center tw-items-center tw-gap-4">
-            Make a total of: {{ targetNumber }}
-            <button @click="showHintModal = true" class="tw-px-3 tw-py-1 tw-bg-blue-500 tw-text-white tw-rounded">Hint</button>
-        </h3>
+    <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
 
-        <!-- Timer Bar -->
-        <div class="progress-container tw-w-1/2 tw-mx-auto">
-            <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="100"></progress>
-            <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
-        </div>
+        <!-- White Container -->
+        <div class="nes-container is-rounded is-centered with-title tw-bg-white tw-max-w-3xl">
+            <p class="title">Counting</p>
+            <div class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center">
 
-        <!-- Question and Coins Display -->
-        <h2 class="tw-text-2xl tw-font-bold tw-text-gray-800 tw-mb-6 tw-text-center">
-            Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}
-        </h2>
+                <!-- Question and Coins Display -->
+                <h2 class="tw-text-sm tw-font-bold tw-text-gray-800 tw-text-center">
+                    Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+                </h2>
 
-        <!-- Hint Modal -->
-        <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
-            <div class="tw-bg-white tw-p-6 tw-rounded tw-shadow-md tw-text-center">
-                <p class="tw-text-lg tw-mb-4">In Hint Mode, click items to preview them in the target box with a counter.<br>Do you want to turn on Hint Mode?</p>
-                <button @click="getHint(true)" class="tw-px-4 tw-py-2 tw-bg-green-500 tw-text-white tw-rounded tw-mr-2">Yes</button>
-                <button @click="getHint(false)" class="tw-px-4 tw-py-2 tw-bg-red-500 tw-text-white tw-rounded">No</button>
-            </div>
-        </div>
+                <!-- Instructions and Hint Button -->
+                <h3 class="tw-text-2xl tw-font-bold tw-mb-4 tw-flex tw-justify-center tw-items-center tw-gap-4">
+                    Make a total of: {{ targetNumber }}
+                    <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm">Hint</button>
+                </h3>
 
-        <!-- Grids for Selection -->
-        <div class="grid-container">
-            <div v-for="(grid, index) in grids" :key="index" class="grid-item">
-                <div class="object-grid">
-                    <div v-for="object in grid" :key="object.id" :class="['object', { 'selected': object.selected }]" @click="toggleSelectById(object.id)" ref="objects" :data-id="object.id" v-bind:style="{ visibility: object.visible ? 'visible' : 'hidden' }">
-                        <img :src="object.image" :alt="object.type" class="tw-w-full tw-h-full object-contain" />
+                <!-- Timer Bar -->
+                <div class="progress-container tw-w-full">
+                    <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
+                    <p class="nes-text is-primary">{{ Math.round(timerWidth) }}s</p>
+                </div>
+
+                <!-- Hint Modal -->
+                <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
+                    <div class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6">
+                        <p class="title">Hint</p>
+                        <p class="tw-text-lg tw-mb-4">
+                            In Hint Mode, click items to preview them in the target box with a counter.<br>Do you want to turn on Hint Mode?
+                        </p>
+                        
+                        <!-- Button Container for Alignment and Spacing -->
+                        <div class="tw-flex tw-gap-8 tw-justify-center">
+                            <button @click="getHint(true)" class="nes-btn is-success tw-w-32">Yes</button>
+                            <button @click="getHint(false)" class="nes-btn is-error tw-w-32">No</button>
+                        </div>
                     </div>
                 </div>
-                <p style="font-size: 22px; margin-top: 15px;" class="tw-text-center">{{ labels[index] }}</p>
+
+                <!-- Grids for Selection -->
+                <div class="grid-container">
+                    <div v-for="(grid, index) in grids" :key="index" class="grid-item">
+                        <div class="object-grid">
+                            <div v-for="object in grid" :key="object.id" :class="['object', { 'selected': object.selected }]" @click="toggleSelectById(object.id)" ref="objects" :data-id="object.id" v-bind:style="{ visibility: object.visible ? 'visible' : 'hidden' }">
+                                <img :src="object.image" :alt="object.type" class="tw-w-full tw-h-full object-contain" />
+                            </div>
+                        </div>
+                        <p class="tw-text-center tw-mt-3 tw-text-base">{{ labels[index] }}</p>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="tw-text-center">
+                    <button class="nes-btn" @click="submitAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
+                </div>
+
+                <!-- Target Boxes for Display -->
+                <div class="tw-flex tw-justify-center tw-gap-8 tw-mt-6">
+                    <div ref="hundredsBox" class="target-box nes-container is-rounded" style="padding: 8px;"></div>
+                    <div ref="tensBox" class="target-box nes-container is-rounded" style="padding: 8px;"></div>
+                    <div ref="onesBox" class="target-box nes-container is-rounded" style="padding: 8px;"></div>
+                </div>
             </div>
         </div>
-
-        <!-- Submit Button -->
-        <div class="tw-text-center tw-mt-6">
-            <button class="nes-btn" @click="submitAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
-        </div>
-
-        <!-- Target Boxes for Display -->
-        <div class="tw-flex tw-justify-center tw-gap-8 tw-mt-8">
-            <div ref="hundredsBox" class="target-box"></div>
-            <div ref="tensBox" class="target-box"></div>
-            <div ref="onesBox" class="target-box"></div>
-        </div>
-    </div>
-
-    <!-- Game Over Modal -->
-    <div v-if="gameOver" class="game-over-overlay">
-        <div class="game-over-content">
-            <h2>{{ completionMessage }}</h2>
-            <p>Coins Earned: {{ coins }}</p>
-            <div class="button-container">
-                <button @click="exitGame" class="nes-btn is-primary">
-                    Exit
-                </button>
-                <button @click="restartGame" class="nes-btn is-success">
-                    Restart
-                </button>
+        <!-- Game Over Modal -->
+        <div v-if="gameOver" class="game-over-overlay">
+            <div class="game-over-content">
+                <h2>{{ completionMessage }}</h2>
+                <p>Coins Earned: {{ coins }}</p>
+                <div class="button-container">
+                    <button @click="exitGame" class="nes-btn is-primary">
+                        Exit
+                    </button>
+                    <button @click="restartGame" class="nes-btn is-success">
+                        Restart
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -101,23 +115,23 @@ export default {
 
 
         // Timer-related data
-        const timerWidth = ref(100);
+        const timerWidth = ref(20);
         const timerInterval = ref(null);
         const timerFrozen = ref(false);
         // Timer Logic
         const startTimer = () => {
-            timerWidth.value = 100;
+            timerWidth.value = 20;
             timerFrozen.value = false;
             clearInterval(timerInterval.value);
 
             timerInterval.value = setInterval(() => {
                 if (!timerFrozen.value) {
-                    timerWidth.value = Math.max(0, timerWidth.value - 0.5);
+                    timerWidth.value = Math.max(0, timerWidth.value - 0.1);
                     if (timerWidth.value <= 0) {
                         handleTimeOut();
                     }
                 }
-            }, 50);
+            }, 100);
         };
 
         const resetTimer = () => {
@@ -183,9 +197,9 @@ export default {
         const generateObjects = () => {
             let idCounter = 0;
             objects.value = [
-                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'apple', value: 1, selected: false, visible: true, image: '/assets/MarketImages/apple.png' })),
-                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'basket', value: 10, selected: false, visible: true, image: '/assets/MarketImages/basket.png' })),
-                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'crate', value: 100, selected: false, visible: true, image: '/assets/MarketImages/crate.png' }))
+                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'apple', value: 1, selected: false, visible: true, image: '/assets/marketassets/apple.png' })),
+                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'basket', value: 10, selected: false, visible: true, image: '/assets/marketassets/basket.png' })),
+                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'crate', value: 100, selected: false, visible: true, image: '/assets/marketassets/crate.png' }))
             ];
         };
 
@@ -221,6 +235,10 @@ export default {
             const img = document.createElement('img');
             img.src = object.image;
             img.classList.add('tw-box-object', 'tw-opacity-30');
+            img.style.width = '41px'; 
+            img.style.height = '41px';
+            img.style.margin = '5px'; 
+            img.style.objectFit = 'contain';
             img.dataset.ghost = true;
             box.appendChild(img);
 
@@ -388,7 +406,10 @@ export default {
         const hideTempCounterOverlay = (box) => {
             const tempCounter = box.querySelector('.tw-temp-counter-overlay');
             if (tempCounter) tempCounter.remove();
-            box.querySelectorAll('.tw-box-object').forEach(item => item.classList.remove('tw-blurred-item'));
+            
+            box.querySelectorAll('.tw-box-object').forEach(item => {
+                item.style.filter = 'blur(4px)'; // Directly apply blur effect
+            });
         };
         
         const animateFlyingObject = (object, onComplete) => {
@@ -438,6 +459,10 @@ export default {
             const imgElement = document.createElement('img');
             imgElement.src = object.image;
             imgElement.className = 'tw-box-object';
+            imgElement.style.width = '41px'; 
+            imgElement.style.height = '41px';
+            imgElement.style.margin = '5px'; 
+            imgElement.style.objectFit = 'contain';
             box.appendChild(imgElement);
         };
 
@@ -463,17 +488,15 @@ export default {
                 box.appendChild(overlay);
             }
             Object.assign(overlay.style, {
-                fontFamily: "'Press Start 2P', sans-serif",
-                fontSize: '200px',
+                fontSize: '120px',
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
-                transform: 'translate(-50%, -50%)',
-                zIndex: '10'
+                transform: 'translate(-45%, -45%)',
+                zIndex: '10',
+                textShadow: '3px 3px 0px white, -3px 3px 0px white, 3px -3px 0px white, -3px -3px 0px white'
             });
             overlay.textContent = count;
-
-            box.querySelectorAll('.tw-box-object').forEach(item => item.classList.add('tw-blurred-item'));
         };
 
         const getHint = (answer) => {
@@ -586,15 +609,12 @@ export default {
 
     /* Game Box and Object Grid */
     .target-box {
-    width: 300px;
-    height: 300px;
-    border: 2px solid gray;
-    border-radius: 8px;
+    width: 180px;
+    height: 180px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
-    padding: 10px;
     overflow: hidden;
     position: relative;
     }
@@ -602,8 +622,7 @@ export default {
     .grid-container {
     display: flex;
     justify-content: space-around;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 40px;
     }
 
     .object-grid {
@@ -613,17 +632,22 @@ export default {
     }
 
     .object {
-    width: 80px;
-    height: 80px;
+    width: 65px;
+    height: 65px;
     transition: transform 1s ease-in-out, top 1s ease-in-out, left 1s ease-in-out;
     position: relative;
     }
 
-    .tw-box-object { width: 60px; height: 60px; margin: 5px; object-fit: contain; }
+    /* .tw-box-object { 
+        width: 41px; 
+        height: 41px; 
+        margin: 5px; 
+        object-fit: contain; 
+    } */
 
     /* Animations */
     .selected { animation: wiggle 0.5s infinite; }
-    .tw-blurred-item { filter: blur(6px); }
+    /* .tw-blurred-item { filter: blur(6px); } */
 
     /* Wiggle animation */
     @keyframes wiggle {

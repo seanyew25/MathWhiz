@@ -8,9 +8,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import Cutscene from './MarketCutscene.vue';
-import MarketCounting from './MarketCounting.vue';
-import MarketOrdering from './MarketOrdering.vue';
+import Cutscene from '../components/market/MarketCutscene.vue';
+import MarketCounting from '../components/market/MarketCounting.vue';
+import MarketOrdering from '../components/market/MarketOrdering.vue';
 
 const showCutscene = ref(true); // Show cutscene initially
 const showCounting = ref(false);

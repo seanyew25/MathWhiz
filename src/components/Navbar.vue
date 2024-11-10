@@ -77,6 +77,16 @@
             <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
+              to="/market"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Market</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <!-- <a>Test</a> -->
+            <RouterLink
+              class="nav-link"
               to="/bakery"
               aria-current="page"
               style="text-decoration: none; color: black"

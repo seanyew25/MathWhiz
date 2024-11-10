@@ -402,7 +402,6 @@ export default {
 }
 
 .story-carousel-wrapper {
-  background-color: #b7e0ff;
   min-height: 100vh;
   display: flex;
   align-items: center;

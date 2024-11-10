@@ -1,32 +1,41 @@
 <template>
-  <div class="tw-absolute tw-inset-0 tw-flex tw-items-center tw-justify-center tw-text-center tw-top-[var(--navbar-height)]" @click="toggleAnimation">
-  <div class="tw-relative tw-inline-block tw-text-center">
-    <!-- Character Image with Animation -->
-    <img :src="currentImage" :class="{ shake: currentAnimation.value === 'alerted' }" 
-        alt="Character Animation" class="character-size tw-object-contain tw-mx-auto" />
+    <div class="cutscene md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
+        <!-- White Container -->
+        <div class="nes-container is-rounded is-centered with-title tw-bg-white tw-max-w-3xl">
+            <p class="title">Market</p>
+            <div class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center" @click="toggleAnimation">
+                <div class="tw-relative tw-inline-block tw-text-center">
+                    <!-- Character Image with Animation -->
+                    <img :src="currentImage" :class="{ shake: currentAnimation.value === 'alerted' }" 
+                        alt="Character Animation" class="character-size tw-object-contain tw-mx-auto"/>
 
-    <!-- Exclamation Icon for Alerted State, with custom position -->
-    <img v-if="isAlerted" src="/assets/MarketImages/exclamation.png" alt="Exclamation" 
-        :class="{ shake: isAlerted }"
-        class="tw-absolute tw--top-9 tw-left-1/4 tw-w-16 tw-h-16" />
+                    <!-- Exclamation Icon for Alerted State, with custom position -->
+                    <img v-if="isAlerted" src="/assets/marketassets/exclamation.png" alt="Exclamation" 
+                        :class="{ shake: isAlerted }"
+                        class="tw-absolute tw--top-9 tw-left-1/4 tw-w-16 tw-h-16" />
 
-    <!-- Dialogue Speech Bubble -->
-    <div v-if="!isAlerted" class="nes-balloon from-left dialogue-position">
-        <p>{{ displayedText }}</p>
+                    <!-- Dialogue Speech Bubble -->
+                    <div v-if="!isAlerted"
+                        :class="[
+                            'dialogue-position',
+                            isSmallScreen ? 'nes-container is-rounded' : 'nes-balloon from-left',
+                        ]">
+                        <p>{{ displayedText }}</p>
+                    </div>
+
+                    <!-- End Buttons, appear only when cutscene finishes -->
+                    <div v-if="showEndButtons" class="tw-absolute tw-bottom-[-6rem] tw-left-1/2 tw-transform tw--translate-x-1/2 tw-flex tw-gap-20">
+                    <button @click="$emit('end-cutscene'); $emit('go-to-counting')" class="wiggle-button nes-btn is-primary">Go to Counting!</button>
+                    <button @click="$emit('end-cutscene'); $emit('go-to-ordering')" class="wiggle-button nes-btn is-success">Go to Ordering!</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-
-    <!-- End Buttons, appear only when cutscene finishes -->
-    <div v-if="showEndButtons" class="tw-absolute tw-bottom-[-6rem] tw-left-1/2 tw-transform tw--translate-x-1/2 tw-flex tw-gap-20">
-      <button @click="$emit('end-cutscene'); $emit('go-to-counting')" class="tw-px-4 tw-py-2 tw-bg-blue-500 tw-text-white tw-rounded wiggle-button">Go to Counting!</button>
-      <button @click="$emit('end-cutscene'); $emit('go-to-ordering')" class="tw-px-4 tw-py-2 tw-bg-blue-500 tw-text-white tw-rounded wiggle-button">Go to Ordering!</button>
-    </div>
-  </div>
-</div>
 </template>
 
-
 <script>
-import { ref, computed, onMounted, reactive } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 
 export default {
   setup(props, { emit }) {
@@ -54,7 +63,7 @@ export default {
 
     // Animation State
     const currentAnimation = ref("running"); // Initial animation
-    const currentImage = ref(`/assets/MarketImages/run${runFrame.value}.png`);
+    const currentImage = ref(`/assets/marketassets/run${runFrame.value}.png`);
 
     const isAlerted = computed(() => currentAnimation.value === "alerted");
 
@@ -68,25 +77,25 @@ export default {
 
     // Function to cycle through running frames
     function runAnimation() {
-        currentImage.value = `/assets/MarketImages/run${runFrame.value}.png`;
+        currentImage.value = `/assets/marketassets/run${runFrame.value}.png`;
         runFrame.value = runFrame.value < totalRunFrames ? runFrame.value + 1 : 1;
     }
 
     // Function to cycle through breathing frames
     function breatheAnimation() {
-        currentImage.value = `/assets/MarketImages/breathe${breatheFrames[breatheIndex]}.png`;
+        currentImage.value = `/assets/marketassets/breathe${breatheFrames[breatheIndex]}.png`;
         breatheIndex = (breatheIndex + 1) % breatheFrames.length;
     }
 
     // Function to cycle through shocked frames
     function shockedAnimation() {
-        currentImage.value = `/assets/MarketImages/shocked${shockedFrames[shockedIndex]}.png`;
+        currentImage.value = `/assets/marketassets/shocked${shockedFrames[shockedIndex]}.png`;
         shockedIndex = (shockedIndex + 1) % shockedFrames.length;
     }
 
     // Function to cycle through standing frames
     function standingAnimation() {
-        currentImage.value = `/assets/MarketImages/standing${standingFrames[standingIndex]}.png`;
+        currentImage.value = `/assets/marketassets/standing${standingFrames[standingIndex]}.png`;
         standingIndex = (standingIndex + 1) % standingFrames.length;
     }
 
@@ -109,7 +118,7 @@ export default {
               dialogueText.value = "The queues!!!!";
           } else {
               currentAnimation.value = "alerted";
-              currentImage.value = `/assets/MarketImages/alert1.png`;
+              currentImage.value = `/assets/marketassets/alert1.png`;
               dialogueText.value = "Hey, you over there!";
 
               const imgElement = document.querySelector("img");
@@ -132,8 +141,8 @@ export default {
               standingClickCount++;
           } else {
               currentAnimation.value = "carrying";
-              currentImage.value = `/assets/MarketImages/carrying1.png`;
-              dialogueText.value = "Could you help me count the apples and manage the queues?";
+              currentImage.value = `/assets/marketassets/carrying1.png`;
+              dialogueText.value = "Could you help me with the apples and queues?";
               standingClickCount = 0;
           }
       } else if (currentAnimation.value === "carrying") {
@@ -169,9 +178,22 @@ export default {
             setTimeout(typeText, 40);
         }
     }
+    // Detect screen size
+    const isSmallScreen = ref(window.innerWidth < 768);
+
+    const updateScreenSize = () => {
+    isSmallScreen.value = window.innerWidth < 768;
+    };
+
+    onBeforeUnmount(() => {
+    window.removeEventListener("resize", updateScreenSize);
+    });
 
     // Start the typewriter effect on mount
     onMounted(() => {
+        updateScreenSize();
+        window.addEventListener("resize", updateScreenSize);
+
         typeText();
 
         // Start the appropriate animation based on currentAnimation state
@@ -186,14 +208,7 @@ export default {
                 standingAnimation();
             }
         }, 75);
-        const navbar = document.querySelector(".navbar");
-        if (navbar) {
-            navbarHeight.value = navbar.offsetHeight;
-            document.documentElement.style.setProperty("--navbar-height", `${navbarHeight.value}px`);
-        }
     });
-
-    const navbarHeight = ref(0);
 
     return {
       currentImage,
@@ -203,25 +218,36 @@ export default {
       showEndButton,
       cutsceneActive,
       showEndButtons,
-      
       toggleAnimation,
       endCutscene,
-      navbarHeight
+      isSmallScreen,
+      updateScreenSize
     };
   }
 };
 </script>
 
 <style scoped>
-* {
-    font-family: 'Press Start 2P', sans-serif;
+.cutscene {
+  font-family: "Press Start 2P", sans-serif;
+  z-index: 1; /* Ensure the cutscene is below the navbar */
 }
 
 .dialogue-position {
-        position: absolute;
-        bottom: 11rem; /* Anchor the box to the bottom */
-        right: -17rem; /* Adjust initial horizontal position as needed */
-        transform-origin: bottom; /* Ensures the box grows upward */
+  position: absolute;
+  bottom: 11rem; /* Anchor the box to the bottom */
+  right: -17rem; /* Adjust initial horizontal position as needed */
+  transform-origin: bottom; /* Ensures the box grows upward */
+}
+
+@media (max-width: 767px) {
+  .dialogue-position {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    transform: none;
+    margin-top: 1rem;
+  }
 }
 
 .nes-balloon {
@@ -230,6 +256,14 @@ export default {
         padding: 1rem;
         overflow-wrap: break-word; /* Wraps text within the fixed width */
         text-align: left; /* Keeps text left-aligned within the fixed width */
+}
+
+.nes-container {
+  display: inline-block;
+  width: 100%;
+  padding: 1rem;
+  overflow-wrap: break-word;
+  text-align: left;
 }
 
 .character-size {
@@ -249,21 +283,36 @@ export default {
         animation: shake 0.3s; /* Adjust duration as needed */
 }
 
-/* Wiggle animation */
 @keyframes tw-wiggle {
         0%, 100% { transform: rotate(0); }
         25% { transform: rotate(-3deg); }
         75% { transform: rotate(3deg); }
 }
 
-/* Button hover styles */
-.wiggle-button {
-        transition: background-color 0.3s ease, transform 0.1s ease;
+.wiggle-button:hover {
+        animation: tw-wiggle 0.5s infinite;
 }
 
-.wiggle-button:hover {
-        background-color: #22c55e; /* Tailwind's green-500 */
-        animation: tw-wiggle 0.5s infinite;
-        color: white;
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .character-size {
+    width: 100px;
+  }
+
+  .nes-balloon {
+    width: 200px;
+    padding: 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .character-size {
+    width: 80px;
+  }
+
+  .nes-balloon {
+    width: 150px;
+    padding: 0.25rem;
+  }
 }
 </style>
