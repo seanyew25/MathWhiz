@@ -73,7 +73,7 @@
                 </transition-group>
               </div>
 
-              <span>=</span>
+              <!-- <span>=</span> -->
             </div>
 
             <transition name="fade">
@@ -158,9 +158,10 @@
           <dialog class="nes-dialog" id="dialog-default">
             <form method="dialog">
               <p class="title">Hint</p>
-              <p>
-                Hover over the bottom row of emojis to visualize the question!
-                For multiplication, you'll see a grid. For division, you'll see colored groups.
+              <p class="text-center">
+                Hover over the <strong>bottom row of emojis</strong> to visualise the question!<br>
+                For <strong>multiplication</strong>, you'll see a grid. <br>
+                For <strong>division</strong>, you'll see coloured groups.
               </p>
               <menu class="dialog-menu center-button">
                 <button class="nes-btn is-primary" @click="closeHintDialog">I Understand!</button>
@@ -195,7 +196,7 @@ import { useRouter } from 'vue-router';
 const emojiSet = ["😀", "🐶", "🍕", "🚗", "🎉", "🏀", "🌍", "💡", "📚", "💻"];
 const getRandomEmoji = () => emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
-const tables = [2, 3, 4, 5, 6, 7, 8, 9, 10];
+const tables = [2, 3, 4, 5, 6, 7]; // 11NOV24 Edited the number pool to be smaller, checked the syllabus for multiplication.
 
 const generateQuestion = () => {
   const operators = ["×", "÷"];
