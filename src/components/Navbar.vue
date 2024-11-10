@@ -135,7 +135,7 @@
           </li>  -->
 
           <!-- END OF REMOVE -->
-          <li class="nav-item" :class="{ 'active': activeRoute === '/game' }"
+          <li class="nav-item" :class="{ 'active': isGameActive }"
           style="padding-left: 50px;">
             <!-- <a>Test</a> -->
             <RouterLink v-if="isAuthenticated" class="nav-link math-game" to="/game" aria-current="page"
@@ -236,6 +236,21 @@
                   v-model="confirmPassword"
                 /> -->
               <!-- </div> -->
+
+              <div class="mb-3">
+                <label for="inputSignupUsername" class="form-label"
+                  >Display Name</label
+                >
+                <input
+                  :class="'form-control ' + usernameCheck"
+                  id="inputSignupUsername"
+                  aria-describedby="emailHelp"
+                  v-model="username"
+                />
+                <div class="invalid-feedback">Kindly add a display name.</div>
+              </div>
+
+
               <div style="float: right">
                 <button @click="handleSignup" type="button" class="btn btn-primary">
                   Sign Up!
@@ -369,28 +384,28 @@ const handleScroll = () => {
   const currentScroll = window.pageYOffset || 0;
 
   if (currentScroll > lastScrollTop && currentScroll > 0) {
-    // User is scrolling down
     isNavbarHidden.value = true;
   } else if (currentScroll < lastScrollTop) {
-    // User is scrolling up
     isNavbarHidden.value = false;
   }
 
-  // Update the last scroll position
   lastScrollTop = currentScroll;
 };
 
 onMounted(() => {
-  // Add global scroll event listener
   window.addEventListener('scroll', handleScroll);
 });
 
 onBeforeUnmount(() => {
-  // Remove global scroll event listener when the component is unmounted
   window.removeEventListener('scroll', handleScroll);
 });
 
 const route = useRoute();
 const activeRoute = computed(() => route.path);
+
+const isGameActive = computed(() => {
+  // Check if the current path is NOT '/', '/story', or '/shop'
+  return route.path !== '/' && route.path !== '/story' && route.path !== '/shop';
+});
 
 </script>

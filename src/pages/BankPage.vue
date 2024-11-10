@@ -285,9 +285,6 @@ export default {
 };
 </script>
 <style scoped>
-.math-game {
-  
-}
 .space-between{
   padding-top: 30px;
   padding-bottom: 30px;
