@@ -975,7 +975,7 @@
                  "value":true
                 }],
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":120,
          "x":0,
          "y":0
@@ -99745,14 +99745,6 @@
                         }]
                 }],
          "tilewidth":16
-        }, 
-        {
-         "firstgid":88542,
-         "source":"..\/..\/..\/..\/MathWhizTilemap\/warning(1).tsx"
-        }, 
-        {
-         "firstgid":88558,
-         "source":"..\/..\/..\/..\/MathWhizTilemap\/warning(2).tsx"
         }],
  "tilewidth":16,
  "type":"map",
