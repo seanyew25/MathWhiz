@@ -12,6 +12,7 @@
             {{
               currentQuestion.operator === "+"
                 ? "Addition Game"
+                : "Subtraction Game" 
             }}
           </h1>
 

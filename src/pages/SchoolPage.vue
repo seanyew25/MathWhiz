@@ -11,10 +11,8 @@
   </div>
 </template>
 <style scoped></style>
-<script setup>
-// import SchoolASPage from "./ASComponent.vue";
-// import SchoolMDPage from "./MDComponent.vue";
 
+<script>
 import MuliplicationDivisionGame from "../components/school/MultiplicationDivisionGame.vue";
 import AdditionSubtractGame from "../components/school/AdditionSubtractGame.vue";
 import { ref, onMounted } from "vue";
