@@ -6,8 +6,8 @@
 </template>
 <style scoped></style>
 <script setup>
-// import SchoolASPage from "ASComponent.vue";
-// import SchoolMDPage from "MDComponent.vue";
+import SchoolASPage from "./ASComponent.vue";
+// import SchoolMDPage from "./MDComponent.vue";
 
 //rename GameComponent.vue to MDComponent.vue
 // my vue template will be under ASComponent.vue
