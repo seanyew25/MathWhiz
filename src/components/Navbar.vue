@@ -1,51 +1,83 @@
+<style scoped>
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #FFF5CD;
+  transition: transform 0.2s ease;
+  transform: translateY(0);
+}
+
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
+.nav-item {
+  padding-left: 15px;
+}
+
+.nav-item a {
+  position: relative;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-item a:hover {
+  transform: scale(1.1);
+  color: #FFCFB3;
+}
+
+.nav-item a:hover::after,
+.nav-item.active a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.9;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+}
+.profile-icon:hover {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+</style>
 <template>
-  <nav
-    class="navbar navbar-expand-lg"
-    style="
+  <nav class="navbar navbar-expand-lg" style="
       background-color: rgba(255, 245, 205, 1);
       padding-left: 5%;
       padding-right: 5%;
+      border: 2px solid #212121; /* Dark pixelated effect */
+      border-radius: 3px; /* Small rounding for a retro look */
     "
-  >
+    :class="['navbar', { hidden: isNavbarHidden }]">
     <div class="container-fluid">
-      <a class="navbar-brand"
-        ><RouterLink style="text-decoration: none; color: black" to="/"
-          >MathWhiz</RouterLink
-        ></a
-      >
+      <a class="navbar-brand">
+        <RouterLink style="text-decoration: none; color: black" to="/"><img src="/assets/navbar/MathWhiz-logo-final.png"
+            style="width:120px" alt=""></RouterLink>
+      </a>
       <div class="d-flex order-lg-2 gap-2">
-        <button
-          v-if="!isAuthenticated"
-          @click="openModal"
-          class="btn btn-outline-primary"
-          type="submit"
-          data-bs-target="#getStartedModal"
-          data-bs-toggle="modal"
-        >
+        <button v-if="!isAuthenticated" @click="openModal" class="btn btn-outline-primary" type="submit"
+          data-bs-target="#getStartedModal" data-bs-toggle="modal">
           Get Started!
         </button>
 
         <!-- Example single danger button -->
         <div v-else class="dropdown-center">
-          <button
-            class="btn btn-secondary dropdown-toggle"
-            style="background-color: transparent; color: black; border: none"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              class="bi bi-person"
-              viewBox="0 0 16 16"
-            >
-              <path
-                d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"
-              />
-            </svg>
+          <button class="btn btn-secondary dropdown-toggle math-game profile-icon"
+            style="background-color: transparent; color: black; border: none" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <img
+                  src="/assets/mainassets/player.png" width="20"
+                />
             {{ userData.displayName ? userData.displayName : username }}
           </button>
           <ul class="dropdown-menu">
@@ -55,26 +87,17 @@
           </ul>
         </div>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarSupportedContent"
-          aria-controls="navbarSupportedContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
       </div>
 
-      <div
-        class="order-lg-1 collapse navbar-collapse"
-        id="navbarSupportedContent"
-      >
+      <div class="order-lg-1 collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <!-- <a>Test</a> -->
+          <!-- START OF REMOVE -->
+
+           <!-- <li class="nav-item">
             <RouterLink
               class="nav-link"
               to="/bakery"
@@ -84,7 +107,6 @@
             >
           </li>
           <li class="nav-item">
-            <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
               to="/bank"
@@ -94,7 +116,6 @@
             >
           </li>
           <li class="nav-item">
-            <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
               to="/school"
@@ -102,36 +123,39 @@
               style="text-decoration: none; color: black"
               >School</RouterLink
             >
-          </li>
+          </li> 
           <li class="nav-item">
-            <!-- <a>Test</a> -->
             <RouterLink
               class="nav-link"
-              to="/game"
+              to="/timerbar"
               aria-current="page"
               style="text-decoration: none; color: black"
-              >Game</RouterLink
+              >Timer</RouterLink
             >
-          </li>
-          <li class="nav-item">
+          </li>  -->
+
+          <!-- END OF REMOVE -->
+          <li class="nav-item" :class="{ 'active': isGameActive }"
+          style="padding-left: 50px;">
             <!-- <a>Test</a> -->
-            <RouterLink
-              class="nav-link"
-              to="/story"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Story</RouterLink
-            >
+            <RouterLink v-if="isAuthenticated" class="nav-link math-game" to="/game" aria-current="page"
+              style="text-decoration: none; color: black">
+              <img src="/assets/navbar/animated_control_room_facebook_scrolling.gif"
+            style="width:25px" alt=""> Game</RouterLink>
           </li>
-          <li class="nav-item">
+          <li class="nav-item" :class="{ 'active': activeRoute === '/story' }">
             <!-- <a>Test</a> -->
-            <RouterLink
-              class="nav-link"
-              to="/shop"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Shop</RouterLink
-            >
+            <RouterLink v-if="isAuthenticated" class="nav-link math-game" to="/story" aria-current="page"
+              style="text-decoration: none; color: black">
+              <img src="/assets/navbar/animated_spell_book.gif"
+            style="width:50px" alt="">Story</RouterLink>
+          </li>
+          <li class="nav-item" :class="{ 'active': activeRoute === '/shop' }">
+            <!-- <a>Test</a> -->
+            <RouterLink v-if="isAuthenticated" class="nav-link math-game" to="/shop" aria-current="page"
+              style="text-decoration: none; color: black">
+              <img src="/assets/navbar/animated_shopping_cart.gif"
+            style="width:50px" alt="">Shop</RouterLink>
           </li>
         </ul>
       </div>
@@ -140,115 +164,63 @@
 
   <!-- <div v-if="showModal">Hello World</div> -->
   <div>
-    <div
-      class="modal fade"
-      id="getStartedModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
+    <div class="modal fade" id="getStartedModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <h1 class="modal-title fs-5" id="getStartedLabel">Get Started!</h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <nav class="nav nav-tabs">
-              <a
-                @click="displayForm = 'login'"
-                :class="
-                  displayForm === 'login' ? 'nav-link active' : 'nav-link'
-                "
-                aria-current="page"
-                >Login</a
-              >
-              <a
-                @click="displayForm = 'signup'"
-                :class="
-                  displayForm === 'signup' ? 'nav-link active' : 'nav-link'
-                "
-                >Sign Up</a
-              >
+              <a @click="displayForm = 'login'" :class="displayForm === 'login' ? 'nav-link active' : 'nav-link'
+                " aria-current="page">Login</a>
+              <a @click="displayForm = 'signup'" :class="displayForm === 'signup' ? 'nav-link active' : 'nav-link'
+                ">Sign Up</a>
             </nav>
-            <form
-              class="mt-3"
-              v-show="displayForm === 'login'"
-              id="login"
-              @submit.prevent="handleLogin"
-            >
+            <form class="mt-3" v-show="displayForm === 'login'" id="login" @submit.prevent="handleLogin">
               <div class="mb-3">
                 <label for="inputEmail" class="form-label">Email address</label>
-                <input
-                  type="email"
-                  :class="'form-control ' + loginValidity"
-                  id="inputEmail"
-                  aria-describedby="emailHelp"
-                  v-model="email"
-                />
+                <input type="email" :class="'form-control ' + loginValidity" id="inputEmail"
+                  aria-describedby="emailHelp" v-model="email" />
                 <div class="invalid-feedback">
                   Kindly re-check the email address you've provided.
                 </div>
               </div>
               <div class="mb-3">
                 <label for="inputPassword" class="form-label">Password</label>
-                <input
-                  type="password"
-                  :class="'form-control ' + loginValidity"
-                  id="inputPassword"
-                  v-model="loginPassword"
-                />
+                <input type="password" :class="'form-control ' + loginValidity" id="inputPassword"
+                  v-model="loginPassword" />
                 <div class="invalid-feedback">
                   Kindly re-check the password you've provided.
                 </div>
               </div>
               <div style="float: right">
-                <button
-                  @click="handleLogin"
-                  type="button"
-                  class="btn btn-primary"
-                >
+                <button @click="handleLogin" type="button" class="btn btn-primary">
                   Login!
                 </button>
               </div>
             </form>
-            <form
-              class="mt-3"
-              v-show="displayForm === 'signup'"
-              id="signup"
-              @submit.prevent="handleLogin"
-            >
+            <form class="mt-3" v-show="displayForm === 'signup'" id="signup" @submit.prevent="handleLogin">
+              <div class="mb-3">
+                <label for="inputSignupUsername" class="form-label">Username</label>
+                <input :class="'form-control ' + usernameCheck" id="inputSignupUsername" aria-describedby="emailHelp"
+                  v-model="username" />
+                <div class="invalid-feedback">Kindly add a username.</div>
+              </div>
 
               <div class="mb-3">
-                <label for="inputSignupEmail" class="form-label"
-                  >Email address</label
-                >
-                <input
-                  type="email"
-                  :class="'form-control ' + signupValidity"
-                  id="inputSignupEmail"
-                  aria-describedby="emailHelp"
-                  v-model="signupEmail"
-                />
+                <label for="inputSignupEmail" class="form-label">Email address</label>
+                <input type="email" :class="'form-control ' + signupValidity" id="inputSignupEmail"
+                  aria-describedby="emailHelp" v-model="signupEmail" />
                 <div class="invalid-feedback">
                   Kindly re-check the email address you've provided.
                 </div>
               </div>
               <div class="mb-3">
-                <label for="inputSignupPassword" class="form-label"
-                  >Password</label
-                >
-                <input
-                  type="password"
-                  :class="'form-control ' + signupValidity"
-                  id="inputSignupPassword"
-                  v-model="signupPassword"
-                />
+                <label for="inputSignupPassword" class="form-label">Password</label>
+                <input type="password" :class="'form-control ' + signupValidity" id="inputSignupPassword"
+                  v-model="signupPassword" />
                 <div class="invalid-feedback">
                   Password must have at least 6 characters.
                 </div>
@@ -280,11 +252,7 @@
 
 
               <div style="float: right">
-                <button
-                  @click="handleSignup"
-                  type="button"
-                  class="btn btn-primary"
-                >
+                <button @click="handleSignup" type="button" class="btn btn-primary">
                   Sign Up!
                 </button>
               </div>
@@ -297,6 +265,7 @@
 </template>
 
 <script setup>
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -306,15 +275,14 @@ import {
   signOut,
 } from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
-import { ref, onMounted } from "vue";
 import * as bootstrap from "bootstrap";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
+
 const loginValidity = ref("");
 const email = ref("");
 const signupEmail = ref("");
 const loginPassword = ref("");
 const signupPassword = ref("");
-// const confirmPassword = ref("");
 const errorMessage = ref("");
 const displayForm = ref("login");
 const username = ref("");
@@ -344,61 +312,37 @@ onMounted(() => {
     isAuthenticated.value = user !== null;
   });
 });
+
 const signupValidity = ref("");
-
 const router = useRouter();
-
 const handleLogin = () => {
-  console.log(email.value);
-  console.log(loginPassword.value);
-
   signInWithEmailAndPassword(auth, email.value, loginPassword.value)
     .then((userCredential) => {
-      // Signed in
       const user = userCredential.user;
-      // console.log(auth.currentUser);
-      console.log("You're logged in", user);
       const modalElement = document.getElementById("getStartedModal");
       const modal = bootstrap.Modal.getInstance(modalElement);
-      // userData.value = user;
       router.push("/story");
       modal.hide();
-
-      // Here you can add logic to redirect the user or update the UI
     })
     .catch((error) => {
       const errorCode = error.code;
       errorMessage.value = error.message;
-      console.error("Login error:", errorCode, errorMessage.value);
       loginValidity.value = "is-invalid";
     });
 };
 
 const handleSignup = () => {
-  console.log(signupEmail.value);
-  console.log(signupPassword.value);
-  username.value.trim().length === 0
-    ? (usernameCheck.value = "is-invalid")
-    : "";
+  if (username.value.trim().length === 0) {
+    usernameCheck.value = "is-invalid";
+    return;
+  }
   createUserWithEmailAndPassword(auth, signupEmail.value, signupPassword.value)
     .then((userCredential) => {
-      // Signed up
-      // const user = auth.currentUser;
       const user = userCredential.user;
       user["displayName"] = username.value.trim();
       userData.value = user;
-      console.log(userData.value);
       createUserProfile(user.uid);
-      updateProfile(user, {
-        displayName: username.value.trim(),
-      })
-        .then((response) => {
-          // console.log(response);
-          // userData.value = updatedUser;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      updateProfile(user, { displayName: username.value.trim() });
       router.push("/story");
 
       const modalElement = document.getElementById("getStartedModal");
@@ -406,22 +350,17 @@ const handleSignup = () => {
       modal.hide();
     })
     .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(error.message);
       signupValidity.value = "is-invalid";
-      // ..
     });
 };
 
 const handleLogout = () => {
   signOut(auth)
     .then(() => {
-      console.log("Sign-out successful.");
       router.push("/");
     })
     .catch((error) => {
-      // An error happened.
+      console.error("Logout error:", error);
     });
 };
 
@@ -437,4 +376,36 @@ async function createUserProfile(userId) {
     { merge: true }
   );
 }
+
+const isNavbarHidden = ref(false);
+let lastScrollTop = 0;
+
+const handleScroll = () => {
+  const currentScroll = window.pageYOffset || 0;
+
+  if (currentScroll > lastScrollTop && currentScroll > 0) {
+    isNavbarHidden.value = true;
+  } else if (currentScroll < lastScrollTop) {
+    isNavbarHidden.value = false;
+  }
+
+  lastScrollTop = currentScroll;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
+
+const route = useRoute();
+const activeRoute = computed(() => route.path);
+
+const isGameActive = computed(() => {
+  // Check if the current path is NOT '/', '/story', or '/shop'
+  return route.path !== '/' && route.path !== '/story' && route.path !== '/shop';
+});
+
 </script>

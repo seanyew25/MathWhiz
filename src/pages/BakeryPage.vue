@@ -105,6 +105,7 @@ export default {
     },
     rejectCall() {
       this.showPhone = false;
+      this.$router.push("/game");
     },
     generateRandomCakes() {
       const cakeTypes = [
