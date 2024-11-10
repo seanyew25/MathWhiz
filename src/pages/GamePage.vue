@@ -127,7 +127,7 @@ export default {
           homeDoor.anims.play("homeDoor-open", false);
           homeDoor.once("animationcomplete", (animation, frame) => {
             console.log(frame.index);
-            this.router.push("/profile");
+            this.router.push("/catchangingroom");
           });
         } else if (name === "bankDoor" && !this.doorAnimationCompleted) {
           this.doorAnimationCompleted = true;

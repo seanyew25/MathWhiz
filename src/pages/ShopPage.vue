@@ -99,15 +99,16 @@ export default {
     return {
       cats: [
         {
-          name: "Morgana",
+          name: "Tuxedo",
           cuteness: 92,
           fluffiness: 85,
           coolness: 90,
           color: "Siamese",
           imgLocation: "/assets/shopassets/morgana.png",
-          description: "The Original. This cat will steal your heart.",
-          rarity: "Rare",
-          price: 200,
+          description:
+            "Morgana's Original Look. This cat will steal your heart.",
+          rarity: "Common",
+          price: 20,
         },
         {
           name: "Peach",
@@ -118,7 +119,7 @@ export default {
           imgLocation: "/assets/shopassets/peach.png",
           description: "Soft and sweet, just like a peach.",
           rarity: "Common",
-          price: 200,
+          price: 20,
         },
 
         {
@@ -130,7 +131,7 @@ export default {
           imgLocation: "/assets/shopassets/midnight.png",
           description: "A sleek shadow that prowls through the night.",
           rarity: "Super Rare",
-          price: 800,
+          price: 80,
         },
 
         {
@@ -142,7 +143,7 @@ export default {
           imgLocation: "/assets/shopassets/luminiscent.png",
           description: "A glowing beauty that lights up any room.",
           rarity: "Super Rare",
-          price: 800,
+          price: 80,
         },
 
         {
@@ -154,7 +155,7 @@ export default {
           imgLocation: "/assets/shopassets/calico.png",
           description: "A colorful friend full of personality.",
           rarity: "Common",
-          price: 200,
+          price: 20,
         },
 
         {
@@ -166,7 +167,7 @@ export default {
           imgLocation: "/assets/shopassets/cream.png",
           description: "Soft, creamy, and always ready to cuddle.",
           rarity: "Rare",
-          price: 400,
+          price: 40,
         },
 
         {
@@ -178,7 +179,7 @@ export default {
           imgLocation: "/assets/shopassets/mocha.png",
           description: "Warm and cozy, just like your favorite drink.",
           rarity: "Rare",
-          price: 400,
+          price: 40,
         },
 
         {
@@ -190,7 +191,7 @@ export default {
           imgLocation: "/assets/shopassets/snowy.png",
           description: "As pure and cool as freshly fallen snow.",
           rarity: "Super Rare",
-          price: 800,
+          price: 80,
         },
       ],
       money: "",

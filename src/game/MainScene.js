@@ -11,7 +11,7 @@ export default class MainScene extends Phaser.Scene {
   static player;
   static cursors;
   static objects;
-  static speed = 80;
+  static speed = 100;
 
   preload() {
     // Runs once, loads up assets like images and audio
@@ -301,6 +301,7 @@ export default class MainScene extends Phaser.Scene {
       }
     }
     this.player = this.physics.add.sprite(playerX, playerY, "player", 3);
+    // this.player.setVisible(false);
     this.cat = this.physics.add.sprite(playerX, playerY - 20, "cat", 44);
     // this.catOffsetX = 0;
     // this.catOffsetY = -20;
@@ -807,12 +808,38 @@ export default class MainScene extends Phaser.Scene {
 
     if (!moving) {
       this.setCatPosition = false;
-      this.player.anims.stop();
+      // this.player.anims.stop();
       if (this.cat.anims.isPlaying) {
         const currentAnimationName = this.cat.anims.currentAnim.key;
         if (currentAnimationName.includes("walk")) {
           this.cat.body.setVelocity(0);
           this.cat.anims.stop();
+          if (currentAnimationName === "cat-walk-down") {
+            this.cat.setFrame(44);
+          } else if (currentAnimationName === "cat-walk-left") {
+            this.cat.setFrame(160);
+          } else if (currentAnimationName === "cat-walk-up") {
+            this.cat.setFrame(288);
+          } else if (currentAnimationName === "cat-walk-right") {
+            this.cat.setFrame(416);
+          }
+        }
+      }
+
+      if (this.player.anims.isPlaying) {
+        const currentAnimationName = this.player.anims.currentAnim.key;
+        if (currentAnimationName.includes("walk")) {
+          this.player.body.setVelocity(0);
+          this.player.anims.stop();
+          if (currentAnimationName === "walk-down") {
+            this.player.setFrame(3);
+          } else if (currentAnimationName === "walk-left") {
+            this.player.setFrame(2);
+          } else if (currentAnimationName === "walk-up") {
+            this.player.setFrame(1);
+          } else if (currentAnimationName === "walk-right") {
+            this.player.setFrame(0);
+          }
         }
       }
     }
