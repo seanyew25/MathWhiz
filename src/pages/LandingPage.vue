@@ -70,6 +70,14 @@
         >
           Get Started!
         </button>
+        <button
+          v-else
+          class="btn btn-outline-secondary w-75 p-3 tw-opacity-50 tw-cursor-not-allowed"
+          disabled
+          title="You're already signed in!"
+        >
+          Already Signed In
+      </button>
     </div> 
   </div>
 
@@ -189,4 +197,17 @@ video {
 </style>
 
 <script setup>
+import { ref, onMounted } from "vue";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+const auth = getAuth();
+const isAuthenticated = ref("");
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      isAuthenticated.value = true;
+    } else {
+      isAuthenticated.value = false;
+    }
+  });
+});
 </script>
