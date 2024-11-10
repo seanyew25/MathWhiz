@@ -99,8 +99,9 @@
     </div>
     <div class="tw-flex tw-flex-col tw-items-center">
       <button
+        v-if="!isAuthenticated"
         @click="openModal"
-        class="btn btn-outline-primary w-75 p-3 tw-font-russo-one"
+        class="btn btn-outline-primary w-75 p-3"
         type="submit"
         data-bs-target="#getStartedModal"
         data-bs-toggle="modal"
