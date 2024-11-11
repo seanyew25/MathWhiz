@@ -29,14 +29,14 @@
                         <img src="/assets/marketassets/conveyor start.png">
                         </div>
 
-                        <img src="/assets/marketassets/conveyor middle.png" alt="Conveyor Middle" v-for="n in 10" />
+                        <img src="/assets/marketassets/conveyor middle.png" alt="Conveyor Middle" v-for="n in 9" />
 
                         <div class="tw-conveyor conveyor-end">
                         <img src="/assets/marketassets/conveyor end.png"/>
                         </div>
                         
                         <div class="tw-grocery-container" :id="'grocery-' + index">
-                            <img :src="conveyor.image" class="tw-grocery" :alt="'Basket ' + (index + 1)" />
+                            <img :src="conveyor.image" class="tw-grocery" :alt="'Basket ' + index" />
                             <div v-if="!conveyor.showCross && conveyor.assignedOrdinal" 
                                 :class="['tw-label-circle', conveyor.labelClass]" 
                                 @click="resetLabel(index)">
@@ -105,7 +105,7 @@ export default {
     name: "MarketOrdering",
     setup() {
         const conveyors = reactive(Array.from({ length: 4 }, (_, i) => ({
-            id: i + 1,
+            id: i,
             correctOrdinal: null,
             assignedOrdinal: null,
             image: '',
@@ -141,20 +141,18 @@ export default {
             });
         };
 
-        // Modified to calculate start and end positions more dynamically
-
         const resetGroceries = () => {
             conveyors.forEach((conveyor, index) => {
-                const grocery = document.getElementById(`grocery-${conveyor.id - 1}`);
-                const conveyorStartImage = document.querySelector('div.conveyor-start');
+                const grocery = document.getElementById(`grocery-${conveyor.id}`);
+                
+                // No animation
                 grocery.style.transition = "none";
 
-                // Calculate start position more precisely based on the start image position and offset
-                const startPos = conveyorStartImage.getBoundingClientRect().left;
-                grocery.style.left = `${startPos}px`;
-                
-                grocery.offsetHeight; // Force reflow to apply the immediate positioning
-                grocery.style.transition = "left 3s linear";
+                // Start position
+                grocery.style.left = `20px`;
+
+                // Force reflow to apply the positioning immediately
+                grocery.offsetHeight;
             });
         };
 
@@ -167,14 +165,14 @@ export default {
 
             let cumulativeDelay = 0;
             shuffledConveyors.forEach((conveyor, index) => {
-                const grocery = document.getElementById(`grocery-${conveyor.id - 1}`);
-                const conveyorEndImage = document.querySelector('div.conveyor-end');
-                
-                // Calculate end position based on the end image position and offset
-                const endPos = conveyorEndImage.getBoundingClientRect().left;
+                const grocery = document.getElementById(`grocery-${conveyor.id}`);
+
+                // Animation
+                grocery.style.transition = "left 4s linear";
 
                 setTimeout(() => {
-                    grocery.style.left = `${endPos}px`;
+                    // End position
+                    grocery.style.left = `735px`;
                 }, cumulativeDelay);
 
                 cumulativeDelay += Math.random() * 800 + 200; // Introduce random delays for each item
@@ -262,7 +260,7 @@ export default {
             });
 
             assignRandomImages();
-            setTimeout(resetGroceries, 200);
+            resetGroceries();
             setTimeout(startRace, 1000);
             resetTimer();
             loadingNextQuestion.value = false;
