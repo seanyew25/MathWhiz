@@ -7,12 +7,12 @@
       @go-to-multiplication-division="goToMultiplicationDivision"
     />
     <AdditionSubtractGame v-else-if="showAdditionSubtraction" />
-    <MuliplicationDivisionGame v-else-if="showMultiplicationDivision" />
+    <MultiplicationDivisionGame v-else-if="showMultiplicationDivision" />
   </div>
 </template>
 
 <script setup>
-import MuliplicationDivisionGame from "../components/school/MultiplicationDivisionGame.vue";
+import MultiplicationDivisionGame from "../components/school/MultiplicationDivisionGame.vue";
 import AdditionSubtractGame from "../components/school/AdditionSubtractGame.vue";
 import { ref, onMounted } from "vue";
 import SchoolCutscene from "../components/school/SchoolCutscene.vue";

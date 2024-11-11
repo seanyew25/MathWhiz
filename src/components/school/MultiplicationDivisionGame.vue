@@ -4,7 +4,7 @@
     <!-- Game Container -->
       <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 850px;">
         <p class="title" style="background-color: rgba(255, 245, 205, 1);">Multiplication and Division</p>
-
+ 
         <div class="tw-w-full">
           <!-- Instructions and Hint -->
           <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
