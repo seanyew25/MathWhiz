@@ -126,6 +126,7 @@
   overflow: hidden;
   text-align: center;
   color: #fff;
+  z-index: 10;
 }
 
 .hero-video {

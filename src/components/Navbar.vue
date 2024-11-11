@@ -128,7 +128,17 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <!-- START OF REMOVE -->
 
-          <!-- <li class="nav-item">
+          <li class="nav-item">
+            <RouterLink
+              class="nav-link"
+              to="/market"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Market</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <a>Test</a>
             <RouterLink
               class="nav-link"
               to="/bakery"
@@ -163,7 +173,7 @@
               style="text-decoration: none; color: black"
               >Timer</RouterLink
             >
-          </li>  -->
+          </li>
 
           <!-- END OF REMOVE -->
           <li

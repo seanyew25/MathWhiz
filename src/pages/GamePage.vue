@@ -252,7 +252,7 @@ export default {
           shoppingCentreDoor.setDepth(0);
           shoppingCentreDoor.anims.play("shoppingCentreDoor-open", false);
           shoppingCentreDoor.once("animationcomplete", (animation, frame) => {
-            this.router.push("/shoppingcentre");
+            this.router.push("/market");
           });
         } else if (
           (name === "schoolDoor1" || name === "schoolDoor2") &&

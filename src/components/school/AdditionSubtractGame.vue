@@ -1,21 +1,37 @@
 <template>
-  <div
-    class="math-game min-h-screen bg-gray-100 flex flex-col"
-    style="background-color: #add8e6; position: relative"
-  >
-    <div class="flex-grow flex items-center justify-center p-4">
-      <div
-        class="w-full max-w-5xl bg-white rounded-lg shadow-xl overflow-hidden"
-      >
-        <div class="p-6 w-[400px] h-[300px] mx-auto">
-          <h1 class="text-3xl font-bold text-center align-center mb-6">
-            {{
-              currentQuestion.operator === "+"
-                ? "Addition Game"
-                : "Subtraction Game"
-            }}
-          </h1>
+  <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
 
+    <!-- Game Container -->
+      <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 800px;">
+        <p class="title" style="background-color: rgba(255, 245, 205, 1);">Addition and Subtraction</p>
+
+        <div class="p-6 w-[400px] h-[300px] mx-auto">
+ 
+          <!-- Instructions and Hint -->
+          <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
+            <h1 class="tw-text-3xl text-center align-center">
+              {{currentQuestion.operator === "+" ? "Add the numbers!" : "Subtract the numbers!"
+              }}
+            </h1>
+            <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm tw-mx-4">Hint</button>
+          </div>  
+
+          <!-- Hint Modal -->
+          <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
+            <div class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6">
+              <p class="title">Hint</p>
+              <p class="tw-text-lg tw-mb-4">
+                Hover over the emojis to visualise the addition and subtraction!
+              </p>
+              
+              <!-- Button-->
+              <div class="tw-flex tw-gap-8 tw-justify-center">
+                <button @click="showHintModal = false" class="nes-btn is-success tw-w-auto">I Understand!</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timer Bar -->
           <div class="progress-container">
             <progress
               class="nes-progress is-success"
@@ -24,29 +40,6 @@
             ></progress>
             <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
           </div>
-
-          <section>
-            <button
-              type="button"
-              class="nes-btn is-primary"
-              onclick="document.getElementById('dialog-default').showModal();"
-            >
-              Hint
-            </button>
-            <dialog class="nes-dialog" id="dialog-default">
-              <form method="dialog">
-                <p class="title">Hint</p>
-                <p>
-                  Hover over the emojis to visualise the addition and
-                  subtraction
-                </p>
-                <menu class="dialog-menu">
-                  <button class="nes-btn">Cancel</button>
-                  <button class="nes-btn is-primary">Confirm</button>
-                </menu>
-              </form>
-            </dialog>
-          </section>
 
           <transition name="fade" mode="out-in">
             <div :key="'question-' + questionIndex" class="question-container">
@@ -146,21 +139,14 @@
             </button>
           </div>
 
-          <!-- Streak Message -->
-          <div v-if="streakActive" class="text-center mb-2">
-            <p class="text-xl text-green-600">
-              You are on a streak! x2 coins enabled!
-            </p>
-          </div>
+          <!-- Question and Coins Display -->
+          <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-6">
+              Question {{ questionsAnswered }}/10 - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+          </h2>
 
-          <!-- Display coin count -->
-          <div class="text-center mt-4">
-            <p class="text-xl">
-              Coins Earned: {{ coins }} <i class="nes-icon coin is-medium"></i>
-            </p>
-            <p class="text-xl">
-              Questions Answered: {{ questionsAnswered }} / 10
-            </p>
+          <!-- Streak Message -->
+          <div v-if="streakActive" class="tw-flex tw-items-center tw-justify-center">
+            <i class="nes-icon trophy is-large"></i><p class="tw-mx-6">On a streak! x2 coins enabled!</p><i class="nes-icon trophy is-large"></i>
           </div>
 
           <div v-if="gameOver" class="game-over-overlay">
@@ -173,7 +159,6 @@
               <button @click="restartGame" class="nes-btn is-success">
                 Restart Game
               </button>
-            </div>
           </div>
         </div>
       </div>
@@ -407,14 +392,9 @@ export default {
 /* @import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css");
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
 
-.math-game {
-  font-family: "Press Start 2P", cursive;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: mediumseagreen;
-}
+* {
+    font-family: 'Press Start 2P', sans-serif;
+    }
 
 body {
   display: flex;

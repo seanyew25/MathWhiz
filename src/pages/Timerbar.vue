@@ -5,7 +5,7 @@
     </div>
     <p class="timer-text position-absolute top-50 start-50 translate-middle">{{ Math.ceil(timerSeconds) }}s</p>
   </div>
-</template>
+</template> 
 
 <script>
 export default {
