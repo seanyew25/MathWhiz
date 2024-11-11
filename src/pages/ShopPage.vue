@@ -1,22 +1,25 @@
 <template>
-  <div class="tw-flex-1 tw-bg-[#B7E0FF] tw-min-h-screen tw-pb-10">
-    <br />
-    <div class="nes-container tw-bg-[#FFCFB3] tw-mb-6 tw-mx-auto tw-w-fit">
-      <span class="tw-font-press-start tw-text-xs"
-        >Destress Coins {{ money }}</span
-      >&nbsp;<i class="nes-icon coin is-small"></i>
+  <div class="shop tw-flex tw-flex-col tw-items-center tw-justify-center tw-min-h-screen">
+
+    <!-- Currency Display -->
+    <div class="nes-container is-rounded is-centered tw-bg-[#FFCFB3] tw-w-fit" style="margin-top: 30px;">
+      <h2 class=" tw-text-lg">{{ money }} Destress Coins <i class="nes-icon coin"></i></h2>
     </div>
+
     <div
-      class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-m-auto tw-mb-10"
+      class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-my-6"
     >
       <div v-for="cat in cats" class="tw-m-auto">
         <CardComponent
           :key="cat.name"
           :catObj="cat"
           @buyAction="handleBuyAction"
+
         />
       </div>
     </div>
+
+    <!-- Insufficient Currency Alert -->
     <dialog class="nes-dialog md:tw-max-w-[50%]" id="dialog-default">
       <form method="dialog">
         <p class="tw-font-press-start tw-text-xs">{{ dialogMessage }}</p>
@@ -25,9 +28,13 @@
         </button>
       </form>
     </dialog>
+
   </div>
 </template>
 <style scoped>
+.shop {
+  font-family: "Press Start 2P";
+}
 .nes-btn {
   border-image-slice: 2;
   border-image-width: 2;
@@ -99,15 +106,16 @@ export default {
     return {
       cats: [
         {
-          name: "Morgana",
+          name: "Tuxedo",
           cuteness: 92,
           fluffiness: 85,
           coolness: 90,
           color: "Siamese",
           imgLocation: "/assets/shopassets/morgana.png",
-          description: "The Original. This cat will steal your heart.",
-          rarity: "Rare",
-          price: 200,
+          description:
+            "Morgana's Original Look. This cat will steal your heart.",
+          rarity: "Common",
+          price: 20,
         },
         {
           name: "Peach",
@@ -118,7 +126,7 @@ export default {
           imgLocation: "/assets/shopassets/peach.png",
           description: "Soft and sweet, just like a peach.",
           rarity: "Common",
-          price: 200,
+          price: 20,
         },
 
         {
@@ -130,19 +138,19 @@ export default {
           imgLocation: "/assets/shopassets/midnight.png",
           description: "A sleek shadow that prowls through the night.",
           rarity: "Super Rare",
-          price: 800,
+          price: 80,
         },
 
         {
-          name: "Luminescent",
+          name: "Luminous",
           cuteness: 85,
           fluffiness: 80,
           coolness: 95,
           color: "Silver",
-          imgLocation: "/assets/shopassets/luminiscent.png",
+          imgLocation: "/assets/shopassets/luminous.png",
           description: "A glowing beauty that lights up any room.",
           rarity: "Super Rare",
-          price: 800,
+          price: 80,
         },
 
         {
@@ -154,7 +162,7 @@ export default {
           imgLocation: "/assets/shopassets/calico.png",
           description: "A colorful friend full of personality.",
           rarity: "Common",
-          price: 200,
+          price: 20,
         },
 
         {
@@ -166,7 +174,7 @@ export default {
           imgLocation: "/assets/shopassets/cream.png",
           description: "Soft, creamy, and always ready to cuddle.",
           rarity: "Rare",
-          price: 400,
+          price: 40,
         },
 
         {
@@ -178,7 +186,7 @@ export default {
           imgLocation: "/assets/shopassets/mocha.png",
           description: "Warm and cozy, just like your favorite drink.",
           rarity: "Rare",
-          price: 400,
+          price: 40,
         },
 
         {
@@ -190,7 +198,7 @@ export default {
           imgLocation: "/assets/shopassets/snowy.png",
           description: "As pure and cool as freshly fallen snow.",
           rarity: "Super Rare",
-          price: 800,
+          price: 80,
         },
       ],
       money: "",
