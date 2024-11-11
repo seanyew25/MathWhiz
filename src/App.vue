@@ -34,6 +34,10 @@ router.beforeEach(async (to, from) => {
 const backgroundImage = computed(() => {
   if (route.path === "/market") {
     return "url('/assets/backgroundassets/cart.gif')";
+  } else if (route.path === "/bank") {
+    return "url('/assets/backgroundassets/safe.gif')";
+  } else if (route.path === "/bakery") {
+    return "url('/assets/backgroundassets/fridge.gif')";
   } else if (route.path === "/school") {
     return "url('/assets/backgroundassets/book.gif')";
   } else if (route.path === "/") {
@@ -47,15 +51,15 @@ const backgroundColor = computed(() => {
   if (route.path === "/") {
     return "";
   } else {
-  return "pink"; // Default
+  return "#B7E0FF"; // Default
   }
 });
 
 </script>
 
 <template>
-  <Navbar />
   <div :style="{ backgroundImage: backgroundImage, backgroundColor: backgroundColor}" class="background">
+    <Navbar />
     <RouterView></RouterView>
   </div>
 </template>

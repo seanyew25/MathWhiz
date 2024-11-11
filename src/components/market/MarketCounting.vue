@@ -1,27 +1,16 @@
 <template>
     <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
 
-        <!-- White Container -->
-        <div class="nes-container is-rounded is-centered with-title tw-bg-white tw-max-w-3xl">
-            <p class="title">Counting</p>
+        <!-- Game Container -->
+        <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 768px;">
+            <p class="title" style="background-color: rgba(255, 245, 205, 1);">Counting</p>
             <div class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center">
 
-                <!-- Question and Coins Display -->
-                <h2 class="tw-text-sm tw-font-bold tw-text-gray-800 tw-text-center">
-                    Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
-                </h2>
-
                 <!-- Instructions and Hint Button -->
-                <h3 class="tw-text-2xl tw-font-bold tw-mb-4 tw-flex tw-justify-center tw-items-center tw-gap-4">
-                    Make a total of: {{ targetNumber }}
-                    <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm">Hint</button>
+                <h3 class="tw-text-3xl tw-mb-4 tw-flex tw-justify-center tw-items-center tw-gap-4">
+                    Make a total of:{{ targetNumber }}
+                    <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm tw-mx-2">Hint</button>
                 </h3>
-
-                <!-- Timer Bar -->
-                <div class="progress-container tw-w-full">
-                    <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
-                    <p class="nes-text is-primary">{{ Math.round(timerWidth) }}s</p>
-                </div>
 
                 <!-- Hint Modal -->
                 <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
@@ -31,12 +20,18 @@
                             In Hint Mode, click items to preview them in the target box with a counter.<br>Do you want to turn on Hint Mode?
                         </p>
                         
-                        <!-- Button Container for Alignment and Spacing -->
+                        <!-- Buttons -->
                         <div class="tw-flex tw-gap-8 tw-justify-center">
                             <button @click="getHint(true)" class="nes-btn is-success tw-w-32">Yes</button>
                             <button @click="getHint(false)" class="nes-btn is-error tw-w-32">No</button>
                         </div>
                     </div>
+                </div>
+
+                <!-- Timer Bar -->
+                <div class="progress-container tw-w-full">
+                    <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
+                    <p class="nes-text is-primary">{{ Math.round(timerWidth) }}s</p>
                 </div>
 
                 <!-- Grids for Selection -->
@@ -57,16 +52,27 @@
                 </div>
 
                 <!-- Target Boxes for Display -->
-                <div class="tw-flex tw-justify-center tw-gap-8 tw-mt-6">
-                    <div ref="hundredsBox" class="target-box nes-container is-rounded" style="padding: 8px;"></div>
-                    <div ref="tensBox" class="target-box nes-container is-rounded" style="padding: 8px;"></div>
-                    <div ref="onesBox" class="target-box nes-container is-rounded" style="padding: 8px;"></div>
+                <div class="tw-flex tw-justify-center tw-gap-8 tw-my-6">
+                    <div ref="hundredsBox" class="target-box nes-container is-rounded tw-bg-white" style="padding: 8px;"></div>
+                    <div ref="tensBox" class="target-box nes-container is-rounded tw-bg-white" style="padding: 8px;"></div>
+                    <div ref="onesBox" class="target-box nes-container is-rounded tw-bg-white" style="padding: 8px;"></div>
                 </div>
+
+                <!-- Question and Coins Display -->
+                <h2 class="tw-text-base tw-font-bold tw-text-gray-800 tw-text-center">
+                    Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+                </h2>
+
+                <!-- Streak Message -->
+                <div v-if="streakCount >= 5" class="tw-flex tw-items-center tw-justify-center">
+                    <i class="nes-icon trophy is-large"></i><p class="tw-mx-6">On a streak! x2 coins enabled!</p><i class="nes-icon trophy is-large"></i>
+                </div>
+
             </div>
         </div>
         <!-- Game Over Modal -->
         <div v-if="gameOver" class="game-over-overlay">
-            <div class="game-over-content">
+            <div class="game-over-content nes-container is-rounded">
                 <h2>{{ completionMessage }}</h2>
                 <p>Coins Earned: {{ coins }}</p>
                 <div class="button-container">
@@ -297,8 +303,8 @@ export default {
                     showItemCountOverlay(tensBox.value, 0);
                     setTimeout(() => {
                         showItemCountOverlay(hundredsBox.value, 0);
-                    }, 200);
-                }, 200);
+                    }, 100);
+                }, 100);
                 // Load the next question after displaying zeros
                 setTimeout(() => {
                     resetStreak(); // Reset streak on incorrect answer
@@ -316,7 +322,7 @@ export default {
             if (groups.ones.length > 0) {
                 animateItems(groups.ones, 'ones', handleTensAnimationOrZero);
             } else if (groups.tens.length > 0 || groups.hundreds.length > 0) {
-                setTimeout(() => showItemCountOverlay(onesBox.value, 0), 100);
+                setTimeout(() => showItemCountOverlay(onesBox.value, 0), 50);
                 handleTensAnimationOrZero();
             }
         };
@@ -327,7 +333,7 @@ export default {
             if (tensGroup.length > 0) {
                 animateItems(tensGroup, 'tens', handleHundredsAnimation);
             } else if (hundredsGroup.length > 0) {
-                setTimeout(() => showItemCountOverlay(tensBox.value, 0), 300);
+                setTimeout(() => showItemCountOverlay(tensBox.value, 0), 150);
                 handleHundredsAnimation();
             } else {
                 handleHundredsAnimation();
@@ -379,7 +385,7 @@ export default {
                             onComplete();
                         }
                     });
-                }, index * 500);
+                }, index * 200);
             });
         };
 
@@ -433,7 +439,7 @@ export default {
             document.body.appendChild(clonedElement);
 
             clonedElement.getBoundingClientRect();
-            clonedElement.style.transition = 'top 0.3s ease-in-out, left 0.3s ease-in-out';
+            clonedElement.style.transition = 'top 0.15s ease-in-out, left 0.15s ease-in-out';
 
             requestAnimationFrame(() => {
                 clonedElement.style.top = `${newTop}px`;
@@ -594,8 +600,6 @@ export default {
         background: #fff;
         padding: 40px;
         width: 500px;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         text-align: center;
     }
 
@@ -652,8 +656,8 @@ export default {
     /* Wiggle animation */
     @keyframes wiggle {
     0%, 100% { transform: rotate(0); }
-    25% { transform: rotate(-3deg); }
-    75% { transform: rotate(3deg); }
+    25% { transform: rotate(-7deg); }
+    75% { transform: rotate(7deg); }
     }
     /* Counting Styles */
 </style>

@@ -1,10 +1,12 @@
 <template>
     <div class="cutscene md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
-        <!-- White Container -->
-        <div class="nes-container is-rounded is-centered with-title tw-bg-white tw-max-w-3xl">
-            <p class="title">Market</p>
+
+        <!-- Cutscene Container -->
+        <div class="nes-container is-rounded is-centered with-title tw-max-w-3xl" style="background-color: rgba(255, 245, 205, 1);">
+            <p class="title" style="background-color: rgba(255, 245, 205, 1);">Supermarket</p>
             <div class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center" @click="toggleAnimation">
                 <div class="tw-relative tw-inline-block tw-text-center">
+
                     <!-- Character Image with Animation -->
                     <img :src="currentImage" :class="{ shake: currentAnimation.value === 'alerted' }" 
                         alt="Character Animation" class="character-size tw-object-contain tw-mx-auto"/>

@@ -1,18 +1,13 @@
 <template>
     <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
 
-        <!-- White Container -->
-        <div class="nes-container is-rounded is-centered with-title tw-bg-white tw-max-w-3xl">
-            <p class="title">Ordering</p>
+        <!-- Game Container -->
+        <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 768px;">
+            <p class="title" style="background-color: rgba(255, 245, 205, 1);">Ordering</p>
             <div class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center">
 
-                <!-- Question and Coins Display -->
-                <h2 class="tw-text-sm tw-font-bold tw-text-gray-800 tw-text-center">
-                Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
-                </h2>
-
                 <!-- Instructions -->
-                <h2 class="tw-text-2    xl tw-font-bold tw-text-gray-800 tw-mb-2 tw-text-center">Label the items in order!</h2>
+                <h2 class="tw-text-3xl tw-mb-2 tw-text-center">Label the items in order!</h2>
 
                 <!-- Timer Bar Logic -->
                 <div class="progress-container tw-w-full">
@@ -71,6 +66,17 @@
                     <button class="nes-btn" @click="checkAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
                 </div>
             </div>
+
+            <!-- Question and Coins Display -->
+            <h2 class="tw-text-sm tw-font-bold tw-text-gray-800 tw-text-center tw-mt-6">
+                Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+            </h2>
+
+            <!-- Streak Message -->
+            <div v-if="streakCount >= 5" class="tw-flex tw-items-center tw-justify-center">
+                <i class="nes-icon trophy is-large"></i><p class="tw-mx-6">On a streak! x2 coins enabled!</p><i class="nes-icon trophy is-large"></i>
+            </div>
+
         </div>
 
         <!-- Game Over Modal -->
