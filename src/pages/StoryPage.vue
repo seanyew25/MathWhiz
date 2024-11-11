@@ -14,10 +14,7 @@
               <section class="message-list">
                 <section class="message -left flex">
                   <div>
-                    <img
-                      src="/assets/mainassets/player.png"
-                      class="tw-h-20 md:tw-order-2"
-                    />
+                    <img :src="imgLink" class="tw-h-20 md:tw-order-2" />
                     <div
                       class="nes-balloon tw-bg-inherit tw-font-press-start md:tw-order-1"
                     >
@@ -47,10 +44,14 @@
             </p>
             <section class="nes-container">
               <div class="nes-balloon tw-bg-inherit tw-font-press-start">
-                <p>Morgana strolls along the Bakery today! </p>
+                <p>Morgana strolls along the Bakery today!</p>
               </div>
-              <p><img src="/assets/mainassets/MorganaExploringMathropolis.png"
-                      class="tw-h-[300px] tw-justify-end"></p>
+              <p>
+                <img
+                  src="/assets/mainassets/MorganaExploringMathropolis.png"
+                  class="tw-h-[300px] tw-justify-end"
+                />
+              </p>
             </section>
           </div>
         </div>
@@ -66,7 +67,7 @@
               <section class="message-list">
                 <section class="message -left">
                   <div>
-                    <img src="/assets/mainassets/player.png" class="tw-h-20" />
+                    <img :src="imgLink" class="tw-h-20" />
                     <div class="nes-balloon tw-bg-inherit tw-font-press-start">
                       <p>Omg Morgana! What happened to your fur?😱</p>
                     </div>
@@ -106,7 +107,7 @@
               <section class="message-list">
                 <section class="message -left">
                   <div>
-                    <img src="/assets/mainassets/player.png" class="tw-h-20" />
+                    <img :src="imgLink" class="tw-h-20" />
                     <div class="nes-balloon tw-bg-inherit tw-font-press-start">
                       <p>I'm gonna help you solve the problems!!</p>
                     </div>
@@ -114,7 +115,7 @@
                 </section>
                 <section class="message -left">
                   <div>
-                    <img src="/assets/mainassets/player.png" class="tw-h-20" />
+                    <img :src="imgLink" class="tw-h-20" />
                     <div class="nes-balloon tw-bg-inherit tw-font-press-start">
                       <p>And you can destress and get your fur back!</p>
                     </div>
@@ -144,7 +145,7 @@
               <section class="message-list">
                 <section class="message -left">
                   <div>
-                    <img src="/assets/mainassets/player.png" class="tw-h-20" />
+                    <img :src="imgLink" class="tw-h-20" />
                     <div class="nes-balloon tw-bg-inherit tw-font-press-start">
                       <p>Move around with the <strong>arrow keys</strong>!</p>
                     </div>
@@ -195,10 +196,7 @@
                         The caution sign will direct you to your challenges!
                       </p>
                     </div>
-                    <img
-                      src="/assets/mainassets/player.png"
-                      class="tw-h-[80px]"
-                    />
+                    <img :src="imgLink" class="tw-h-[80px]" />
                   </div>
                 </section>
 
@@ -230,7 +228,10 @@
                 </section>
 
                 <div>
-                  <img src="/assets/mainassets/minimap.png" class="tw-h-[200px]">
+                  <img
+                    src="/assets/mainassets/minimap.png"
+                    class="tw-h-[200px]"
+                  />
                 </div>
                 <section class="message -right">
                   <div class="nes-balloon tw-font-press-start">
@@ -314,6 +315,8 @@
 </template>
 
 <script>
+import { globalState } from "../components/globalState";
+
 export default {
   data() {
     return {
@@ -323,11 +326,13 @@ export default {
         down: false,
         right: false,
       },
+      imgLink: "",
     };
   },
   mounted() {
     window.addEventListener("keydown", this.handleKeydown);
     window.addEventListener("keyup", this.handleKeyup);
+    this.imgLink = globalState.playerImgLink;
   },
   beforeDestroy() {
     window.removeEventListener("keydown", this.handleKeydown);
@@ -416,8 +421,8 @@ export default {
 
 .carousel-item {
   transition: transform 0.5s ease;
-  padding:20px;
-  height:60%;
+  padding: 20px;
+  height: 60%;
 }
 
 .carousel-inner {

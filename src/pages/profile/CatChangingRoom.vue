@@ -50,13 +50,6 @@ export default {
     },
   },
 
-  // Watchers
-  watch: {
-    exampleProp(newVal, oldVal) {
-      console.log("Prop changed from", oldVal, "to", newVal);
-    },
-  },
-
   // Methods
   methods: {
     async getPurchasedCatsAndEquippedCat(db, collectionName, documentId) {
