@@ -2,7 +2,7 @@
   <div class="shop tw-flex tw-flex-col tw-items-center tw-justify-center tw-min-h-screen">
 
     <!-- Currency Display -->
-    <div class="nes-container is-rounded is-centered tw-bg-[#FFCFB3] tw-w-fit">
+    <div class="nes-container is-rounded is-centered tw-bg-[#FFCFB3] tw-w-fit" style="margin-top: 30px;">
       <h2 class=" tw-text-lg">{{ money }} Destress Coins <i class="nes-icon coin"></i></h2>
     </div>
 
@@ -142,12 +142,12 @@ export default {
         },
 
         {
-          name: "Luminescent",
+          name: "Luminous",
           cuteness: 85,
           fluffiness: 80,
           coolness: 95,
           color: "Silver",
-          imgLocation: "/assets/shopassets/luminiscent.png",
+          imgLocation: "/assets/shopassets/luminous.png",
           description: "A glowing beauty that lights up any room.",
           rarity: "Super Rare",
           price: 80,

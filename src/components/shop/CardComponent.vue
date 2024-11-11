@@ -1,9 +1,9 @@
 <template>
   <button @click="handleCardClick" class="card" ref="cardButton">
     <div
-      class="card-front tw-w-60 tw-h-[327px] nes-container is-rounded animate__animated animate__zoomIn"
+      class="card-front tw-w-60 tw-h-[327px] nes-container is-rounded animate__animated animate__zoomIn tw-bg-black"
       :class="rarityShadow"
-      style="padding: 0;"
+      style="padding: 0; border-width: 3px;"
     >
       <div
         class="tw-p-2 tw-text-center tw-items-center border-bottom border-dark border-5"
@@ -60,8 +60,9 @@
     </div>
 
     <div
-      class="card-back tw-w-60 tw-rounded-lg tw-h-[328px] border border-dark border-5"
+      class="card-back tw-w-60 tw-h-[327px] nes-container is-rounded tw-bg-black"
       :class="rarityShadow"
+      style="padding: 0; border-width: 3px;"
     >
       <div
         class="tw-p-2 tw-text-center tw-items-center border-bottom border-dark border-5"
