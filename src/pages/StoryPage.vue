@@ -46,7 +46,11 @@
               Morgana likes to explore Mathropolis
             </p>
             <section class="nes-container">
-              <p><img src="" alt=""></p>
+              <div class="nes-balloon tw-bg-inherit tw-font-press-start">
+                <p>Morgana strolls along the Bakery today! </p>
+              </div>
+              <p><img src="/assets/mainassets/MorganaExploringMathropolis.png"
+                      class="tw-h-[300px] tw-justify-end"></p>
             </section>
           </div>
         </div>
@@ -226,10 +230,8 @@
                 </section>
 
                 <div>
-                  <img src="/assets/mainassets/minimap.png" class="tw-h-[180px]">
+                  <img src="/assets/mainassets/minimap.png" class="tw-h-[200px]">
                 </div>
-
-                <br>
                 <section class="message -right">
                   <div class="nes-balloon tw-font-press-start">
                     <p>Follow these signboards to your challenges!</p>
@@ -283,7 +285,7 @@
 
             <button type="button" @click="goToHome" class="nes-btn is-success">
               <!-- Adding a span component here to make text nes, not sure why it doesnt work with class.-->
-              <span class="nes-text">Let's get started!</span>
+              <span class="nes-text">Click me to get started!</span>
             </button>
           </div>
         </div>
@@ -402,7 +404,6 @@ export default {
 }
 
 .story-carousel-wrapper {
-  background-color: #b7e0ff;
   min-height: 100vh;
   display: flex;
   align-items: center;
