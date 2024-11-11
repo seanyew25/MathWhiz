@@ -65,7 +65,7 @@
             style="width:120px" alt=""></RouterLink>
       </a>
       <div class="d-flex order-lg-2 gap-2">
-        <button v-if="!isAuthenticated" @click="openModal" class="btn btn-outline-primary" type="submit"
+        <button v-if="!isAuthenticated" @click="openModal" class="nes-btn is-primary" type="submit"
           data-bs-target="#getStartedModal" data-bs-toggle="modal">
           Get Started!
         </button>
