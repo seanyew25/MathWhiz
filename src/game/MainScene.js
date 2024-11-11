@@ -916,7 +916,7 @@ export function initializePhaser(equippedPlayer, equippedCat, playerCoords) {
   const config = {
     type: Phaser.CANVAS, // Which renderer to use
     width: window.innerWidth, // Canvas width in pixels
-    height: window.innerHeight - 56, // Canvas height in pixels
+    height: window.innerHeight - 150.55, // Canvas height in pixels
     parent: "phaser-container", // ID of the DOM element to add the canvas to
     pixelArt: true,
     transparency: false,
