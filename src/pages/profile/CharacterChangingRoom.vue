@@ -19,7 +19,7 @@
           :class="index === 0 ? 'carousel-item active' : 'carousel-item'"
         >
           <div
-            class="card tw-w-full md:tw-w-[70%] tw-m-auto border border-4 border-dark"
+            class="card tw-w-full md:tw-w-[70%] tw-bg-[#FFF5CD] tw-m-auto border border-4 border-dark"
           >
             <div class="img-wrapper tw-m-auto">
               <img
@@ -28,7 +28,9 @@
                 alt="Cropped Image"
               />
             </div>
-            <div class="card-body border-top border-dark border-3">
+            <div
+              class="card-body border-top border-dark border-3 tw-bg-[#E78F81]"
+            >
               <h5 class="card-title tw-font-russo-one">{{ character.name }}</h5>
               <p class="card-text tw-font-mono">
                 {{ character.description }}
@@ -36,16 +38,19 @@
               <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
               <button
                 type="button"
+                @click="handleEquipAction(character)"
                 class="nes-btn is-primary tw-font-press-start tw-float-right"
               >
-                Equip
+                {{
+                  character.name === equippedPlayer.name ? "Equipped" : "Equip"
+                }}
               </button>
             </div>
           </div>
         </div>
       </div>
       <button
-        class="carousel-control-prev"
+        class="carousel-control-prev carousel-cursor"
         type="button"
         data-bs-target="#carouselExample"
         data-bs-slide="prev"
@@ -54,7 +59,7 @@
         <span class="visually-hidden">Previous</span>
       </button>
       <button
-        class="carousel-control-next"
+        class="carousel-control-next carousel-cursor"
         type="button"
         data-bs-target="#carouselExample"
         data-bs-slide="next"
@@ -66,16 +71,20 @@
   </div>
 </template>
 <script>
+import { getAuth } from "firebase/auth";
+import { getFirestore, getDoc, doc, setDoc } from "firebase/firestore";
+
 export default {
   data() {
     return {
       characters: [
         {
-          name: "Default Outfit",
-          imgLocation: "/assets/mainassets/player.png",
+          name: "Hoodie Boy",
+          imgLocation: "/assets/profileassets/character/Hoodie Boy.png",
           description:
-            "Stylish, casual and good-looking, the default outfit is perfect for any occasion",
+            "A casual cool kid in his comfortable hoodie, ready for any relaxed adventure",
         },
+
         {
           name: "Beanie Boy",
           imgLocation: "/assets/profileassets/character/Beanie Boy.png",
@@ -149,12 +158,6 @@ export default {
             "A teenage boy sporting a goatee, trying to look more mature than his years",
         },
         {
-          name: "Hoodie Boy",
-          imgLocation: "/assets/profileassets/character/Hoodie Boy.png",
-          description:
-            "A casual cool kid in his comfortable hoodie, ready for any relaxed adventure",
-        },
-        {
           name: "Shirt Boy",
           imgLocation: "/assets/profileassets/character/Shirt Boy.png",
           description:
@@ -185,7 +188,71 @@ export default {
             "A playful girl with cute twintail hairstyle, full of youthful energy",
         },
       ],
+      equippedPlayer: {},
     };
+  },
+  methods: {
+    async getEquippedPlayer(db, collectionName, documentId) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          if (doc.data().equippedPlayer) {
+            this.equippedPlayer = doc.data().equippedPlayer;
+          } else {
+            console.log("No equippedPlayer data!");
+          }
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
+    },
+    async setEquippedPlayer(db, collectionName, documentId, playerObj) {
+      const docRef = doc(db, collectionName, documentId);
+      console.log(playerObj);
+      this.equippedPlayer = playerObj;
+      try {
+        const doc = await setDoc(
+          docRef,
+          {
+            equippedPlayer: playerObj,
+          },
+          { merge: true }
+        );
+        console.log(doc);
+      } catch (error) {
+        console.error("Error setting document:", error);
+      }
+    },
+    handleEquipAction(playerObj) {
+      console.log(playerObj);
+      console.log(`equippedPlayer=${this.equippedPlayer}`);
+      console.log(typeof this.equippedPlayer);
+      if (playerObj.name !== this.equippedPlayer.name) {
+        console.log("Proceeding to change equip");
+        this.equippedPlayer = playerObj;
+        this.setEquippedPlayer(
+          this.db,
+          "users",
+          this.auth.currentUser.uid,
+          playerObj
+        );
+      }
+    },
+  },
+  mounted() {
+    const auth = getAuth();
+    console.log(`uid=${auth.currentUser.uid}`);
+    const db = getFirestore();
+    this.db = db;
+    this.auth = auth;
+    console.log(db);
+    this.getEquippedPlayer(db, "users", auth.currentUser.uid);
+    // this.getPurchasedCatsAndequippedPlayer(db, "users", auth.currentUser.uid);
   },
 };
 </script>
@@ -206,6 +273,12 @@ export default {
   margin-top: -40%; /* Moves the image up to crop the top */
   margin-left: auto;
   margin-right: auto;
+}
+
+.carousel-cursor {
+  cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC)
+      14 0,
+    pointer;
 }
 
 .nes-btn {

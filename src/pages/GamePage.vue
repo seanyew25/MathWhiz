@@ -139,10 +139,13 @@ export default {
         console.log(doc);
         if (doc.exists()) {
           console.log("Document data:", doc.data());
-          if (doc.data().equippedCat) {
+          if (doc.data().equippedCat && doc.data().equippedPlayer) {
             this.equippedCat = doc.data().equippedCat;
+            const equippedPlayer = doc.data().equippedPlayer;
+            console.log(equippedPlayer);
             console.log(this.equippedCat);
             this.game = initializePhaser(
+              equippedPlayer.name,
               this.equippedCat.name,
               globalState.playerPosition
             );
