@@ -98,7 +98,7 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <img :src="playerImage" width="20" />
+            <img :src="globalState.playerImgLink" width="20" />
             {{ userData.displayName ? userData.displayName : username }}
           </button>
           <ul class="dropdown-menu">
@@ -164,7 +164,7 @@
               style="text-decoration: none; color: black"
               >School</RouterLink
             >
-          </li> 
+          </li>
           <li class="nav-item">
             <RouterLink
               class="nav-link"
@@ -403,6 +403,7 @@ import {
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import * as bootstrap from "bootstrap";
 import { useRouter, useRoute } from "vue-router";
+import { globalState } from "./globalState";
 
 const loginValidity = ref("");
 const email = ref("");
@@ -522,7 +523,7 @@ async function getEquippedPlayer(db, collectionName, documentId) {
     if (doc.exists()) {
       console.log("Document data:", doc.data());
       if (doc.data().equippedPlayer) {
-        playerImage.value = doc.data().equippedPlayer.imgLocation;
+        globalState.playerImgLink = doc.data().equippedPlayer.imgLocation;
       } else {
         console.log("No equippedPlayer data!");
       }

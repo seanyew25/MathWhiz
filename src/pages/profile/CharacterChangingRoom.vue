@@ -2,15 +2,21 @@
   <div
     class="tw-flex tw-flex-col tw-items-center tw-min-h-[calc(100vh-110.31px)]"
   >
-    <br />
-    <div class="nes-container is-rounded tw-bg-[#FFCFB3] tw-relative">
-      <h6 class="tw-font-press-start tw-text-2xl tw-p-4 tw-text-center">
-        Choose your character!
-      </h6>
+    <div
+      class="nes-container tw-bg-[#FFCFB3] tw-mb-2 tw-mt-6 tw-mx-auto tw-w-fit tw-text-center"
+    >
+      <span class="tw-font-press-start tw-text-2xl">
+        Welcome to the Character Changing Room!</span
+      >
+      <br />
+      <br />
+      <span class="tw-font-press-start tw-text-md"
+        >What character would you like to be today?</span
+      >
     </div>
     <div
       id="carouselExample"
-      class="carousel slide tw-h-fit tw-w-[100vw] md:tw-w-[50vw] tw-inline-block tw-mt-6"
+      class="carousel slide tw-h-fit tw-w-[100vw] md:tw-w-[75vh] lg:tw-w-[50vw] tw-inline-block tw-mt-6"
     >
       <div class="carousel-inner">
         <div
@@ -20,7 +26,7 @@
         >
           <div class="tw-flex tw-justify-center">
             <div
-              class="tw-w-full md:tw-w-[50%] tw-h-fit nes-container is-rounded tw-bg-[#FFF5CD] tw-flex tw-justify-center tw-flex-col tw-relative"
+              class="tw-w-full sm:tw-w-[75%] xl:tw-w-[50%] tw-h-fit nes-container is-rounded tw-bg-[#FFF5CD] tw-flex tw-justify-center tw-flex-col tw-relative"
               style="padding: 0; border-width: 3px"
             >
               <div class="tw-flex tw-justify-center tw-my-4">
@@ -32,7 +38,7 @@
               </div>
 
               <div
-                class="border-top border-dark border-3 tw-bg-[#E78F81] tw-w-[102%] tw-relative tw-left-[-3px] tw-px-4 tw-pt-2"
+                class="border-top border-bottom border-dark border-3 tw-bg-[#E78F81] tw-mx-[-3px] tw-relative tw-px-4 tw-pt-2"
               >
                 <h5 class="tw-font-russo-one">
                   {{ character.name }}
@@ -41,10 +47,12 @@
                   {{ character.description }}
                 </p>
                 <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+              </div>
+              <div class="tw-pb-[-100px]">
                 <button
                   type="button"
                   @click="handleEquipAction(character)"
-                  class="nes-btn is-primary tw-font-press-start tw-float-right"
+                  class="nes-btn is-success tw-font-press-start tw-w-[102%] tw-relative tw-left-[-8px] tw-top-[-2px]"
                 >
                   {{
                     character.name === equippedPlayer.name
@@ -63,7 +71,11 @@
         data-bs-target="#carouselExample"
         data-bs-slide="prev"
       >
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <!-- <span class="carousel-control-prev-icon" aria-hidden="true"></span> -->
+        <img
+          src="/assets/profileassets/carousel-left-arrow.png"
+          class="tw-h-20"
+        />
         <span class="visually-hidden">Previous</span>
       </button>
       <button
@@ -72,7 +84,10 @@
         data-bs-target="#carouselExample"
         data-bs-slide="next"
       >
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <img
+          src="/assets/profileassets/carousel-right-arrow.png"
+          class="tw-h-20"
+        />
         <span class="visually-hidden">Next</span>
       </button>
     </div>
@@ -81,6 +96,7 @@
 <script>
 import { getAuth } from "firebase/auth";
 import { getFirestore, getDoc, doc, setDoc } from "firebase/firestore";
+import { globalState } from "../../components/globalState";
 
 export default {
   data() {
@@ -223,6 +239,7 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       console.log(playerObj);
       this.equippedPlayer = playerObj;
+      globalState.playerImgLink = playerObj.imgLocation;
       try {
         const doc = await setDoc(
           docRef,
@@ -280,7 +297,7 @@ export default {
   position: relative;
   display: inline-block;
   padding: 6px 8px;
-  margin: 4px;
+  margin: 4px 4px -2px 4px;
   text-align: center;
   vertical-align: middle;
   cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC)
@@ -293,9 +310,10 @@ export default {
   color: #212529;
   background-color: #fff;
 }
-.nes-btn.is-primary {
-  color: #fff;
-  background-color: #209cee;
+.nes-btn.is-success {
+  /* color: #fff; */
+  background-color: #92cc41;
+  color: #36454f;
 }
 .nes-container.is-rounded {
   border-image-slice: 3;

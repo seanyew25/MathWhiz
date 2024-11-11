@@ -4,6 +4,7 @@ import App from "./App.vue"; //can write as import App from "@/App.vue", the @ d
 // Import our custom CSS
 import "./styles.scss";
 import "./style.css";
+import "nes.css/css/nes.min.css";
 
 // Import all of Bootstrap's JS
 import * as bootstrap from "bootstrap";
@@ -60,6 +61,7 @@ const routes = [
   { path: "/story", component: StoryPage },
   { path: "/shop", component: ShopPage },
   { path: "/catchangingroom", component: CatChangingRoom },
+  { path: "/characterchangingroom", component: CharacterChangingRoom },
   { path: "/timerbar", component: TimerBar },
 ];
 

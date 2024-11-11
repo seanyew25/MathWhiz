@@ -2,7 +2,7 @@
   <div class="tw-relative">
     <div class="tw-absolute tw-left-[10px] tw-top-[10px]">
       <button
-        class="nes-btn is-primary tw-font-press-start tw-text-xs"
+        class="nes-btn is-primary tw-font-press-start tw-text-xs md:tw-text-base xl:tw-text-lg"
         @click="handleToDoClick"
       >
         {{ checklistToggled ? "Hide" : "Show" }} Quest Log
@@ -16,11 +16,11 @@
       <div
         v-if="checklistToggled"
         id="checklist"
-        class="tw-absolute tw-left-[10px] tw-top-[60px] tw-p-2 tw-bg-[#B7E0FF] tw-max-w-[30%] border border-3 border-white"
+        class="tw-absolute tw-left-[10px] tw-top-[60px] md:tw-top-[70px] xl:tw-top-[75px] tw-p-2 tw-bg-[#B7E0FF] tw-max-w-[30%] border border-3 border-white"
       >
-        <ul class="nes-list is-disc tw-mb-0 tw-mr-2 tw-overflow-hidden">
+        <ul class="tw-ml-[-10px] tw-mb-0 tw-mr-2 tw-overflow-hidden">
           <li
-            class="tw-font-russo-one tw-text-sm"
+            class="tw-font-russo-one tw-text-xs md:tw-text-sm lg:tw-text-base 2xl:tw-text-lg"
             v-for="(task, key) in allTasks"
             :key="key"
             :class="checkCompletion(task)"
@@ -294,6 +294,7 @@ export default {
 .custom-strikethrough {
   text-decoration-color: white;
 }
+
 .nes-btn {
   border-image-slice: 2;
   border-image-width: 2;

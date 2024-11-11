@@ -1,20 +1,25 @@
 <template>
-  <div class="shop tw-flex tw-flex-col tw-items-center tw-justify-center tw-min-h-screen">
-
+  <div
+    class="shop tw-flex tw-flex-col tw-items-center tw-justify-center tw-min-h-screen"
+  >
     <!-- Currency Display -->
-    <div class="nes-container is-rounded is-centered tw-bg-[#FFCFB3] tw-w-fit" style="margin-top: 30px;">
-      <h2 class=" tw-text-lg">{{ money }} Destress Coins <i class="nes-icon coin"></i></h2>
+    <div
+      class="nes-container is-rounded is-centered tw-bg-[#FFCFB3] tw-w-fit"
+      style="margin-top: 24px"
+    >
+      <h2 class="tw-text-lg">
+        {{ money }} Destress Coins <i class="nes-icon coin"></i>
+      </h2>
     </div>
 
     <div
-      class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-my-6"
+      class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-mt-6 tw-mb-6"
     >
-      <div v-for="cat in cats" class="tw-m-auto">
+      <div v-for="cat in cats" class="tw-m-auto tw-h-[330px]">
         <CardComponent
           :key="cat.name"
           :catObj="cat"
           @buyAction="handleBuyAction"
-
         />
       </div>
     </div>
@@ -28,7 +33,6 @@
         </button>
       </form>
     </dialog>
-
   </div>
 </template>
 <style scoped>
