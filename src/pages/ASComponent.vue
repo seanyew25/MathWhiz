@@ -22,7 +22,7 @@
           </menu>
         </form>
       </dialog>
-  
+   
       <div class="question-container">
         <div class="question-text">
           <span>{{ currentQuestion.leftNumber }}</span>

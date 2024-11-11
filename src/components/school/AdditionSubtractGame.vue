@@ -6,7 +6,7 @@
         <p class="title" style="background-color: rgba(255, 245, 205, 1);">Addition and Subtraction</p>
 
         <div class="p-6 w-[400px] h-[300px] mx-auto">
-
+ 
           <!-- Instructions and Hint -->
           <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
             <h1 class="tw-text-3xl text-center align-center">

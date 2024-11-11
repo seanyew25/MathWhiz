@@ -14,7 +14,7 @@
             alt="Character Animation"
             class="character-size tw-object-contain tw-mx-auto"
           />
-
+ 
           <!-- Exclamation Icon for Alerted State -->
           <img
             v-if="isAlerted"
@@ -166,7 +166,7 @@ export default {
         dialogueText.value = "Oh no! I got sidetracked again...";
       } else if (currentAnimation.value === "headache") {
         currentAnimation.value = "spin";
-        dialogueText.value = "The library is still so messy!";
+        dialogueText.value = "The school is still so messy!";
       } else if (currentAnimation.value === "spin") {
         currentAnimation.value = "alerted";
         currentImage.value = `/assets/schoolassets/spin4.png`;
@@ -181,10 +181,10 @@ export default {
         }, 750);
       } else if (currentAnimation.value === "standing") {
         if (standingClickCount === 0) {
-          dialogueText.value = "The library is in a mess!";
+          dialogueText.value = "The school is in a mess!";
           standingClickCount++;
         } else if (standingClickCount === 1) {
-          dialogueText.value = "I need help tidying the library.";
+          dialogueText.value = "I need help tidying the school.";
           standingClickCount++;
         } else {
           currentAnimation.value = "carrying";
