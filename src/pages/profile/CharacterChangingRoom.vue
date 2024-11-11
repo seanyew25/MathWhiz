@@ -3,7 +3,7 @@
     class="tw-flex tw-flex-col tw-items-center tw-min-h-[calc(100vh-110.31px)]"
   >
     <br />
-    <div class="nes-container is-rounded tw-bg-[#FFCFB3]">
+    <div class="nes-container is-rounded tw-bg-[#FFCFB3] tw-relative">
       <h6 class="tw-font-press-start tw-text-2xl tw-p-4 tw-text-center">
         Choose your character!
       </h6>
@@ -18,33 +18,41 @@
           :key="index"
           :class="index === 0 ? 'carousel-item active' : 'carousel-item'"
         >
-          <div
-            class="card tw-w-full md:tw-w-[70%] tw-bg-[#FFF5CD] tw-m-auto border border-4 border-dark"
-          >
-            <div class="img-wrapper tw-m-auto">
-              <img
-                class="img-crop tw-inline-block"
-                :src="character.imgLocation"
-                alt="Cropped Image"
-              />
-            </div>
+          <div class="tw-flex tw-justify-center">
             <div
-              class="card-body border-top border-dark border-3 tw-bg-[#E78F81]"
+              class="tw-w-full md:tw-w-[50%] tw-h-fit nes-container is-rounded tw-bg-[#FFF5CD] tw-flex tw-justify-center tw-flex-col tw-relative"
+              style="padding: 0; border-width: 3px"
             >
-              <h5 class="card-title tw-font-russo-one">{{ character.name }}</h5>
-              <p class="card-text tw-font-mono">
-                {{ character.description }}
-              </p>
-              <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
-              <button
-                type="button"
-                @click="handleEquipAction(character)"
-                class="nes-btn is-primary tw-font-press-start tw-float-right"
+              <div class="tw-flex tw-justify-center tw-my-4">
+                <img
+                  :src="character.imgLocation"
+                  alt="Cropped Image"
+                  class="tw-w-[30%]"
+                />
+              </div>
+
+              <div
+                class="border-top border-dark border-3 tw-bg-[#E78F81] tw-w-[102%] tw-relative tw-left-[-3px] tw-px-4 tw-pt-2"
               >
-                {{
-                  character.name === equippedPlayer.name ? "Equipped" : "Equip"
-                }}
-              </button>
+                <h5 class="tw-font-russo-one">
+                  {{ character.name }}
+                </h5>
+                <p class="tw-font-mono">
+                  {{ character.description }}
+                </p>
+                <!-- <a href="#" class="btn btn-primary">Go somewhere</a> -->
+                <button
+                  type="button"
+                  @click="handleEquipAction(character)"
+                  class="nes-btn is-primary tw-font-press-start tw-float-right"
+                >
+                  {{
+                    character.name === equippedPlayer.name
+                      ? "Equipped"
+                      : "Equip"
+                  }}
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -257,24 +265,6 @@ export default {
 };
 </script>
 <style scoped>
-.img-wrapper {
-  /* width: 50%, */
-  width: 50%;
-  height: 50%; /* Desired height of the image container */
-  overflow: hidden;
-  display: block; /* Hides any overflow outside the container */
-}
-
-.img-crop {
-  width: 100%; /* Ensures the image fills the container width */
-  height: 100%; /* Makes the image fill the height of the container */
-  object-fit: cover; /* Ensures the image covers the container */
-  object-position: top; /* Aligns the image to the top, so only the top is cropped */
-  margin-top: -40%; /* Moves the image up to crop the top */
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .carousel-cursor {
   cursor: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC)
       14 0,
@@ -313,7 +303,7 @@ export default {
   border-image-repeat: stretch;
   border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
   border-image-outset: 2;
-  padding: 1rem 1.5rem;
+  /* padding: 1rem 1.5rem; */
   margin: 4px;
 }
 </style>
