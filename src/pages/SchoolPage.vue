@@ -10,9 +10,8 @@
     <MultiplicationDivisionGame v-else-if="showMultiplicationDivision" />
   </div>
 </template>
-<style scoped></style>
 
-<script>
+<script setup>
 import MultiplicationDivisionGame from "../components/school/MultiplicationDivisionGame.vue";
 import AdditionSubtractGame from "../components/school/AdditionSubtractGame.vue";
 import { ref, onMounted } from "vue";
@@ -45,5 +44,4 @@ onMounted(() => {
   showAdditionSubtraction.value = false;
   showMultiplicationDivision.value = false;
 });
-
 </script>
