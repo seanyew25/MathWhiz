@@ -18,7 +18,7 @@ import { getFirestore } from "firebase/firestore";
 import GamePage from "./pages/GamePage.vue";
 import LandingPage from "./pages/LandingPage.vue";
 import ProfilePage from "./pages/profile/ProfilePage.vue";
-import ShoppingCentrePage from "./pages/ShoppingCentrePage.vue";
+import Market from "./pages/Market.vue";
 import SchoolPage from "./pages/SchoolPage.vue";
 import BakeryPage from "./pages/BakeryPage.vue";
 import BankPage from "./pages/BankPage.vue";
@@ -51,7 +51,7 @@ const routes = [
   { path: "/game", component: GamePage },
   { path: "/", component: LandingPage },
   { path: "/profile", component: ProfilePage },
-  { path: "/shoppingcentre", component: ShoppingCentrePage },
+  { path: "/market", component: Market },
   { path: "/school", component: SchoolPage },
   { path: "/bakery", component: BakeryPage },
   { path: "/bank", component: BankPage },

@@ -1,37 +1,54 @@
 <template>
-  <div
-    class="math-game tw-min-h-screen tw-flex tw-flex-col"
-    style="background-color: #add8e6"
-  >
-    <div class="tw-flex-grow tw-flex tw-items-center tw-justify-center tw-p-4">
-      <div
-        class="tw-w-full tw-max-w-5xl tw-bg-white tw-rounded-lg tw-shadow-xl tw-overflow-hidden"
-        style="width: 1000px;"
-      >
-        <div class="tw-p-6 tw-w-full">
-          <h1 class="tw-text-xl tw-font-bold tw-text-center tw-mb-6">
-            {{ currentQuestion.operator === "×" ? "Multiplication" : "Division" }}
-          </h1>
+  <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
 
-          <div class="progress-container tw-relative tw-mb-4">
+    <!-- Game Container -->
+      <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 850px;">
+        <p class="title" style="background-color: rgba(255, 245, 205, 1);">Multiplication and Division</p>
+
+        <div class="tw-w-full">
+          <!-- Instructions and Hint -->
+          <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
+            <h1 class="tw-text-3xl text-center align-center">
+              {{ currentQuestion.operator === "×" ? "Multiply the numbers!" : "Divide the numbers!" }}
+            </h1>
+            <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm tw-mx-4">Hint</button>
+          </div>
+
+          <!-- Hint Modal -->
+          <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
+            <div class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6">
+              <p class="title">Hint</p>
+              <p class="tw-text-lg tw-mb-4">
+                Hover over the bottom row of emojis to visualise the question!<br>
+                For multiplication, you'll see a grid. <br>
+                For division, you'll see coloured groups.
+              </p>
+              
+              <!-- Button-->
+              <div class="tw-flex tw-gap-8 tw-justify-center">
+                <button @click="showHintModal = false" class="nes-btn is-success tw-w-auto">I Understand!</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timer Bar -->
+          <div class="progress-container">
             <progress
-              class="nes-progress is-success tw-w-full"
+              class="nes-progress is-success"
               :value="timerWidth"
               :max="100"
             ></progress>
-            <p class="nes-text tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw-translate-x-[-50%] tw-translate-y-[-50%] tw-text-center">
-              {{ Math.ceil(timerSeconds) }}s
-            </p>
+            <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
           </div>
 
-          <transition name="fade">
+          <!-- <transition name="fade">
             <div
               v-if="isBonusRound && !gameOver"
               class="bonus-round text-center mb-4"
             >
               Bonus Round! Double coins for correct answers!
             </div>
-          </transition>
+          </transition> -->
 
           <div class="text-center tw-mb-4">
             <div class="text-4xl" v-if="currentQuestion">
@@ -124,21 +141,13 @@
             >
               Submit Answer
             </button>
-            <button
-              type="button"
-              class="nes-btn is-primary center"
-              @click="showHintDialog"
-              :disabled="gameOver || !gameStarted"
-            >
-              Hint!
-            </button>
           </div>
 
-          <div class="tw-text-center tw-mt-6" v-if="hasCorrectStreak">
+          <!-- <div class="tw-text-center tw-mt-6" v-if="hasCorrectStreak">
             <p class="tw-text-xl">
               <i class="nes-icon coin is-medium"></i>Coins earned: {{ medals }} / 15
             </p>
-          </div>
+          </div> -->
 
           <div v-if="gameOver" class="game-over-overlay">
             <div class="game-over-content">
@@ -185,7 +194,6 @@
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -532,6 +540,10 @@ export default {
 </script>
 
 <style scoped>
+* {
+  font-family: "Press Start 2P";
+}
+
 .math-game {
   font-family: "Press Start 2P", cursive;
 }

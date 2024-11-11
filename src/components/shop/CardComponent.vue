@@ -1,8 +1,9 @@
 <template>
   <button @click="handleCardClick" class="card" ref="cardButton">
     <div
-      class="card-front tw-w-60 tw-h-[327px] tw-rounded-lg border border-dark border-5 animate__animated animate__zoomIn"
+      class="card-front tw-w-60 tw-h-[327px] nes-container is-rounded animate__animated animate__zoomIn"
       :class="rarityShadow"
+      style="padding: 0;"
     >
       <div
         class="tw-p-2 tw-text-center tw-items-center border-bottom border-dark border-5"
@@ -33,7 +34,7 @@
         class="tw-h-20 tw-flex-1 border-top border-dark border-5 tw-p-2 tw-justify-center tw-text-center tw-items-center"
         :class="rarityDescriptions"
       >
-        <p class="tw-text-sm" style="font-family: monospace">
+        <p class="tw-text-xs">
           {{ catObj.description }}
         </p>
       </div>
@@ -43,14 +44,14 @@
         :class="rarityPrices"
       >
         <div class="tw-flex tw-items-center tw-ml-1">
-          <span class="tw-font-russo-one tw-mr-1">{{ catObj.price }} </span>
-          <i class="nes-icon coin is-small"></i>
+          <span>{{ catObj.price }}<i class="nes-icon coin is-small"></i></span>
+          
         </div>
 
         <button
           @click.stop="handleBuyClick"
           type="button"
-          class="nes-btn tw-font-press-start tw-text-xs tw-justify-self-end"
+          class="nes-btn tw-text-xs tw-justify-self-end"
           :class="rarityButtons"
         >
           Buy
@@ -136,6 +137,10 @@
 </template>
 
 <style scoped>
+* {
+  font-family: 'Press Start 2P', sans-serif;
+}
+
 .nes-btn.is-success {
   color: #fff;
   background-color: #92cc41;
