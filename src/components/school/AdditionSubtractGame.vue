@@ -13,13 +13,18 @@
           <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm tw-mx-4">Hint</button>
         </div>
 
-          <!-- Hint Modal -->
-          <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
-            <div class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6">
-              <p class="title">Hint</p>
-              <p class="tw-text-lg tw-mb-4">
-                Hover over the emojis to visualise the addition and subtraction!
-              </p>
+        <!-- Hint Modal -->
+        <div
+          v-if="showHintModal"
+          class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50"
+        >
+          <div
+            class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6"
+          >
+            <p class="title">Hint</p>
+            <p class="tw-text-lg tw-mb-4">
+              Click on the addition or subtraction operator to visualise the question!
+            </p>
               
               <!-- Button-->
               <div class="tw-flex tw-gap-8 tw-justify-center">
@@ -52,34 +57,39 @@
 
               <!-- Emoji and Operator Display -->
               <div class="text-center mb-6" style="position: relative">
-                <div class="text-4xl mb-4">
-                  <transition-group name="bounce" tag="div">
-                    <span
+              <div class="text-4xl mb-4">
+                <!-- Left Emojis -->
+                <transition-group name="bounce" tag="div">
+                  <span
                     v-for="(item, index) in currentQuestion.leftItems"
                     :key="'left-' + index"
                     :class="['emoji-group', { hide: item.hide }]"
                     class="emoji-group"
                   >
-                      {{ item.item }}
-                    </span>
-                  </transition-group>
+                    {{ item.item }}
+                  </span>
+                </transition-group>
 
-                  <!-- Operator with Hover Events -->
-                  <div class="text-4xl operator-symbol" @mouseover="handleHover" @mouseleave="clearHover">
+                  <!-- Operator with Click Events -->
+                  <div
+                  class="text-4xl operator-symbol"
+                  @click="handleOperatorClick($event)"
+                  ref="operatorSymbol"
+                >
                   {{ currentQuestion.operator }}
-                  </div>
+                </div>
 
                   <!-- Right Emojis -->
                   <transition-group name="bounce" tag="div">
-                    <span
+                  <span
                     v-for="(item, index) in currentQuestion.rightItems"
                     :key="'right-' + index"
                     :class="['emoji-group', { hide: item.hide }]"
                     class="emoji-group"
                   >
-                      {{ item.item }}
-                    </span>
-                  </transition-group>
+                    {{ item.item }}
+                  </span>
+                </transition-group>
 
                   <!-- Equals Sign -->
                   <span>=</span>
@@ -233,8 +243,9 @@ export default {
       additionTableRows: [],
       timerInterval: null,
       showHintModal: false,
-      timeRemaining: 15, // Time remaining in seconds
-      totalTime: 15, // Total time per question in seconds
+      timeRemaining: 20,
+      totalTime: 20,
+      operatorEffectActive: false,
     };
   },
   computed: {
@@ -243,6 +254,57 @@ export default {
     },
   },
   methods: {
+    handleOperatorClick(event) {
+      event.stopPropagation();
+      if (this.operatorEffectActive) {
+        this.clearOperatorEffect();
+      } else {
+        this.applyOperatorEffect();
+        document.addEventListener('click', this.handleOutsideClick);
+      }
+    },
+    applyOperatorEffect() {
+      this.operatorEffectActive = true;
+      if (this.currentQuestion.operator === '-') {
+        this.currentQuestion.leftItems.forEach((item, i) => {
+          if (
+            i >=
+            this.currentQuestion.leftItems.length -
+              this.currentQuestion.rightNumber
+          ) {
+            item.hide = true;
+          }
+        });
+        this.currentQuestion.rightItems.forEach((item) => (item.hide = true));
+      } else if (this.currentQuestion.operator === '+') {
+        const totalEmojis =
+          this.currentQuestion.leftNumber + this.currentQuestion.rightNumber;
+        const emoji = this.currentQuestion.selectedEmoji;
+        this.additionTableRows = Array(Math.ceil(totalEmojis / 10))
+          .fill()
+          .map((_, i) =>
+            Array(Math.min(10, totalEmojis - i * 10)).fill(emoji)
+          );
+        this.showAdditionTable = true;
+      }
+    },
+    clearOperatorEffect() {
+      this.operatorEffectActive = false;
+      if (this.currentQuestion.operator === '-') {
+        this.currentQuestion.leftItems.forEach((item) => (item.hide = false));
+        this.currentQuestion.rightItems.forEach((item) => (item.hide = false));
+      } else if (this.currentQuestion.operator === '+') {
+        this.showAdditionTable = false;
+        this.additionTableRows = [];
+      }
+      document.removeEventListener('click', this.handleOutsideClick);
+    },
+    handleOutsideClick(event) {
+      const operatorElement = this.$refs.operatorSymbol;
+      if (!operatorElement.contains(event.target)) {
+        this.clearOperatorEffect();
+      }
+    },
     startTimer(resume = false) {
       if (!resume) {
         this.timeRemaining = this.totalTime;
@@ -254,33 +316,35 @@ export default {
           this.timeRemaining = Math.max(0, this.timeRemaining - 0.1);
           if (this.timeRemaining <= 0) {
             clearInterval(this.timerInterval);
-            this.nextQuestion();
+            this.handleIncorrectAnswer();
           }
         }
       }, 100);
     },
-      playSound(correct) {
-        const audio = new Audio(
-          correct
-            ? "https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"
-            : "https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"
-        );
-        audio.play();
-      },
-      handleCorrectAnswer() {
+    playSound(correct) {
+      const audio = new Audio(
+        correct
+          ? 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3'
+          : 'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'
+      );
+      audio.play();
+    },
+    handleCorrectAnswer() {
       this.playSound(true);
       this.correctAnswersInRow += 1;
       this.questionsAnswered += 1;
 
-      // Activate streak on the 6th correct answer
       if (this.correctAnswersInRow >= 5) {
         this.streakActive = true;
       } else {
         this.streakActive = false;
       }
 
-      // Award coins (double coins if streak is active)
-      this.coins += this.streakActive ? 2 : 1;
+      if (this.correctAnswersInRow >= 6) {
+        this.coins += 2;
+      } else {
+        this.coins += 1;
+      }
 
       if (this.questionsAnswered >= 10) {
         this.endGame();
@@ -289,60 +353,29 @@ export default {
 
       this.nextQuestion();
     },
-      handleIncorrectAnswer() {
-        this.playSound(false);
-        this.correctAnswersInRow = 0;
-        this.streakActive = false;
-        this.questionsAnswered += 1;
-  
-        if (this.questionsAnswered >= 10) {
-          this.endGame();
-          return;
-        }
-  
-        this.nextQuestion();
-      },
-      checkAnswer() {
-        const userAnswer = parseInt(this.userInput, 10);
-  
-        if (userAnswer === this.currentQuestion.correct) {
-          this.handleCorrectAnswer();
-        } else {
-          this.handleIncorrectAnswer();
-        }
-      },
-      handleHover() {
-        if (this.currentQuestion.operator === "-") {
-          this.currentQuestion.leftItems.forEach((item, i) => {
-            if (
-              i >=
-              this.currentQuestion.leftItems.length -
-                this.currentQuestion.rightNumber
-            ) {
-              item.hide = true;
-            }
-          });
-          this.currentQuestion.rightItems.forEach((item) => (item.hide = true));
-        } else if (this.currentQuestion.operator === "+") {
-          const totalEmojis =
-            this.currentQuestion.leftNumber + this.currentQuestion.rightNumber;
-          const emoji = this.currentQuestion.selectedEmoji;
-          this.additionTableRows = Array(Math.ceil(totalEmojis / 10))
-            .fill()
-            .map((_, i) => Array(Math.min(10, totalEmojis - i * 10)).fill(emoji));
-          this.showAdditionTable = true;
-        }
-      },
-      clearHover() {
-        if (this.currentQuestion.operator === "-") {
-          this.currentQuestion.leftItems.forEach((item) => (item.hide = false));
-          this.currentQuestion.rightItems.forEach((item) => (item.hide = false));
-        } else if (this.currentQuestion.operator === "+") {
-          this.showAdditionTable = false;
-          this.additionTableRows = [];
-        }
-      },
-      nextQuestion() {
+    handleIncorrectAnswer() {
+      this.playSound(false);
+      this.correctAnswersInRow = 0;
+      this.streakActive = false;
+      this.questionsAnswered += 1;
+
+      if (this.questionsAnswered >= 10) {
+        this.endGame();
+        return;
+      }
+
+      this.nextQuestion();
+    },
+    checkAnswer() {
+      const userAnswer = parseInt(this.userInput, 10);
+
+      if (userAnswer === this.currentQuestion.correct) {
+        this.handleCorrectAnswer();
+      } else {
+        this.handleIncorrectAnswer();
+      }
+    },
+    nextQuestion() {
       this.userInput = '';
       this.questionIndex = (this.questionIndex + 1) % this.questions.length;
 
@@ -364,59 +397,51 @@ export default {
         ];
       }
 
-      // Reset timeRemaining and restart the timer
       this.timeRemaining = this.totalTime;
       this.startTimer();
-      },
-      endGame() {
-        this.gameOver = true;
-        this.completionMessage = "Game Over! You've answered 10 questions.";
-        clearInterval(this.timerInterval);
-      },
-      restartGame() {
-        this.gameOver = false;
-        this.completionMessage = "";
-        this.coins = 0;
-        this.correctAnswersInRow = 0;
-        this.streakActive = false;
-        this.questionsAnswered = 0;
-        this.userInput = "";
-        this.questions = [
-          generateQuestion(),
-          generateQuestion(),
-          generateQuestion(),
-          generateQuestion(),
-        ];
-        this.questionIndex = 0;
-        this.startTimer();
-      },
-      exitGame() {
-        console.log("Exiting game");
-      },
     },
-    mounted() {
-      this.startTimer();
-    },
-    beforeUnmount() {
+    endGame() {
+      this.gameOver = true;
+      this.completionMessage = "Game Over! You've answered 10 questions.";
       clearInterval(this.timerInterval);
     },
-
-    watch: {
+    restartGame() {
+      this.gameOver = false;
+      this.completionMessage = '';
+      this.coins = 0;
+      this.correctAnswersInRow = 0;
+      this.streakActive = false;
+      this.questionsAnswered = 0;
+      this.userInput = '';
+      this.questions = [
+        generateQuestion(),
+        generateQuestion(),
+        generateQuestion(),
+        generateQuestion(),
+      ];
+      this.questionIndex = 0;
+      this.startTimer();
+    },
+    exitGame() {
+      console.log('Exiting game');
+    },
+  },
+  watch: {
     showHintModal(newVal) {
       if (newVal) {
-        // Pause the timer
         clearInterval(this.timerInterval);
       } else {
-        // Resume the timer without resetting timeRemaining
         this.startTimer(true);
       }
     },
   },
   mounted() {
     this.startTimer();
+    this.handleOutsideClick = this.handleOutsideClick.bind(this);
   },
   beforeUnmount() {
     clearInterval(this.timerInterval);
+    document.removeEventListener('click', this.handleOutsideClick);
   },
 };
 </script>
