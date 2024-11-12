@@ -194,7 +194,7 @@ export default {
           price: 80,
         },
       ],
-      money: "",
+      money: 0,
       dialogMessage: "",
       auth: "",
       db: "",
@@ -247,6 +247,8 @@ export default {
       }
     },
     async handleBuyAction(catObj) {
+      
+    console.log(this.money)
       console.log(catObj.price);
       if (this.money >= catObj.price) {
         this.money -= catObj.price;
@@ -289,14 +291,6 @@ export default {
     this.auth = auth;
     console.log(db);
     this.getCurrencyAndPurchasedCats(db, "users", auth.currentUser.uid);
-    // onAuthStateChanged(auth, (user) => {
-    //   console.log(user);
-    //   const db = getFirestore();
-    //   console.log(db);
-    //   this.getCurrency(db, "users", auth.currentUser.uid).then((response) => {
-    //     console.log(response.data);
-    //   });
-    // });
   },
 };
 </script>
