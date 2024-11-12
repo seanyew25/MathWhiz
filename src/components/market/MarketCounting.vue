@@ -62,7 +62,13 @@
                     <div v-for="(grid, index) in grids" :key="index" class="grid-item">
                         <p class="tw-text-center tw-mt-2 tw-mb-0 tw-text-base">{{ labels[index] }}</p>
                         <div class="object-grid">
-                            <div v-for="object in grid" :key="object.id" :class="['object', { 'selected': object.selected }]" @click="toggleSelectById(object.id)" ref="objects" :data-id="object.id" v-bind:style="{ visibility: object.visible ? 'visible' : 'hidden' }">
+                            <div v-for="object in grid"
+                            :key="object.id"
+                            :class="['object', { 'selected': object.selected }]"
+                            @click="toggleSelectById(object.id)"
+                            ref="objects"
+                            :data-id="object.id" 
+                            v-bind:style="{ visibility: object.visible ? 'visible' : 'hidden' }">
                                 <img :src="object.image" :alt="object.type" class="tw-w-full tw-h-full object-contain" />
                             </div>
                         </div>
