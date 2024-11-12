@@ -1,199 +1,185 @@
 <template>
-  <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
-
+  <div class="math-game md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
     <!-- Game Container -->
-      <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 850px;">
-        <p class="title" style="background-color: rgba(255, 245, 205, 1);">Multiplication and Division</p>
- 
-        <div class="tw-w-full">
-          <!-- Instructions and Hint -->
-          <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
-            <h1 class="tw-text-3xl text-center align-center">
-              {{ currentQuestion.operator === "×" ? "Multiply the numbers!" : "Divide the numbers!" }}
-            </h1>
-            <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm tw-mx-4">Hint</button>
-          </div>
+    <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 850px; padding: 10px;">
+      <p class="title" style="background-color: rgba(255, 245, 205, 1);">Multiplication and Division</p>
 
-          <!-- Hint Modal -->
-          <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
-            <div class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6">
-              <p class="title">Hint</p>
-              <p class="tw-text-lg tw-mb-4">
-                Hover over the bottom row of emojis to visualise the question!<br>
-                For multiplication, you'll see a grid. <br>
-                For division, you'll see coloured groups.
-              </p>
-              
-              <!-- Button-->
-              <div class="tw-flex tw-gap-8 tw-justify-center">
-                <button @click="showHintModal = false" class="nes-btn is-success tw-w-auto">I Understand!</button>
-              </div>
-            </div>
-          </div>
+      <div class="tw-w-full">
+        <!-- Instructions and Hint -->
+        <div class="tw-flex tw-items-center tw-justify-center tw-mb-2">
+          <h1 class="tw-text-3xl text-center align-center">
+            {{ currentQuestion.operator === "×" ? "Multiply the numbers!" : "Divide the numbers!" }}
+          </h1>
+          <button @click="showHintDialog" class="nes-btn is-primary tw-text-sm tw-mx-4">Hint</button>
+        </div>
 
-          <!-- Timer Bar -->
-          <div class="progress-container">
-            <progress
-              class="nes-progress is-success"
-              :value="timerWidth"
-              :max="100"
-            ></progress>
-            <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
-          </div>
+        <!-- Hint Modal -->
+        <dialog class="nes-dialog" id="dialog-default" style="border-radius: 10px;">
+          <form method="dialog">
+            <p class="title tw-text-lg tw-mb-4 text-center">Hint</p>
+            <p class="text-center tw-text-md tw-mb-4">
+              Hover over the <strong>bottom row of emojis</strong> to visualise the question!<br>
+              For <strong>multiplication</strong>, you'll see a grid. <br>
+              For <strong>division</strong>, you'll see coloured groups.
+            </p>
+            <menu class="dialog-menu" style="align-items: center;">
+              <button class="nes-btn is-success" @click="closeHintDialog">I Understand!</button>
+            </menu>
+          </form>
+        </dialog>
 
-          <!-- <transition name="fade">
-            <div
-              v-if="isBonusRound && !gameOver"
-              class="bonus-round text-center mb-4"
+        <!-- Timer Bar -->
+        <div class="progress-container tw-relative tw-mb-2">
+          <progress
+            class="nes-progress is-success tw-w-full"
+            :value="timerWidth"
+            :max="100"
+          ></progress>
+          <p class="nes-text tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw-translate-x-[-50%] tw-translate-y-[-50%] tw-text-center">
+            {{ Math.ceil(timerSeconds) }}s
+          </p>
+        </div>
+
+        <transition name="fade">
+          <div
+            v-if="isBonusRound"
+            class="bonus-round text-center mb-4"
+          >
+            Bonus Round! Double coins for correct answers!
+          </div>
+        </transition>
+
+        <div class="text-center tw-mb-2">
+          <div class="text-4xl" v-if="currentQuestion">
+            <span>{{ currentQuestion.leftNumber }}</span>
+            <span class="mx-2">{{ currentQuestion.operator }}</span>
+            <span>{{ currentQuestion.rightNumber }}</span>
+          </div>
+        </div>
+
+        <div class="text-center tw-mb-3">
+          <div class="tw-text-4xl tw-mb-4" v-if="currentQuestion">
+            <transition-group name="bounce" tag="div">
+              <span
+                v-for="(item, index) in currentQuestion.leftItems"
+                :key="'left-' + index"
+                :class="getEmojiClass(index)"
+                class="emoji-group"
+              >
+                {{ item }}
+              </span>
+            </transition-group>
+
+            <div class="tw-text-4xl">{{ currentQuestion.operator }}</div>
+
+            <div 
+              class="bottom-emojis" 
+              ref="bottomEmojis"
+              @mouseover="handleBottomEmojisHover"
+              @mouseleave="handleBottomEmojisLeave"
             >
-              Bonus Round! Double coins for correct answers!
-            </div>
-          </transition> -->
-
-          <div class="text-center tw-mb-4">
-            <div class="text-4xl" v-if="currentQuestion">
-              <span>{{ currentQuestion.leftNumber }}</span>
-              <span class="mx-2">{{ currentQuestion.operator }}</span>
-              <span>{{ currentQuestion.rightNumber }}</span>
-            </div>
-          </div>
-
-          <div class="text-center tw-mb-6">
-            <div class="tw-text-4xl tw-mb-4" v-if="currentQuestion">
               <transition-group name="bounce" tag="div">
                 <span
-                  v-for="(item, index) in currentQuestion.leftItems"
-                  :key="'left-' + index"
-                  :class="getEmojiClass(index)"
+                  v-for="(item, index) in currentQuestion.rightItems"
+                  :key="'right-' + index"
                   class="emoji-group"
                 >
                   {{ item }}
                 </span>
               </transition-group>
-
-              <div class="tw-text-4xl">{{ currentQuestion.operator }}</div>
-
-              <div 
-                class="bottom-emojis" 
-                ref="bottomEmojis"
-                @mouseover="handleBottomEmojisHover"
-                @mouseleave="handleBottomEmojisLeave"
-              >
-                <transition-group name="bounce" tag="div">
-                  <span
-                    v-for="(item, index) in currentQuestion.rightItems"
-                    :key="'right-' + index"
-                    class="emoji-group"
-                  >
-                    {{ item }}
-                  </span>
-                </transition-group>
-              </div>
-
-              <!-- <span>=</span> -->
             </div>
+          </div>
 
-            <transition name="fade">
-              <div v-if="showMultiplicationGrid && currentQuestion.operator === '×'" class="multiplication-grid">
-                <div class="grid-row grid-header">
-                  <div class="grid-cell"></div>
-                  <div v-for="col in currentQuestion.rightNumber" :key="'col-' + col" class="grid-cell">
-                    {{ col }}
-                  </div>
-                </div>
-                <div
-                  v-for="row in currentQuestion.leftNumber"
-                  :key="'row-' + row"
-                  class="grid-row"
-                >
-                  <div class="grid-cell grid-label">{{ row }}</div>
-                  <div
-                    v-for="col in currentQuestion.rightNumber"
-                    :key="'col-' + col"
-                    class="grid-cell"
-                    :class="{ 'highlighted': isHighlighted(row, col) }"
-                    @mouseover="highlightCell(row, col)"
-                    @mouseleave="clearHighlight"
-                  >
-                    {{ currentQuestion.leftItems[0] }}
-                  </div>
+          <transition name="fade">
+            <div v-if="showMultiplicationGrid && currentQuestion.operator === '×'" class="multiplication-grid">
+              <div class="grid-row grid-header">
+                <div class="grid-cell"></div>
+                <div v-for="col in currentQuestion.rightNumber" :key="'col-' + col" class="grid-cell">
+                  {{ col }}
                 </div>
               </div>
-            </transition>
-          </div>
+              <div
+                v-for="row in currentQuestion.leftNumber"
+                :key="'row-' + row"
+                class="grid-row"
+              >
+                <div class="grid-cell grid-label">{{ row }}</div>
+                <div
+                  v-for="col in currentQuestion.rightNumber"
+                  :key="'col-' + col"
+                  class="grid-cell"
+                  :class="{ 'highlighted': isHighlighted(row, col) }"
+                  @mouseover="highlightCell(row, col)"
+                  @mouseleave="clearHighlight"
+                >
+                  {{ currentQuestion.leftItems[0] }}
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
 
-          <div class="nes-field tw-mb-4">
-            <input
-              type="number"
-              v-model="userInput"
-              @keyup.enter="checkAnswer"
-              class="nes-input is-success"
-              placeholder="Enter Your Answer"
-              :disabled="gameOver || !gameStarted"
-            />
-          </div>
+        <div class="nes-field tw-mb-2">
+          <input
+            type="number"
+            v-model="userInput"
+            @keyup.enter="checkAnswer"
+            class="nes-input is-success"
+            placeholder="Enter Your Answer"
+            :disabled="gameOver || !gameStarted"
+          />
+        </div>
 
-          <div class="tw-text-center tw-mb-4">
-            <button
-              @click="checkAnswer"
-              :class="{ 'nes-btn': true, 'is-disabled': gameOver || !gameStarted }"
-              :disabled="gameOver || !gameStarted"
-            >
-              Submit Answer
+        <div class="tw-text-center tw-mb-2">
+          <button
+            @click="checkAnswer"
+            :class="{ 'nes-btn': true, 'is-disabled': gameOver || !gameStarted }"
+            :disabled="gameOver || !gameStarted"
+          >
+            Submit Answer
+          </button>
+        </div>
+
+        <div class="tw-text-center tw-mb-2">
+          <p class="tw-test-md">
+            <br>
+            Question: {{ questionCount }} / 10 |
+            Coins earned: {{ medals }}<i class="nes-icon coin is-small"></i>
+          </p>
+        </div>
+
+        <div v-if="gameOver" class="game-over-overlay">
+          <div class="game-over-content">
+            <h2>{{ completionMessage }}</h2>
+            <br>
+            <p>You're one step closer to regaining Morgana's fur!</p>
+            <p>Play again?</p>
+            <button @click="exitGame" class="nes-btn is-primary">
+              Exit Game
+            </button>
+            <button @click="restartGame" class="nes-btn is-success">
+              Restart Game
             </button>
           </div>
-
-          <!-- <div class="tw-text-center tw-mt-6" v-if="hasCorrectStreak">
-            <p class="tw-text-xl">
-              <i class="nes-icon coin is-medium"></i>Coins earned: {{ medals }} / 15
-            </p>
-          </div> -->
-
-          <div v-if="gameOver" class="game-over-overlay">
-            <div class="game-over-content">
-              <h2>{{ completionMessage }}</h2>
-              <br>
-              <p>You're one step closer to regaining Morgana's fur!</p>
-              <p>Play again?</p>
-              <button @click="exitGame" class="nes-btn is-primary">
-                Exit Game
-              </button>
-              <button @click="restartGame" class="nes-btn is-success">
-                Restart Game
-              </button>
-            </div>
-          </div>
-
-          <dialog class="nes-dialog" id="dialog-default">
-            <form method="dialog">
-              <p class="title">Hint</p>
-              <p class="text-center">
-                Hover over the <strong>bottom row of emojis</strong> to visualise the question!<br>
-                For <strong>multiplication</strong>, you'll see a grid. <br>
-                For <strong>division</strong>, you'll see coloured groups.
-              </p>
-              <menu class="dialog-menu center-button">
-                <button class="nes-btn is-primary" @click="closeHintDialog">I Understand!</button>
-              </menu>
-            </form>
-          </dialog>
-          
-          <dialog class="nes-dialog" id="instructions-dialog">
-            <form method="dialog">
-              <p class="title" style="text-align:center;">Welcome to the Multiplication and Division Game!</p>
-              <p style="text-align: center;">
-                Answer questions to earn Destress coins.<br><br>
-                Objective: Earn <strong>15</strong> Destress coins to return Morgana's fur!<br><br>
-                You have <strong>{{ initialTimerSeconds }}</strong> seconds for each question. Good luck!
-              </p>
-              <menu class="dialog-menu center-button">
-                <button class="nes-btn is-primary" style="text-align:center;" @click="startGame">Start Game</button>
-              </menu>
-            </form>
-          </dialog>
         </div>
+        
+        <dialog class="nes-dialog" id="instructions-dialog">
+          <form method="dialog">
+            <p class="title" style="text-align:center;">Welcome to the Multiplication and Division Game!</p>
+            <p style="text-align: center;">
+              Answer 10 questions and earn Destress coins.<br><br>
+              Answer 5 questions in a row correctly to active a streak! <br>
+              It earns you double coins!<br><br>
+              You have <strong>{{ initialTimerSeconds }}</strong> seconds for each question. Good luck!
+            </p>
+            <menu class="dialog-menu center-button">
+              <button class="nes-btn is-primary" style="text-align:center;" @click="startGame">Start Game</button>
+            </menu>
+          </form>
+        </dialog>
       </div>
     </div>
+  </div>
 </template>
 
 <script>
@@ -204,7 +190,7 @@ import { useRouter } from 'vue-router';
 const emojiSet = ["😀", "🐶", "🍕", "🚗", "🎉", "🏀", "🌍", "💡", "📚", "💻"];
 const getRandomEmoji = () => emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
-const tables = [2, 3, 4, 5, 6, 7]; // 11NOV24 Edited the number pool to be smaller, checked the syllabus for multiplication.
+const tables = [2, 3, 4, 5, 6, 7];
 
 const generateQuestion = () => {
   const operators = ["×", "÷"];
@@ -240,6 +226,7 @@ export default {
 
     const currentQuestion = ref(generateQuestion());
     const correctStreak = ref(0);
+    const questionCount = ref(0);
     const medals = ref(0);
     const timerWidth = ref(100);
     const initialTimerSeconds = 10;
@@ -249,7 +236,7 @@ export default {
     const hoverIndex = ref(null);
     let timerInterval = null;
 
-    const hasCorrectStreak = computed(() => correctStreak.value >= 0);
+    const hasCorrectStreak = computed(() => correctStreak.value > 0);
     
     const showMultiplicationGrid = ref(false);
     const highlightedRow = ref(0);
@@ -334,29 +321,19 @@ export default {
     const handleCorrectAnswer = () => {
       playSound(true);
       correctStreak.value += 1;
+      questionCount.value += 1;
 
-      if (correctStreak.value % 5 === 0) {
+      if (correctStreak.value === 5) {
         triggerConfetti();
-      }
-
-      if (correctStreak.value % 5 === 0) {
         isBonusRound.value = true;
-        setTimeout(() => {
-          isBonusRound.value = false;
-        }, 30000);
       }
 
       if (medals.value < 15) {
-        if (correctStreak.value > 5 && correctStreak.value % 1 === 0) {
-          medals.value += 2;
-        } else if (correctStreak.value <= 5) {
-          medals.value += 1;
-        }
+        medals.value += correctStreak.value > 5 ? 2 : 1;
       }
 
-      if (medals.value >= 15) {
+      if (medals.value > 15) {
         medals.value = 15;
-        endGame();
       }
 
       earnedMedal.value = true;
@@ -364,14 +341,24 @@ export default {
         earnedMedal.value = false;
       }, 1000);
 
-      if (!gameOver.value) {
+      if (questionCount.value >= 10) {
+        endGame();
+      } else {
         nextQuestion();
       }
     };
 
     const handleIncorrectAnswer = () => {
       playSound(false);
-      correctStreak.value = medals.value;
+      correctStreak.value = 0;
+      isBonusRound.value = false;
+      questionCount.value += 1;
+
+      if (questionCount.value >= 10) {
+        endGame();
+      } else {
+        nextQuestion();
+      }
     };
 
     const checkAnswer = () => {
@@ -414,13 +401,14 @@ export default {
       currentQuestion.value = generateUniqueQuestion();
       timerSeconds.value = initialTimerSeconds;
       startTimer();
+      console.log("Next question! Current question count:", questionCount.value);
     };
 
-    const endGame = () => {
+    const endGame = () => { // 12NOV24 - Sean access this. This is the final coins value. PM me if u nt sure
       gameOver.value = true;
-      completionMessage.value = "You've earned all 15 Destress coins!";
+      completionMessage.value = "You've obtained " + medals.value + " Destress coins!";
       clearInterval(timerInterval);
-      isBonusRound.value = false;
+      console.log("Game over. Total questions answered: ", questionCount.value);
     };
 
     const restartGame = () => {
@@ -429,6 +417,7 @@ export default {
       completionMessage.value = "";
       medals.value = 0;
       correctStreak.value = 0;
+      questionCount.value = 0;
       userInput.value = "";
       isBonusRound.value = false;
       currentQuestion.value = generateQuestion();
@@ -468,8 +457,8 @@ export default {
         const grid = document.querySelector('.multiplication-grid');
         if (grid) {
           grid.style.position = 'absolute';
-          grid.style.top = `${rect.bottom + window.scrollY}px`;
-          grid.style.left = `${rect.left + window.scrollX}px`;
+          grid.style.top = `${rect.top - grid.offsetHeight}px`;
+          grid.style.left = `${rect.left}px`;
           grid.style.width = `${rect.width}px`;
         }
       }
@@ -478,6 +467,9 @@ export default {
     const handleBottomEmojisHover = () => {
       if (currentQuestion.value.operator === '×') {
         showMultiplicationGrid.value = true;
+        nextTick(() => {
+          updateGridPosition();
+        });
       } else if (currentQuestion.value.operator === '÷') {
         hoverIndex.value = 0;
       }
@@ -498,10 +490,12 @@ export default {
 
     onMounted(() => {
       showInstructions();
+      window.addEventListener('resize', updateGridPosition);
     });
 
     onUnmounted(() => {
       clearInterval(timerInterval);
+      window.removeEventListener('resize', updateGridPosition);
     });
 
     return {
@@ -534,6 +528,7 @@ export default {
       hoverIndex,
       handleBottomEmojisHover,
       handleBottomEmojisLeave,
+      questionCount,
     };
   },
 };
@@ -632,18 +627,18 @@ export default {
   text-align: center;
 }
 
-.math-game .hover-red { background-color: rgba(255, 182, 193, 0.7); }
-.math-game .hover-blue { background-color: rgba(173, 216, 230, 0.7); }
-.math-game .hover-yellow { background-color: rgba(255, 255, 224, 0.7); }
-.math-game .hover-green { background-color: rgba(144, 238, 144, 0.7); }
-.math-game .hover-purple { background-color: rgba(240, 128, 128, 0.7); }
+.math-game .hover-red { background-color: #D81B60; }
+.math-game .hover-blue { background-color: #1E88E5; }
+.math-game .hover-yellow { background-color: #FFC107; }
+.math-game .hover-green { background-color: #004D40; }
+.math-game .hover-purple { background-color: #994F00; }
 
 .center-button {
   display: flex;
   justify-content: center;
 }
 
-.multiplication-grid {
+.math-game .multiplication-grid {
   position: absolute;
   z-index: 10;
   background-color: rgba(255, 255, 255, 0.9);
