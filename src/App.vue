@@ -1,9 +1,10 @@
 <script setup>
 import Navbar from "./components/Navbar.vue";
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, onMounted, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const router = useRouter();
+const route = useRoute();
 const auth = getAuth();
 const isAuthenticated = ref("");
 onMounted(() => {
@@ -28,13 +29,55 @@ router.beforeEach(async (to, from) => {
     return { path: "/" };
   }
 });
+
+// Computed property to determine background image based on route
+const backgroundImage = computed(() => {
+  if (route.path === "/market") {
+    return "url('/assets/backgroundassets/cart.gif')";
+  } else if (route.path === "/bank") {
+    return "url('/assets/backgroundassets/safe.gif')";
+  } else if (route.path === "/bakery") {
+    return "url('/assets/backgroundassets/fridge.gif')";
+  } else if (route.path === "/school") {
+    return "url('/assets/backgroundassets/book.gif')";
+  } else if (route.path === "/") {
+    return "";
+  } else {
+  return "url('/assets/backgroundassets/cat.gif')"; // Default
+  }
+});
+
+const backgroundColor = computed(() => {
+  if (route.path === "/") {
+    return "";
+  } else {
+  return "#B7E0FF"; // Default
+  }
+});
+
 </script>
 
 <template>
-  <Navbar />
-  <div class="tw-bg-[#B7E0FF]">
+  <div :style="{ backgroundImage: backgroundImage, backgroundColor: backgroundColor}" class="background">
+    <Navbar />
     <RouterView></RouterView>
   </div>
 </template>
 
-<style></style>
+<style>
+.background {
+    background-size: auto; /* Keeps the original size */
+    background-position: 0 0; /* Starting position */
+    background-repeat: repeat;
+    animation: slowScroll 20s linear infinite; /* Slow scrolling effect */
+}
+
+@keyframes slowScroll {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 144px 144px; /* Adjust for direction and speed */
+    }
+}
+</style>

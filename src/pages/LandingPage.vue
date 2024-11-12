@@ -1,4 +1,6 @@
 <template>
+
+  <!-- Welcome to Mathwhiz Hero Video Container -->
   <div class="hero">
     <video class="hero-video" autoplay muted loop playsinline>
       <source src="../media/final_background_video.mp4" type="video/mp4" />
@@ -11,23 +13,16 @@
       </h1>
     </div>
   </div>
-
-  <!-- <div class="video-container">
-    <video autoplay muted loop>
-      <source src="../media/final_background_video.mp4" type="video/mp4">
-    </video>
-    <h1 class="text-over-video-h1 tw-text-8xl tw-font-bold tw-text-white-600">
-        Welcome to Mathwhiz!
-    </h1>
-  </div> -->
-
+  
+  <!-- 2nd Div - Mathwhiz vision -->
   <div class="background-container">
     <h1 class="tw-font-russo-one">Bringing Math to Life!</h1>
-    <p class="tw-text-2xl tw-font-russo-one">
+    <p class="tw-text-2xl tw-text-center tw-font-russo-one">
       At Mathwhiz, we believe in unlocking the magic of math.
     </p>
   </div>
 
+  <!-- 3rd Div - Mathwhiz Features -->
   <div class="tw-min-h-fit tw-bg-blue-300 tw-p-8">
     <div class="tw-max-w-4xl tw-mx-auto">
       <h1
@@ -76,6 +71,7 @@
           </p>
         </div>
 
+        <!-- Collect cats -->
         <div class="tw-bg-orange-100 tw-p-6 tw-rounded-xl tw-shadow-md">
           <h2
             class="tw-text-2xl tw-font-semibold tw-text-orange-800 tw-mb-4 tw-font-russo-one"
@@ -91,6 +87,7 @@
     </div>
   </div>
 
+  <!-- Mathwhiz Signup Div -->
   <div class="tw-min-h-500px tw-bg-yellow-50 tw-p-4">
     <div class="tw-max-w-4xl tw-mx-auto tw-p-5">
       <h1 class="tw-text-center tw-p-6 tw-font-russo-one">
@@ -99,14 +96,22 @@
     </div>
     <div class="tw-flex tw-flex-col tw-items-center">
       <button
-        v-if="!isAuthenticated"
-        @click="openModal"
-        class="btn btn-outline-primary w-75 p-3"
-        type="submit"
-        data-bs-target="#getStartedModal"
-        data-bs-toggle="modal"
-      >
-        Get Started!
+          v-if="!isAuthenticated"
+          @click="openModal"
+          class="nes-btn is-primary"
+          type="submit"
+          data-bs-target="#getStartedModal"
+          data-bs-toggle="modal"
+        >
+          Get Started!
+        </button>
+        <button
+          v-else
+          class="nes-btn is-disabled"
+          disabled
+          title="You're already signed in!"
+        >
+          Already Signed In
       </button>
     </div>
   </div>
@@ -126,6 +131,7 @@
   overflow: hidden;
   text-align: center;
   color: #fff;
+  z-index: 10;
 }
 
 .hero-video {
@@ -166,19 +172,6 @@
   }
 }
 
-.hero-title2 {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  margin: 0;
-  padding: 0;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 2;
-}
-
 .background-container {
   background-image: linear-gradient(to right, #b7e0ff, #95e3ff);
   /* background-color: #B7E0FF; */
@@ -188,14 +181,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-
-.text-over-video-h1 {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
 }
 
 .video-container {

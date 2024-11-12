@@ -1,15 +1,21 @@
 <template>
-  <div class="tw-flex-1 tw-bg-[#B7E0FF] tw-min-h-screen tw-pb-10">
-    <br />
-    <div class="nes-container tw-bg-[#FFCFB3] tw-mb-6 tw-mx-auto tw-w-fit">
-      <span class="tw-font-press-start tw-text-xs"
-        >Destress Coins {{ money }}</span
-      >&nbsp;<i class="nes-icon coin is-small"></i>
-    </div>
+  <div
+    class="shop tw-flex tw-flex-col tw-items-center tw-justify-center tw-min-h-screen"
+  >
+    <!-- Currency Display -->
     <div
-      class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-m-auto tw-mb-10"
+      class="nes-container is-rounded is-centered tw-bg-[#FFCFB3] tw-w-fit"
+      style="margin-top: 24px"
     >
-      <div v-for="cat in cats" class="tw-m-auto">
+      <h2 class="tw-text-lg">
+        {{ money }} Destress Coins <i class="nes-icon coin"></i>
+      </h2>
+    </div>
+
+    <div
+      class="tw-grid tw-gap-x-2 tw-gap-y-16 tw-grid-cols-1 md:tw-grid-cols-2 lg:tw-grid-cols-3 xl:tw-grid-cols-4 tw-w-full md:tw-w-[80%] tw-mt-6 tw-mb-6"
+    >
+      <div v-for="cat in cats" class="tw-m-auto tw-h-[330px]">
         <CardComponent
           :key="cat.name"
           :catObj="cat"
@@ -17,6 +23,8 @@
         />
       </div>
     </div>
+
+    <!-- Insufficient Currency Alert -->
     <dialog class="nes-dialog md:tw-max-w-[50%]" id="dialog-default">
       <form method="dialog">
         <p class="tw-font-press-start tw-text-xs">{{ dialogMessage }}</p>
@@ -28,6 +36,9 @@
   </div>
 </template>
 <style scoped>
+.shop {
+  font-family: "Press Start 2P";
+}
 .nes-btn {
   border-image-slice: 2;
   border-image-width: 2;
@@ -100,9 +111,9 @@ export default {
       cats: [
         {
           name: "Tuxedo",
-          cuteness: 92,
-          fluffiness: 85,
-          coolness: 90,
+          cuteness: 100,
+          fluffiness: 100,
+          coolness: 100,
           color: "Siamese",
           imgLocation: "/assets/shopassets/morgana.png",
           description:
@@ -113,80 +124,74 @@ export default {
         {
           name: "Peach",
           cuteness: 95,
-          fluffiness: 87,
-          coolness: 70,
+          fluffiness: 75,
+          coolness: 68,
           color: "Calico",
           imgLocation: "/assets/shopassets/peach.png",
           description: "Soft and sweet, just like a peach.",
           rarity: "Common",
           price: 20,
         },
-
         {
           name: "Midnight",
           cuteness: 85,
-          fluffiness: 78,
-          coolness: 95,
+          fluffiness: 97, // Adjusted for Rare rarity
+          coolness: 96, // Adjusted for Rare rarity
           color: "Black",
           imgLocation: "/assets/shopassets/midnight.png",
           description: "A sleek shadow that prowls through the night.",
-          rarity: "Super Rare",
-          price: 80,
+          rarity: "Rare",
+          price: 40,
         },
-
         {
-          name: "Luminescent",
+          name: "Luminous",
           cuteness: 85,
-          fluffiness: 80,
-          coolness: 95,
+          fluffiness: 97, // Adjusted for Rare rarity
+          coolness: 98, // Adjusted for Rare rarity
           color: "Silver",
-          imgLocation: "/assets/shopassets/luminiscent.png",
+          imgLocation: "/assets/shopassets/luminous.png",
           description: "A glowing beauty that lights up any room.",
           rarity: "Super Rare",
           price: 80,
         },
-
         {
           name: "Calico",
           cuteness: 88,
-          fluffiness: 84,
-          coolness: 85,
+          fluffiness: 78, //
+          coolness: 65, //
           color: "Calico",
           imgLocation: "/assets/shopassets/calico.png",
           description: "A colorful friend full of personality.",
           rarity: "Common",
           price: 20,
         },
-
         {
           name: "Cream",
           cuteness: 92,
-          fluffiness: 89,
-          coolness: 72,
+          fluffiness: 85, // Adjusted for Rare rarity
+          coolness: 78, // Adjusted for Rare rarity
           color: "Cream",
           imgLocation: "/assets/shopassets/cream.png",
           description: "Soft, creamy, and always ready to cuddle.",
           rarity: "Rare",
           price: 40,
         },
-
         {
           name: "Mocha",
           cuteness: 87,
-          fluffiness: 88,
-          coolness: 80,
+          fluffiness: 88, // Adjusted for Rare rarity
+          coolness: 80, // Adjusted for Rare rarity
           color: "Chocolate",
           imgLocation: "/assets/shopassets/mocha.png",
           description: "Warm and cozy, just like your favorite drink.",
           rarity: "Rare",
           price: 40,
         },
-
         {
           name: "Snowy",
           cuteness: 98,
-          fluffiness: 94,
-          coolness: 78,
+          fluffiness: 95, // Adjusted for Super Rare rarity
+          coolness: 95, // Adjusted for Super Rare rarity
           color: "White",
           imgLocation: "/assets/shopassets/snowy.png",
           description: "As pure and cool as freshly fallen snow.",

@@ -1,179 +1,205 @@
 <template>
   <div
-    class="math-game min-h-screen bg-gray-100 flex flex-col"
-    style="background-color: #add8e6; position: relative"
+    class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]"
   >
-    <div class="flex-grow flex items-center justify-center p-4">
-      <div
-        class="w-full max-w-5xl bg-white rounded-lg shadow-xl overflow-hidden"
-      >
-        <div class="p-6 w-[400px] h-[300px] mx-auto">
-          <h1 class="text-3xl font-bold text-center align-center mb-6">
+    <!-- Game Container -->
+    <div
+      class="nes-container is-rounded is-centered with-title"
+      style="background-color: rgba(255, 245, 205, 1); width: 800px"
+    >
+      <p class="title" style="background-color: rgba(255, 245, 205, 1)">
+        Addition and Subtraction
+      </p>
+
+      <div class="p-6 w-[400px] h-[300px] mx-auto">
+        <!-- Instructions and Hint -->
+        <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
+          <h1 class="tw-text-3xl text-center align-center">
             {{
               currentQuestion.operator === "+"
-                ? "Addition Game"
-                : "Subtraction Game"
+                ? "Add the numbers!"
+                : "Subtract the numbers!"
             }}
           </h1>
+          <button
+            @click="showHintModal = true"
+            class="nes-btn is-primary tw-text-sm tw-mx-4"
+          >
+            Hint
+          </button>
+        </div>
 
-          <div class="progress-container">
-            <progress
-              class="nes-progress is-success"
-              :value="timerWidth"
-              :max="100"
-            ></progress>
-            <p class="nes-text is-primary">{{ Math.round(timerWidth) }}%</p>
+        <!-- Hint Modal -->
+        <div
+          v-if="showHintModal"
+          class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50"
+        >
+          <div
+            class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6"
+          >
+            <p class="title">Hint</p>
+            <p class="tw-text-lg tw-mb-4">
+              Click on the addition or subtraction operator to visualise the
+              question!
+            </p>
+
+            <!-- Button-->
+            <div class="tw-flex tw-gap-8 tw-justify-center">
+              <button
+                @click="showHintModal = false"
+                class="nes-btn is-success tw-w-auto"
+              >
+                I Understand!
+              </button>
+            </div>
           </div>
+        </div>
 
-          <section>
-            <button
-              type="button"
-              class="nes-btn is-primary"
-              onclick="document.getElementById('dialog-default').showModal();"
-            >
-              Hint
-            </button>
-            <dialog class="nes-dialog" id="dialog-default">
-              <form method="dialog">
-                <p class="title">Hint</p>
-                <p>
-                  Hover over the emojis to visualise the addition and
-                  subtraction
-                </p>
-                <menu class="dialog-menu">
-                  <button class="nes-btn">Cancel</button>
-                  <button class="nes-btn is-primary">Confirm</button>
-                </menu>
-              </form>
-            </dialog>
-          </section>
+        <!-- Timer Bar -->
+        <div class="progress-container">
+          <progress
+            class="nes-progress is-success"
+            :value="timeRemaining"
+            :max="totalTime"
+          ></progress>
+          <p class="nes-text is-primary">
+            {{ timeRemaining.toFixed(1) }} seconds
+          </p>
+        </div>
 
-          <transition name="fade" mode="out-in">
-            <div :key="'question-' + questionIndex" class="question-container">
-              <div class="text-center mb-4">
-                <div class="text-4xl" v-if="currentQuestion">
-                  <span>{{ currentQuestion.leftNumber }}</span>
-                  <span class="mx-2">{{ currentQuestion.operator }}</span>
-                  <span>{{ currentQuestion.rightNumber }}</span>
-                </div>
+        <transition name="fade" mode="out-in">
+          <div :key="'question-' + questionIndex" class="question-container">
+            <div class="text-center mb-4">
+              <div class="text-4xl" v-if="currentQuestion">
+                <span>{{ currentQuestion.leftNumber }}</span>
+                <span class="mx-2">{{ currentQuestion.operator }}</span>
+                <span>{{ currentQuestion.rightNumber }}</span>
               </div>
+            </div>
 
-              <div class="text-center mb-6" style="position: relative">
-                <div class="text-4xl mb-4">
-                  <transition-group name="bounce" tag="div">
-                    <span
-                      v-for="(item, index) in currentQuestion.leftItems"
-                      :key="'left-' + index"
-                      :class="['emoji-group', { hide: item.hide }]"
-                      class="emoji-group"
-                      @mouseover="handleHover"
-                      @mouseleave="clearHover"
-                    >
-                      {{ item.item }}
-                    </span>
-                  </transition-group>
-
-                  <div class="text-4xl">{{ currentQuestion.operator }}</div>
-
-                  <transition-group name="bounce" tag="div">
-                    <span
-                      v-for="(item, index) in currentQuestion.rightItems"
-                      :key="'right-' + index"
-                      :class="['emoji-group', { hide: item.hide }]"
-                      class="emoji-group"
-                      @mouseover="handleHover"
-                      @mouseleave="clearHover"
-                    >
-                      {{ item.item }}
-                    </span>
-                  </transition-group>
-
-                  <span>=</span>
-                </div>
-
-                <!-- Addition hover table showing total in rows of 10 as overlay -->
-                <div v-if="showAdditionTable" class="addition-table-overlay">
-                  <!-- Column headers for 1 to 10 -->
-                  <div class="addition-grid-header">
-                    <span class="row-label"></span>
-                    <!-- Empty cell for alignment with row labels -->
-                    <span
-                      v-for="col in 10"
-                      :key="'col-' + col"
-                      class="column-number"
-                      >{{ col }}</span
-                    >
-                  </div>
-                  <!-- Rows with row labels and emojis -->
-                  <div
-                    v-for="(row, rowIndex) in additionTableRows"
-                    :key="rowIndex"
-                    class="addition-grid-row"
+            <!-- Emoji and Operator Display -->
+            <div class="text-center mb-6" style="position: relative">
+              <div class="text-4xl mb-4">
+                <!-- Left Emojis -->
+                <transition-group name="bounce" tag="div">
+                  <span
+                    v-for="(item, index) in currentQuestion.leftItems"
+                    :key="'left-' + index"
+                    :class="['emoji-group', { hide: item.hide }]"
+                    class="emoji-group"
                   >
-                    <span class="row-label">{{ rowIndex + 1 }}</span>
-                    <!-- Row label -->
-                    <span
-                      v-for="(emoji, index) in row"
-                      :key="index"
-                      class="addition-emoji"
-                    >
-                      {{ emoji }}
-                    </span>
-                  </div>
+                    {{ item.item }}
+                  </span>
+                </transition-group>
+
+                <!-- Operator with Click Events -->
+                <div
+                  class="text-4xl operator-symbol"
+                  @click="handleOperatorClick($event)"
+                  ref="operatorSymbol"
+                >
+                  {{ currentQuestion.operator }}
+                </div>
+
+                <!-- Right Emojis -->
+                <transition-group name="bounce" tag="div">
+                  <span
+                    v-for="(item, index) in currentQuestion.rightItems"
+                    :key="'right-' + index"
+                    :class="['emoji-group', { hide: item.hide }]"
+                    class="emoji-group"
+                  >
+                    {{ item.item }}
+                  </span>
+                </transition-group>
+
+                <!-- Equals Sign -->
+                <span>=</span>
+              </div>
+
+              <!-- Addition hover table showing total in rows of 10 as overlay -->
+              <div v-if="showAdditionTable" class="addition-table-overlay">
+                <!-- Column headers for 1 to 10 -->
+                <div class="addition-grid-header">
+                  <span class="row-label"></span>
+                  <!-- Empty cell for alignment with row labels -->
+                  <span
+                    v-for="col in 10"
+                    :key="'col-' + col"
+                    class="column-number"
+                    >{{ col }}</span
+                  >
+                </div>
+                <!-- Rows with row labels and emojis -->
+                <div
+                  v-for="(row, rowIndex) in additionTableRows"
+                  :key="rowIndex"
+                  class="addition-grid-row"
+                >
+                  <span class="row-label">{{ rowIndex + 1 }}</span>
+                  <!-- Row label -->
+                  <span
+                    v-for="(emoji, index) in row"
+                    :key="index"
+                    class="addition-emoji"
+                  >
+                    {{ emoji }}
+                  </span>
                 </div>
               </div>
             </div>
-          </transition>
-
-          <div class="nes-field is-inline mb-4">
-            <input
-              type="number"
-              v-model="userInput"
-              @keyup.enter="checkAnswer"
-              class="nes-input is-success"
-              placeholder="Enter Your Answer"
-              :disabled="gameOver"
-            />
           </div>
+        </transition>
 
-          <div class="text-center mb-6">
-            <button
-              @click="checkAnswer"
-              :class="{ 'nes-btn': true, 'is-disabled': gameOver }"
-              :disabled="gameOver"
-            >
-              Submit Answer
+        <div class="nes-field is-inline mb-4">
+          <input
+            type="number"
+            v-model="userInput"
+            @keyup.enter="checkAnswer"
+            class="nes-input is-success"
+            placeholder="Enter Your Answer"
+            :disabled="gameOver"
+          />
+        </div>
+
+        <div class="text-center mb-6">
+          <button
+            @click="checkAnswer"
+            :class="{ 'nes-btn': true, 'is-disabled': gameOver }"
+            :disabled="gameOver"
+          >
+            Submit Answer
+          </button>
+        </div>
+
+        <!-- Question and Coins Display -->
+        <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-6">
+          Question {{ questionsAnswered }}/10
+        </h2>
+        <h2 class="tw-text-base tw-text-gray-800 tw-text-center">
+          Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+        </h2>
+
+        <!-- Streak Message -->
+        <div
+          v-if="streakActive"
+          class="tw-flex tw-items-center tw-justify-center"
+        >
+          <i class="nes-icon trophy is-large"></i>
+          <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
+          <i class="nes-icon trophy is-large"></i>
+        </div>
+
+        <div v-if="gameOver" class="game-over-overlay">
+          <div class="game-over-content">
+            <h2>{{ completionMessage }}</h2>
+            <p>Total Coins Earned: {{ coins }}</p>
+            <button @click="exitGame" class="nes-btn is-primary">
+              Exit Game
             </button>
-          </div>
-
-          <!-- Streak Message -->
-          <div v-if="streakActive" class="text-center mb-2">
-            <p class="text-xl text-green-600">
-              You are on a streak! x2 coins enabled!
-            </p>
-          </div>
-
-          <!-- Display coin count -->
-          <div class="text-center mt-4">
-            <p class="text-xl">
-              Coins Earned: {{ coins }} <i class="nes-icon coin is-medium"></i>
-            </p>
-            <p class="text-xl">
-              Questions Answered: {{ questionsAnswered }} / 10
-            </p>
-          </div>
-
-          <div v-if="gameOver" class="game-over-overlay">
-            <div class="game-over-content">
-              <h2>{{ completionMessage }}</h2>
-              <p>Total Coins Earned: {{ coins }}</p>
-              <button @click="exitGame" class="nes-btn is-primary">
-                Exit Game
-              </button>
-              <button @click="restartGame" class="nes-btn is-success">
-                Restart Game
-              </button>
-            </div>
+            <button @click="restartGame" class="nes-btn is-success">
+              Restart Game
+            </button>
           </div>
         </div>
       </div>
@@ -182,6 +208,14 @@
 </template>
 
 <script>
+import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 const emojiSet = ["🚗", "🏀", "🌍", "💡", "📚", "💻", "🏫", "👨‍🏫", "📏", "🔢"];
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
@@ -239,11 +273,16 @@ export default {
         generateQuestion(),
       ],
       questionIndex: 0,
-      timerWidth: 100,
       userInput: "",
       showAdditionTable: false,
       additionTableRows: [],
       timerInterval: null,
+      showHintModal: false,
+      timeRemaining: 20,
+      totalTime: 20,
+      operatorEffectActive: false,
+      db: "",
+      auth: "",
     };
   },
   computed: {
@@ -252,15 +291,68 @@ export default {
     },
   },
   methods: {
-    startTimer() {
-      this.timerWidth = 100;
+    handleOperatorClick(event) {
+      event.stopPropagation();
+      if (this.operatorEffectActive) {
+        this.clearOperatorEffect();
+      } else {
+        this.applyOperatorEffect();
+        document.addEventListener("click", this.handleOutsideClick);
+      }
+    },
+    applyOperatorEffect() {
+      this.operatorEffectActive = true;
+      if (this.currentQuestion.operator === "-") {
+        this.currentQuestion.leftItems.forEach((item, i) => {
+          if (
+            i >=
+            this.currentQuestion.leftItems.length -
+              this.currentQuestion.rightNumber
+          ) {
+            item.hide = true;
+          }
+        });
+        this.currentQuestion.rightItems.forEach((item) => (item.hide = true));
+      } else if (this.currentQuestion.operator === "+") {
+        const totalEmojis =
+          this.currentQuestion.leftNumber + this.currentQuestion.rightNumber;
+        const emoji = this.currentQuestion.selectedEmoji;
+        this.additionTableRows = Array(Math.ceil(totalEmojis / 10))
+          .fill()
+          .map((_, i) => Array(Math.min(10, totalEmojis - i * 10)).fill(emoji));
+        this.showAdditionTable = true;
+      }
+    },
+    clearOperatorEffect() {
+      this.operatorEffectActive = false;
+      if (this.currentQuestion.operator === "-") {
+        this.currentQuestion.leftItems.forEach((item) => (item.hide = false));
+        this.currentQuestion.rightItems.forEach((item) => (item.hide = false));
+      } else if (this.currentQuestion.operator === "+") {
+        this.showAdditionTable = false;
+        this.additionTableRows = [];
+      }
+      document.removeEventListener("click", this.handleOutsideClick);
+    },
+    handleOutsideClick(event) {
+      const operatorElement = this.$refs.operatorSymbol;
+      if (!operatorElement.contains(event.target)) {
+        this.clearOperatorEffect();
+      }
+    },
+    startTimer(resume = false) {
+      if (!resume) {
+        this.timeRemaining = this.totalTime;
+      }
       clearInterval(this.timerInterval);
 
       this.timerInterval = setInterval(() => {
-        this.timerWidth = Math.max(0, this.timerWidth - 0.625);
-        if (this.timerWidth <= 0) {
-          clearInterval(this.timerInterval);
-          this.nextQuestion();
+        if (!this.showHintModal) {
+          this.timeRemaining = Math.max(0, this.timeRemaining - 0.1);
+          if (this.timeRemaining <= 0) {
+            clearInterval(this.timerInterval);
+            this.handleIncorrectAnswer();
+          }
         }
       }, 100);
     },
@@ -279,12 +371,30 @@ export default {
 
       if (this.correctAnswersInRow >= 5) {
         this.streakActive = true;
+      } else {
+        this.streakActive = false;
       }
 
-      this.coins += this.streakActive ? 2 : 1;
+      if (this.correctAnswersInRow >= 6) {
+        this.coins += 2;
+      } else {
+        this.coins += 1;
+      }
 
       if (this.questionsAnswered >= 10) {
         this.endGame();
+        this.updateCurrency(
+          this.db,
+          "users",
+          this.auth.currentUser.uid,
+          this.coins + this.money
+        );
+        this.updateCompletedTasks(
+          this.db,
+          "users",
+          this.auth.currentUser.uid,
+          "additionAndSubtraction"
+        );
         return;
       }
 
@@ -312,37 +422,6 @@ export default {
         this.handleIncorrectAnswer();
       }
     },
-    handleHover() {
-      if (this.currentQuestion.operator === "-") {
-        this.currentQuestion.leftItems.forEach((item, i) => {
-          if (
-            i >=
-            this.currentQuestion.leftItems.length -
-              this.currentQuestion.rightNumber
-          ) {
-            item.hide = true;
-          }
-        });
-        this.currentQuestion.rightItems.forEach((item) => (item.hide = true));
-      } else if (this.currentQuestion.operator === "+") {
-        const totalEmojis =
-          this.currentQuestion.leftNumber + this.currentQuestion.rightNumber;
-        const emoji = this.currentQuestion.selectedEmoji;
-        this.additionTableRows = Array(Math.ceil(totalEmojis / 10))
-          .fill()
-          .map((_, i) => Array(Math.min(10, totalEmojis - i * 10)).fill(emoji));
-        this.showAdditionTable = true;
-      }
-    },
-    clearHover() {
-      if (this.currentQuestion.operator === "-") {
-        this.currentQuestion.leftItems.forEach((item) => (item.hide = false));
-        this.currentQuestion.rightItems.forEach((item) => (item.hide = false));
-      } else if (this.currentQuestion.operator === "+") {
-        this.showAdditionTable = false;
-        this.additionTableRows = [];
-      }
-    },
     nextQuestion() {
       this.userInput = "";
       this.questionIndex = (this.questionIndex + 1) % this.questions.length;
@@ -365,9 +444,47 @@ export default {
         ];
       }
 
-      this.timerWidth = 100;
+      this.timeRemaining = this.totalTime;
       this.startTimer();
     },
+    async getCurrency(db, collectionName, documentId) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          this.money = doc.data().currency;
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
+    },
+    async updateCurrency(db, collectionName, documentId, currency) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        await setDoc(docRef, { currency: currency }, { merge: true });
+        console.log("Currency successfully written!");
+      } catch (error) {
+        console.error("Error writing document: ", error);
+      }
+    },
+    async updateCompletedTasks(db, collectionName, documentId, newTask) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        await setDoc(
+          docRef,
+          { completedTasks: arrayUnion(newTask) },
+          { merge: true }
+        );
+        console.log("Task successfully added to completedTasks!");
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
+    },
+
     endGame() {
       this.gameOver = true;
       this.completionMessage = "Game Over! You've answered 10 questions.";
@@ -394,26 +511,39 @@ export default {
       console.log("Exiting game");
     },
   },
+  watch: {
+    showHintModal(newVal) {
+      if (newVal) {
+        clearInterval(this.timerInterval);
+      } else {
+        this.startTimer(true);
+      }
+    },
+  },
   mounted() {
     this.startTimer();
+    this.handleOutsideClick = this.handleOutsideClick.bind(this);
+    const auth = getAuth();
+    console.log(`uid=${auth.currentUser.uid}`);
+    const db = getFirestore();
+    this.db = db;
+    this.auth = auth;
+    console.log(db);
+    this.getCurrency(db, "users", auth.currentUser.uid);
   },
   beforeUnmount() {
     clearInterval(this.timerInterval);
+    document.removeEventListener("click", this.handleOutsideClick);
   },
 };
 </script>
 
 <style scoped>
 /* @import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css");
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
+  @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
 
-.math-game {
-  font-family: "Press Start 2P", cursive;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background-color: mediumseagreen;
+* {
+  font-family: "Press Start 2P", sans-serif;
 }
 
 body {
@@ -618,5 +748,14 @@ body {
   top: 10px;
   margin-bottom: 15px;
   z-index: 1;
+}
+
+.operator-symbol {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.operator-symbol:hover {
+  transform: scale(1.2);
 }
 </style>

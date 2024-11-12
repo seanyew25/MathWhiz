@@ -5,4 +5,8 @@ export const globalState = reactive({
   setPlayerPosition(x, y) {
     this.playerPosition = { x: x, y: y };
   },
+  playerImgLink: "",
+  setPlayerImageLink(link) {
+    this.playerImgLink = link;
+  },
 });

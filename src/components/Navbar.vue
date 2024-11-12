@@ -6,6 +6,7 @@
   background-color: #fff5cd;
   transition: transform 0.2s ease;
   transform: translateY(0);
+  width: 100vw;
 }
 
 .navbar.hidden {
@@ -85,7 +86,7 @@
         <button
           v-if="!isAuthenticated"
           @click="openModal"
-          class="btn btn-outline-primary"
+          class="nes-btn is-primary"
           type="submit"
           data-bs-target="#getStartedModal"
           data-bs-toggle="modal"
@@ -102,7 +103,7 @@
             data-bs-toggle="dropdown"
             aria-expanded="false"
           >
-            <img src="/assets/mainassets/player.png" width="20" />
+            <img :src="globalState.playerImgLink" width="20" />
             {{ userData.displayName ? userData.displayName : username }}
           </button>
           <ul class="dropdown-menu">
@@ -132,7 +133,17 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <!-- START OF REMOVE -->
 
-          <!-- <li class="nav-item">
+          <li class="nav-item">
+            <RouterLink
+              class="nav-link"
+              to="/market"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Market</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <a>Test</a>
             <RouterLink
               class="nav-link"
               to="/bakery"
@@ -158,7 +169,7 @@
               style="text-decoration: none; color: black"
               >School</RouterLink
             >
-          </li> 
+          </li>
           <li class="nav-item">
             <RouterLink
               class="nav-link"
@@ -167,7 +178,7 @@
               style="text-decoration: none; color: black"
               >Timer</RouterLink
             >
-          </li>  -->
+          </li>
 
           <!-- END OF REMOVE -->
           <li
@@ -394,9 +405,10 @@ import {
   updateProfile,
   signOut,
 } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 import * as bootstrap from "bootstrap";
 import { useRouter, useRoute } from "vue-router";
+import { globalState } from "./globalState";
 
 const loginValidity = ref("");
 const email = ref("");
@@ -411,6 +423,7 @@ const userData = ref("");
 const isAuthenticated = ref(false);
 const auth = getAuth();
 const db = getFirestore();
+const playerImage = ref("");
 const defaultCat = ref([
   {
     name: "Furless",
@@ -425,11 +438,19 @@ const defaultCat = ref([
   },
 ]);
 
+const defaultPlayer = ref({
+  name: "Hoodie Boy",
+  imgLocation: "/assets/profileassets/character/Hoodie Boy.png",
+  description:
+    "A casual cool kid in his comfortable hoodie, ready for any relaxed adventure",
+});
+
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
     console.log(user);
     userData.value = user;
     isAuthenticated.value = user !== null;
+    getEquippedPlayer(db, "users", userData.value.uid);
   });
 });
 
@@ -492,9 +513,31 @@ async function createUserProfile(userId) {
       currency: 0,
       equippedCat: defaultCat.value[0],
       purchasedCats: defaultCat.value,
+      equippedPlayer: defaultPlayer.value,
     },
     { merge: true }
   );
+  console.log(userRef);
+}
+
+async function getEquippedPlayer(db, collectionName, documentId) {
+  const docRef = doc(db, collectionName, documentId);
+  try {
+    const doc = await getDoc(docRef);
+    console.log(doc);
+    if (doc.exists()) {
+      console.log("Document data:", doc.data());
+      if (doc.data().equippedPlayer) {
+        globalState.playerImgLink = doc.data().equippedPlayer.imgLocation;
+      } else {
+        console.log("No equippedPlayer data!");
+      }
+    } else {
+      console.log("No such document!");
+    }
+  } catch (error) {
+    console.error("Error getting document:", error);
+  }
 }
 
 const isNavbarHidden = ref(false);
