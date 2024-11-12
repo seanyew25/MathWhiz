@@ -3,7 +3,8 @@ import { createApp } from "vue";
 import App from "./App.vue"; //can write as import App from "@/App.vue", the @ directs to source directory (for vue cli) https://www.youtube.com/watch?v=PciUq6HcUNc
 // Import our custom CSS
 import "./styles.scss";
-import './style.css'
+import "./style.css";
+import "nes.css/css/nes.min.css";
 
 // Import all of Bootstrap's JS
 import * as bootstrap from "bootstrap";
@@ -26,6 +27,8 @@ import StoryPage from "./pages/StoryPage.vue";
 import ShopPage from "./pages/ShopPage.vue";
 import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
 import TimerBar from "./pages/Timerbar.vue";
+import CharacterChangingRoom from "./pages/profile/CharacterChangingRoom.vue";
+
 // import BankPage from "./components/BankPage.vue";
 // import FractionGame from "./components/FractionGame.vue";
 // import AboutView from "./AboutView.vue";
@@ -58,6 +61,7 @@ const routes = [
   { path: "/story", component: StoryPage },
   { path: "/shop", component: ShopPage },
   { path: "/catchangingroom", component: CatChangingRoom },
+  { path: "/characterchangingroom", component: CharacterChangingRoom },
   { path: "/timerbar", component: TimerBar },
 ];
 

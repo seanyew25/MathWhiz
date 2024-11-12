@@ -32,10 +32,15 @@ export default class MainScene extends Phaser.Scene {
     );
     // tileset name need to be the same as the image name here
     this.load.tilemapTiledJSON("map", `${basePath}/MainTilemap.json`);
-    this.load.spritesheet("player", `${basePath}/sprites/postman.png`, {
-      frameWidth: 16,
-      frameHeight: 32,
-    });
+    this.initialData = this.registry.get("initialData");
+    this.load.spritesheet(
+      "player",
+      `${basePath}/sprites/characters/${this.initialData.equippedPlayer}.png`,
+      {
+        frameWidth: 16,
+        frameHeight: 32,
+      }
+    );
     this.load.spritesheet("homeDoor", `${basePath}/sprites/homeDoor.png`, {
       frameWidth: 16,
       frameHeight: 32,
@@ -60,7 +65,6 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
-    this.initialData = this.registry.get("initialData");
     console.log(this.initialData.equippedCat);
     this.load.spritesheet(
       "cat",
@@ -363,8 +367,8 @@ export default class MainScene extends Phaser.Scene {
     this.anims.create({
       key: "walk-right",
       frames: this.anims.generateFrameNumbers("player", {
-        start: 114,
-        end: 119,
+        start: 112,
+        end: 117,
       }),
       frameRate: 20,
       repeat: -1,
@@ -373,8 +377,8 @@ export default class MainScene extends Phaser.Scene {
     this.anims.create({
       key: "walk-up",
       frames: this.anims.generateFrameNumbers("player", {
-        start: 120,
-        end: 125,
+        start: 118,
+        end: 123,
       }),
       frameRate: 20,
       repeat: -1,
@@ -383,8 +387,8 @@ export default class MainScene extends Phaser.Scene {
     this.anims.create({
       key: "walk-left",
       frames: this.anims.generateFrameNumbers("player", {
-        start: 126,
-        end: 131,
+        start: 124,
+        end: 129,
       }),
       frameRate: 20,
       repeat: -1,
@@ -393,8 +397,8 @@ export default class MainScene extends Phaser.Scene {
     this.anims.create({
       key: "walk-down",
       frames: this.anims.generateFrameNumbers("player", {
-        start: 132,
-        end: 137,
+        start: 130,
+        end: 135,
       }),
       frameRate: 20,
       repeat: -1,
@@ -908,11 +912,11 @@ export default class MainScene extends Phaser.Scene {
   }
 }
 
-export function initializePhaser(equippedCat, playerCoords) {
+export function initializePhaser(equippedPlayer, equippedCat, playerCoords) {
   const config = {
     type: Phaser.CANVAS, // Which renderer to use
     width: window.innerWidth, // Canvas width in pixels
-    height: window.innerHeight - 56, // Canvas height in pixels
+    height: window.innerHeight - 150.55, // Canvas height in pixels
     parent: "phaser-container", // ID of the DOM element to add the canvas to
     pixelArt: true,
     transparency: false,
@@ -932,6 +936,7 @@ export function initializePhaser(equippedCat, playerCoords) {
       preBoot: (game) => {
         // Set initial data here if needed
         game.registry.set("initialData", {
+          equippedPlayer: equippedPlayer,
           equippedCat: equippedCat,
           spawnLocation: playerCoords,
         });

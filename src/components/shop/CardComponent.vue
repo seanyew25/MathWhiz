@@ -102,13 +102,13 @@
                 >Coolness</span
               >
               <span class="tw-text-xs" style="font-family: monospace"
-                >{{ catObj.cuteness }}%</span
+                >{{ catObj.coolness }}%</span
               >
             </div>
             <progress
               class="nes-progress"
               :class="rarityStatBars"
-              :value="catObj.cuteness"
+              :value="catObj.coolness"
               max="100"
             ></progress>
           </div>
