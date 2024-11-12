@@ -1,7 +1,7 @@
 <template>
   <div class="math-game md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
     <!-- Game Container -->
-    <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 850px; padding: 10px;">
+    <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 90%; padding: 10px;">
       <p class="title" style="background-color: rgba(255, 245, 205, 1);">Multiplication and Division</p>
 
       <div class="tw-w-full">
@@ -275,7 +275,9 @@ export default {
 
     const handleTimerExpired = () => {
       correctStreak.value = 0;
+      isBonusRound.value = false; // Remove bonus round popup
       nextQuestion();
+      playSound(false);
     };
 
     const getEmojiClass = (index) => {
@@ -321,7 +323,6 @@ export default {
     const handleCorrectAnswer = () => {
       playSound(true);
       correctStreak.value += 1;
-      questionCount.value += 1;
 
       if (correctStreak.value === 5) {
         triggerConfetti();
@@ -341,24 +342,15 @@ export default {
         earnedMedal.value = false;
       }, 1000);
 
-      if (questionCount.value >= 10) {
-        endGame();
-      } else {
-        nextQuestion();
-      }
+      nextQuestion();
     };
 
     const handleIncorrectAnswer = () => {
       playSound(false);
       correctStreak.value = 0;
       isBonusRound.value = false;
-      questionCount.value += 1;
 
-      if (questionCount.value >= 10) {
-        endGame();
-      } else {
-        nextQuestion();
-      }
+      nextQuestion();
     };
 
     const checkAnswer = () => {
@@ -396,6 +388,13 @@ export default {
 
     const nextQuestion = () => {
       if (gameOver.value) return;
+      questionCount.value += 1;
+
+      if (questionCount.value >= 10) {
+        endGame();
+        return;
+      }
+
       userInput.value = "";
       hoverIndex.value = null;
       currentQuestion.value = generateUniqueQuestion();
@@ -404,7 +403,8 @@ export default {
       console.log("Next question! Current question count:", questionCount.value);
     };
 
-    const endGame = () => { // 12NOV24 - Sean access this. This is the final coins value. PM me if u nt sure
+    const endGame = () => {
+      if (gameOver.value) return;
       gameOver.value = true;
       completionMessage.value = "You've obtained " + medals.value + " Destress coins!";
       clearInterval(timerInterval);
@@ -448,7 +448,15 @@ export default {
     const startGame = () => {
       gameStarted.value = true;
       document.getElementById('instructions-dialog').close();
-      nextQuestion();
+      setInitialQuestion();
+    };
+
+    const setInitialQuestion = () => {
+      userInput.value = "";
+      hoverIndex.value = null;
+      currentQuestion.value = generateUniqueQuestion();
+      timerSeconds.value = initialTimerSeconds;
+      startTimer();
     };
 
     const updateGridPosition = () => {
@@ -529,6 +537,7 @@ export default {
       handleBottomEmojisHover,
       handleBottomEmojisLeave,
       questionCount,
+      setInitialQuestion,
     };
   },
 };
