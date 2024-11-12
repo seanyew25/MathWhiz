@@ -1,13 +1,12 @@
 <template>
     <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
-
         <!-- Game Container -->
         <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 768px;">
             <p class="title" style="background-color: rgba(255, 245, 205, 1);">Counting</p>
             <div class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center">
 
                 <!-- Instructions and Hint Button -->
-                <h3 class="tw-text-3xl tw-mb-4 tw-flex tw-justify-center tw-items-center tw-gap-4">
+                <h3 class="tw-text-3xl tw-mb-2 tw-flex tw-justify-center tw-items-center tw-gap-4">
                     Make a total of:{{ targetNumber }}
                     <button @click="showHintModal = true" class="nes-btn is-primary tw-text-sm tw-mx-2">Hint</button>
                 </h3>
@@ -16,11 +15,11 @@
                 <div v-if="showHintModal" class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50">
                     <div class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6">
                         <p class="title">Hint</p>
-                        <p class="tw-text-lg tw-mb-4">
-                            In Hint Mode, click items to preview them in the target box with a counter.<br>Do you want to turn on Hint Mode?
+                        <p class="tw-text-md tw-mb-4">
+                            In Hint Mode, click on the items to see how they add up in the box.<br><br>
+                            Do you want to use Hint Mode?
                         </p>
-                        
-                        <!-- Buttons -->
+          
                         <div class="tw-flex tw-gap-8 tw-justify-center">
                             <button @click="getHint(true)" class="nes-btn is-success tw-w-32">Yes</button>
                             <button @click="getHint(false)" class="nes-btn is-error tw-w-32">No</button>
@@ -28,68 +27,108 @@
                     </div>
                 </div>
 
+                <!-- Hint Modal -->
+                <!-- <dialog v-if="showHintModal" class="nes-dialog" style="border-radius: 10px;">
+                    <form method="dialog">
+                        <p class="title tw-text-lg tw-mb-4 text-center">Hint</p>
+                        <p class="text-center tw-text-md tw-mb-4">
+                        In Hint Mode, click items to preview them in the target box with a counter.<br>
+                        Do you want to turn on Hint Mode?
+                        </p>
+                        <div class="tw-flex tw-gap-8 tw-justify-center">
+                            <button @click="getHint(true)" class="nes-btn is-success tw-w-32">Yes</button>
+                            <button @click="getHint(false)" class="nes-btn is-error tw-w-32">No</button>
+                        </div>
+                    </form>
+                </dialog> -->
+
                 <!-- Timer Bar -->
                 <div class="progress-container tw-w-full">
                     <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
-                    <p class="nes-text is-primary">{{ Math.round(timerWidth) }}s</p>
+                    <p class="nes-text is-primary timer-text">{{ timerWidth.toFixed(1) }}s</p>
                 </div>
 
+                <!-- Streak Message -->
+                <transition name="fade">
+                <div v-if="streakCount >= 5" class="streak-banner text-center my-2 tw-flex tw-items-center tw-justify-center">
+                    <i class="nes-icon trophy is-large"></i>
+                    <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
+                    <i class="nes-icon trophy is-large"></i>
+                </div>
+                </transition>
+
                 <!-- Grids for Selection -->
-                <div class="grid-container">
+                <div class="grid-container tw-mb-4">
                     <div v-for="(grid, index) in grids" :key="index" class="grid-item">
+                        <p class="tw-text-center tw-mt-2 tw-mb-0 tw-text-base">{{ labels[index] }}</p>
                         <div class="object-grid">
                             <div v-for="object in grid" :key="object.id" :class="['object', { 'selected': object.selected }]" @click="toggleSelectById(object.id)" ref="objects" :data-id="object.id" v-bind:style="{ visibility: object.visible ? 'visible' : 'hidden' }">
                                 <img :src="object.image" :alt="object.type" class="tw-w-full tw-h-full object-contain" />
                             </div>
                         </div>
-                        <p class="tw-text-center tw-mt-3 tw-text-base">{{ labels[index] }}</p>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="tw-text-center">
-                    <button class="nes-btn" @click="submitAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
-                </div>
-
                 <!-- Target Boxes for Display -->
-                <div class="tw-flex tw-justify-center tw-gap-8 tw-my-6">
+                <div class="tw-flex tw-justify-center tw-gap-8 tw-mt-0">
                     <div ref="hundredsBox" class="target-box nes-container is-rounded tw-bg-white" style="padding: 8px;"></div>
                     <div ref="tensBox" class="target-box nes-container is-rounded tw-bg-white" style="padding: 8px;"></div>
                     <div ref="onesBox" class="target-box nes-container is-rounded tw-bg-white" style="padding: 8px;"></div>
                 </div>
 
-                <!-- Question and Coins Display -->
-                <h2 class="tw-text-base tw-font-bold tw-text-gray-800 tw-text-center">
-                    Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
-                </h2>
-
-                <!-- Streak Message -->
-                <div v-if="streakCount >= 5" class="tw-flex tw-items-center tw-justify-center">
-                    <i class="nes-icon trophy is-large"></i><p class="tw-mx-6">On a streak! x2 coins enabled!</p><i class="nes-icon trophy is-large"></i>
+                <!-- Submit Button -->
+                <div class="tw-text-center tw-mt-4">
+                    <button class="nes-btn" @click="submitAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
                 </div>
 
+                <!-- Question Count and Coins Display -->
+                <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-4">
+                Question {{ questionCount }}/10
+                </h2>
+                <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mb-0">
+                    Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+                </h2>
             </div>
         </div>
+
+        <!-- Tutorial Modal-->
+        <dialog class="nes-dialog" id="tutorial">
+          <form method="dialog">
+            <h5 class="title tw-mb-4">Welcome to the Counting Game!</h5>
+            <p style="text-align: center;">
+                Pick the right number of items to match the target number.<br><br>
+                1 crate equals 100, 1 basket equals 10, and 1 apple equals 1.<br><br>
+                Good luck!
+            </p>
+            <menu class="dialog-menu tw-mb-0 tw-px-0">
+              <button class="nes-btn is-primary" style="text-align:center;" @click="startGame">Start Game</button>
+            </menu>
+          </form>
+        </dialog>
+
         <!-- Game Over Modal -->
         <div v-if="gameOver" class="game-over-overlay">
-            <div class="game-over-content nes-container is-rounded">
+            <div class="game-over-content">
                 <h2>{{ completionMessage }}</h2>
-                <p>Coins Earned: {{ coins }}</p>
+                <p>Total Coins Earned: {{ coins }}</p>
                 <div class="button-container">
                     <button @click="exitGame" class="nes-btn is-primary">
-                        Exit
+                        Exit Game
                     </button>
                     <button @click="restartGame" class="nes-btn is-success">
-                        Restart
+                        Restart Game
                     </button>
                 </div>
             </div>
         </div>
+
+        
     </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import confetti from "canvas-confetti";
 import { useRouter } from 'vue-router';
 
 export default {
@@ -100,12 +139,11 @@ export default {
         const showHintModal = ref(false);
         const hintMode = ref(false);
         const coins = ref(0);
-        const questionNumber = ref(1);
+        const questionCount = ref(1);
         const totalQuestions = 10;
         const gameOver = ref(false); 
-        const completionMessage = ref("Game Over!");
+        const completionMessage = ref("Game Over! You've answered 10 questions.");
         const loadingNextQuestion = ref(false);
-        const isStreak = ref(false);
         const streakCount = ref(0);
 
         const labels = ["Hundreds", "Tens", "Ones"];
@@ -119,12 +157,10 @@ export default {
         const tempCounters = reactive({ hundreds: 0, tens: 0, ones: 0 });
         const ghostCounters = reactive({ hundreds: 0, tens: 0, ones: 0 });
 
-
-        // Timer-related data
         const timerWidth = ref(20);
         const timerInterval = ref(null);
         const timerFrozen = ref(false);
-        // Timer Logic
+
         const startTimer = () => {
             timerWidth.value = 20;
             timerFrozen.value = false;
@@ -134,6 +170,7 @@ export default {
                 if (!timerFrozen.value) {
                     timerWidth.value = Math.max(0, timerWidth.value - 0.1);
                     if (timerWidth.value <= 0) {
+                        timerFrozen.value = true
                         handleTimeOut();
                     }
                 }
@@ -146,19 +183,22 @@ export default {
         };
 
         const handleTimeOut = () => {
-            timerFrozen.value = true;
+            playSound(false);
+            console.log("counting, time, playing sound")
+            resetStreak();
             loadNextQuestion();
         };
 
         const loadNextQuestion = () => {
-            if (questionNumber.value < totalQuestions) {
-                questionNumber.value += 1;
+            if (questionCount.value < totalQuestions) {
+                questionCount.value += 1;
                 targetNumber.value = getRandomNumber(1, 999);
                 resetTimer();
                 resetGameObjects();
                 clearTargetBoxes();
                 loadingNextQuestion.value = false;
             } else {
+                loadingNextQuestion.value = false;
                 gameOver.value = true;
             }
         };
@@ -170,9 +210,10 @@ export default {
 
         const restartGame = () => {
             coins.value = 0;
-            questionNumber.value = 1;
+            questionCount.value = 1;
             targetNumber.value = getRandomNumber(1, 999);
             gameOver.value = false;
+            resetStreak();
             resetTimer();
             resetGameObjects();
             clearTargetBoxes();
@@ -299,12 +340,13 @@ export default {
             if (selectedObjects.length === 0) {
                 // Display zeros sequentially
                 showItemCountOverlay(onesBox.value, 0);
+                setTimeout(() => showItemCountOverlay(tensBox.value, 0), 100);
                 setTimeout(() => {
-                    showItemCountOverlay(tensBox.value, 0);
-                    setTimeout(() => {
-                        showItemCountOverlay(hundredsBox.value, 0);
-                    }, 100);
-                }, 100);
+                    showItemCountOverlay(hundredsBox.value, 0);
+                    playSound(false);
+                    console.log("counting, zero, playing sound")
+                }, 200);
+
                 // Load the next question after displaying zeros
                 setTimeout(() => {
                     resetStreak(); // Reset streak on incorrect answer
@@ -347,17 +389,22 @@ export default {
                 
                 // Check if answer is correct
                 if (selectedTotal === targetNumber.value) {
+                    playSound(true);
                     streakCount.value += 1;
 
-                    // Check if user is on a streak
-                    if (streakCount.value > 5) {
-                        isStreak.value = true;
+                    if (streakCount.value == 5){
+                        triggerConfetti();
                     }
 
-                    // Double coins if on streak
-                    coins.value += isStreak.value ? 20 : 10;
+                    if (streakCount.value > 5) {
+                        coins.value += 2;
+                    } else {
+                        coins.value += 1;
+                    }
                 } else {
-                    resetStreak(); // Reset streak if answer is incorrect
+                    playSound(false);
+                    console.log("counting, wrong, playing sound")
+                    resetStreak();
                 }
 
                 setTimeout(() => loadNextQuestion(), 1000);
@@ -366,7 +413,6 @@ export default {
 
         const resetStreak = () => {
             streakCount.value = 0;
-            isStreak.value = false;
         };
 
         const animateItems = (items, boxType, onComplete) => {
@@ -507,10 +553,10 @@ export default {
 
         const getHint = (answer) => {
             showHintModal.value = false;
-            if (!answer && hintMode.value) {
+            if (!answer) {
                 hintMode.value = false;
                 clearGhostElements();
-            } else {
+            } else if (!hintMode.value){
                 toggleHintMode();
             }
         };
@@ -521,11 +567,52 @@ export default {
             ghostCounters.hundreds = ghostCounters.tens = ghostCounters.ones = 0;
         };
 
+        const playSound = (correct) => {
+            const audio = new Audio(
+                correct
+                ? 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3'
+                : 'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'
+            );
+            audio.play();
+        };
+
+        const triggerConfetti = () => {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+            });
+        };
+
+        const showTutorial = () => {
+            document.getElementById('tutorial').showModal();
+        };
+
+        const startGame = () => {
+            document.getElementById('tutorial').close();
+            startTimer(); 
+        };
+
+        // Clean up timer and dynamically added DOM elements
+        onBeforeUnmount(() => {
+            // Clear the timer interval
+            if (timerInterval.value) {
+                clearInterval(timerInterval.value);
+            }
+
+            // Remove any ghost overlays, dynamically added elements, etc.
+            clearGhostElements();
+            document.querySelectorAll('.tw-ghost-counter-overlay').forEach(el => el.remove());
+            document.querySelectorAll('img[data-ghost]').forEach(el => el.remove());
+            document.querySelectorAll('.tw-count-overlay').forEach(el => el.remove());
+            document.querySelectorAll('.tw-temp-counter-overlay').forEach(el => el.remove());
+        });
+
         onMounted(() => {
+            showTutorial();
             targetNumber.value = getRandomNumber(1, 999);
             generateObjects();
             generateGrids();
-            startTimer(); // Start the timer on mount
         });
 
         return {
@@ -560,15 +647,15 @@ export default {
             clearGhostElements,
             startTimer,
             coins,
-            questionNumber,
+            questionCount,
             totalQuestions,
             gameOver,
             completionMessage,
             router,
+            startGame,
             exitGame,
             restartGame,
             loadingNextQuestion,
-            isStreak,
             streakCount,
             resetStreak
         };
@@ -577,39 +664,45 @@ export default {
 </script>
   
 <style scoped>
-    /* Counting Styles */
-    /* Basic Reset */
     * {
     font-family: 'Press Start 2P', sans-serif;
     }
-    
+
+    .progress-container {
+        position: relative; /* To allow positioning of the child elements absolutely */
+    }
+
+    .timer-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
     .game-over-overlay {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.8);
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         z-index: 1000;
     }
 
     .game-over-content {
-        background: #fff;
-        padding: 40px;
-        width: 500px;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 1rem;
         text-align: center;
     }
 
     .button-container button {
-        width: 150px; /* Set fixed width to match the width of "Restart" text */
-        margin: 0 20px; /* Add spacing between buttons */
+        width: 220px;
+        margin: 0 30px;
     }
-
-    body { margin: 0; }
-    .tw-min-h-screen { min-height: 100vh; }
 
     /* Game Box and Object Grid */
     .target-box {
@@ -642,22 +735,28 @@ export default {
     position: relative;
     }
 
-    /* .tw-box-object { 
-        width: 41px; 
-        height: 41px; 
-        margin: 5px; 
-        object-fit: contain; 
-    } */
-
-    /* Animations */
     .selected { animation: wiggle 0.5s infinite; }
-    /* .tw-blurred-item { filter: blur(6px); } */
 
-    /* Wiggle animation */
     @keyframes wiggle {
     0%, 100% { transform: rotate(0); }
     25% { transform: rotate(-7deg); }
     75% { transform: rotate(7deg); }
     }
-    /* Counting Styles */
+
+    .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+    }
+    .fade-enter, .fade-leave-to {
+    opacity: 0;
+    }
+
+    .streak-banner {
+    background-color: #ffd700;
+    color: #000;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    animation: pulse 1s infinite;
+    }
 </style>

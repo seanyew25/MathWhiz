@@ -7,20 +7,29 @@
             <div class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center">
 
                 <!-- Instructions -->
-                <h2 class="tw-text-3xl tw-mb-2 tw-text-center">Label the items in order!</h2>
+                <h2 class="tw-text-2xl tw-mb-2 tw-text-center">Label the items in order!</h2>
 
                 <!-- Timer Bar Logic -->
                 <div class="progress-container tw-w-full">
                     <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
-                    <p class="nes-text is-primary">{{ Math.round(timerWidth) }}s</p>
+                    <p class="nes-text is-primary timer-text">{{ timerWidth.toFixed(1) }}s</p>
+                </div>  
+
+                <!-- Streak Message -->
+                <transition name="fade">
+                <div v-if="streakCount >= 5" class="streak-banner text-center my-2 tw-flex tw-items-center tw-justify-center">
+                    <i class="nes-icon trophy is-large"></i>
+                    <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
+                    <i class="nes-icon trophy is-large"></i>
                 </div>
+                </transition>
 
                 <!-- Conveyor Belts and Groceries -->
-                <div class="tw-mb-2">
+                <div>
                     <div
                         v-for="(conveyor, index) in conveyors"
                         :key="index"
-                        class="tw-conveyor tw-mx-auto tw-scale-75"
+                        class="tw-conveyor tw-scale-75"
                         @dragover="allowDrop"
                         @drop="drop($event, index)"
                         @click="resetLabel(index)"
@@ -49,10 +58,11 @@
                 </div>
 
                 <!-- Ordinal Labels to Drag -->
-                <div class="tw-flex tw-justify-center tw-mb-6 tw-gap-10">
+                <div class="tw-flex tw-justify-center tw-mb-4 tw-gap-10">
                     <div
                         v-for="(label, index) in ordinalNumbers"
                         :key="index"
+                        v-show="!label.hidden"
                         class="tw-draggable nes-btn tw-font-bold"
                         :class="[label.disabled ? 'is error' : 'is-primary']"
                         :draggable="!label.disabled"
@@ -67,38 +77,51 @@
                 </div>
             </div>
 
-            <!-- Question and Coins Display -->
-            <h2 class="tw-text-sm tw-font-bold tw-text-gray-800 tw-text-center tw-mt-6">
-                Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+            <!-- Question Count and Coins Display -->
+            <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-4">
+            Question {{ questionCount }}/10
             </h2>
-
-            <!-- Streak Message -->
-            <div v-if="streakCount >= 5" class="tw-flex tw-items-center tw-justify-center">
-                <i class="nes-icon trophy is-large"></i><p class="tw-mx-6">On a streak! x2 coins enabled!</p><i class="nes-icon trophy is-large"></i>
-            </div>
-
+            <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mb-0">
+                Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+            </h2>
         </div>
 
         <!-- Game Over Modal -->
         <div v-if="gameOver" class="game-over-overlay">
-            <div class="game-over-content  nes-container is-rounded">
-                <h2>{{ completionMessage }}</h2>
-                <p>Coins Earned: {{ coins }}</p>
-                <div class="button-container">
-                    <button @click="exitGame" class="nes-btn is-primary">
-                        Exit
-                    </button>
-                    <button @click="restartGame" class="nes-btn is-success">
-                        Restart
-                    </button>
+                <div class="game-over-content">
+                    <h2>{{ completionMessage }}</h2>
+                    <p>Total Coins Earned: {{ coins }}</p>
+                    <div class="button-container">
+                        <button @click="exitGame" class="nes-btn is-primary">
+                            Exit Game
+                        </button>
+                        <button @click="restartGame" class="nes-btn is-success">
+                            Restart Game
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
+
+        <!-- Tutorial Modal-->
+        <dialog class="nes-dialog" id="tutorial">
+          <form method="dialog">
+            <h5 class="title tw-mb-4" style="text-align:center;">Welcome to the Ordering Game!</h5>
+            <p style="text-align: center;">
+                The grocery baskets will start moving at different times.<br><br>
+                Drag the labels onto the conveyor belts to show <br>which basket goes 1st, 2nd, 3rd, and 4th.<br><br> 
+                Good luck!
+            </p>
+            <menu class="dialog-menu tw-mb-0 tw-px-0">
+              <button class="nes-btn is-primary" style="text-align:center;" @click="startGame">Start Game</button>
+            </menu>
+          </form>
+        </dialog>
     </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import confetti from "canvas-confetti";
 import { useRouter } from 'vue-router';
 
 export default {
@@ -114,23 +137,22 @@ export default {
         })));
 
         const ordinalNumbers = ref([
-            { text: "1st", disabled: false },
-            { text: "2nd", disabled: false },
-            { text: "3rd", disabled: false },
-            { text: "4th", disabled: false },
+            { text: "1st", disabled: false, hidden: false },
+            { text: "2nd", disabled: false, hidden: false },
+            { text: "3rd", disabled: false, hidden: false },
+            { text: "4th", disabled: false, hidden: false },
         ]);
 
         const draggedOrdinal = ref(null);
         const submitted = ref(false);
         const basketImages = Array.from({ length: 8 }, (_, i) => `/assets/marketassets/basket${i + 1}.png`);
         const coins = ref(0); 
-        const questionNumber = ref(1);
+        const questionCount = ref(1);
         const totalQuestions = 10;
         const timerFrozen = ref(false);
         const gameOver = ref(false);
-        const completionMessage = ref("Game Over")
-        const loadingNextQuestion = ref(false);
-        const isStreak = ref(false);
+        const completionMessage = ref("Game Over! You've answered 10 questions.")
+        const loadingNextQuestion = ref(true);
         const streakCount = ref(0);
 
         const assignRandomImages = () => {
@@ -144,15 +166,17 @@ export default {
         const resetGroceries = () => {
             conveyors.forEach((conveyor, index) => {
                 const grocery = document.getElementById(`grocery-${conveyor.id}`);
-                
-                // No animation
-                grocery.style.transition = "none";
 
-                // Start position
-                grocery.style.left = `20px`;
+                if (grocery) {
+                    // No animation
+                    grocery.style.transition = "none";
 
-                // Force reflow to apply the positioning immediately
-                grocery.offsetHeight;
+                    // Start position
+                    grocery.style.left = `20px`;
+
+                    // Force reflow to apply the positioning immediately
+                    grocery.offsetHeight;
+                }
             });
         };
 
@@ -175,7 +199,7 @@ export default {
                     grocery.style.left = `735px`;
                 }, cumulativeDelay);
 
-                cumulativeDelay += Math.random() * 800 + 200; // Introduce random delays for each item
+                cumulativeDelay += Math.random() * 800 + 300; // Introduce random delays for each item
             });
         };
 
@@ -183,26 +207,41 @@ export default {
             draggedOrdinal.value = number;
         };
 
+        const resetLabel = (index) => {
+            const previousLabel = conveyors[index].assignedOrdinal;
+            if (previousLabel) {
+                ordinalNumbers.value = ordinalNumbers.value.map(label =>
+                    label.text === previousLabel ? { ...label, disabled: false, hidden: false } : label
+                );
+                conveyors[index].assignedOrdinal = null;
+            }
+        };
+
         const allowDrop = (event) => {
             event.preventDefault();
         };
 
         const drop = (event, index) => {
+            event.preventDefault(); // Prevent default behavior
+
             if (draggedOrdinal.value) {
                 if (conveyors[index].assignedOrdinal) {
-                    const previousLabel = conveyors[index].assignedOrdinal;
-                    ordinalNumbers.value = ordinalNumbers.value.map(label =>
-                        label.text === previousLabel ? { ...label, disabled: false } : label
-                    );
+                    resetLabel(index); // Reset the current label if it's already assigned
                 }
 
+                // Assign the dragged label to the conveyor
                 conveyors[index].assignedOrdinal = draggedOrdinal.value;
+
+                // Update the ordinalNumbers array to mark the dragged label as disabled
                 ordinalNumbers.value = ordinalNumbers.value.map(label =>
-                    label.text === draggedOrdinal.value ? { ...label, disabled: true } : label
+                    label.text === draggedOrdinal.value ? { ...label, disabled: true, hidden: true } : label
                 );
+
+                // Clear the draggedOrdinal after it's assigned
                 draggedOrdinal.value = null;
             }
         };
+
 
         const checkAnswer = () => {
             submitted.value = true;
@@ -222,23 +261,26 @@ export default {
             });
 
             if (allCorrect) {
-                // Increment streak count on correct answer
+                playSound(true);
                 streakCount.value += 1;
 
-                // Enter streak state if correct answers in a row reach 5
-                if (streakCount.value > 5) {
-                    isStreak.value = true;
+                if (streakCount.value == 5){
+                    triggerConfetti();
                 }
 
-                // Double coins if in streak state
-                coins.value += isStreak.value ? 20 : 10;
+                // Check if user is on a streak
+                if (streakCount.value > 5) {
+                    coins.value += 2;
+                } else {
+                    coins.value += 1;
+                }
             } else {
-                // Reset streak on incorrect answer
+                console.log("ordering, wrong, playing sound")
+                playSound(false);
                 resetStreak();
             }
 
-            if (questionNumber.value < totalQuestions) {
-                questionNumber.value += 1;
+            if (questionCount.value < totalQuestions) {
                 setTimeout(loadNextQuestion, 1000);
             } else {
                 gameOver.value = true;
@@ -247,23 +289,32 @@ export default {
 
         const resetStreak = () => {
             streakCount.value = 0;
-            isStreak.value = false;
         };
 
         const loadNextQuestion = () => {
             submitted.value = false;
-            ordinalNumbers.value.forEach(label => (label.disabled = false));
+            
+            // Ensure all labels are visible and enabled
+            ordinalNumbers.value.forEach(label => {
+                label.disabled = false;
+                label.hidden = false;
+            });
+
+            // Reset conveyor belts
             conveyors.forEach(conveyor => {
                 conveyor.assignedOrdinal = null;
                 conveyor.labelClass = '';
                 conveyor.showCross = false;
             });
 
+            questionCount.value += 1;
             assignRandomImages();
             resetGroceries();
-            setTimeout(startRace, 1000);
-            resetTimer();
-            loadingNextQuestion.value = false;
+            setTimeout(() => {
+                startRace();
+                resetTimer();
+                setTimeout(() => loadingNextQuestion.value = false, 300);
+            }, 1000);
         };
 
         const router = useRouter();
@@ -273,12 +324,12 @@ export default {
 
         const restartGame = () => {
             gameOver.value = false;
-            questionNumber.value = 1;
+            questionCount.value = 0;
             coins.value = 0;
+            resetStreak();
             loadNextQuestion();
         };
 
-        const navbarHeight = ref(0);
         const timerWidth = ref(20);
         const timerInterval = ref(null);
 
@@ -290,7 +341,8 @@ export default {
                 if (!timerFrozen.value) {
                     timerWidth.value = Math.max(0, timerWidth.value - 0.1);
 
-                    if (timerWidth.value <= 0) {
+                    if (timerWidth.value == 0) {
+                        timerFrozen.value = true;
                         handleTimeOut();
                     }
                 }
@@ -303,20 +355,54 @@ export default {
         };
 
         const handleTimeOut = () => {
-            if (questionNumber.value < totalQuestions) {
-                questionNumber.value += 1;
+            if (questionCount.value < totalQuestions) {
+                playSound(false);
+                console.log("handling timeout")
+                resetStreak();
                 loadNextQuestion();
             } else {
                 gameOver.value = true;
             }
         };
 
+        const playSound = (correct) => {
+            const audio = new Audio(
+                correct
+                ? 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3'
+                : 'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'
+            );
+            audio.play();
+        };
+
+        const triggerConfetti = () => {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+            });
+        };
+
+        const showTutorial = () => {
+            document.getElementById('tutorial').showModal();
+        };
+
+        const startGame = () => {
+            document.getElementById('tutorial').close();
+            startRace();
+            resetTimer();
+            setTimeout(() => loadingNextQuestion.value = false, 300);
+        };
         onMounted(() => {
+            showTutorial();
             assignRandomImages();
             resetGroceries();
-            setTimeout(resetGroceries, 200);
-            setTimeout(startRace, 1000);
-            startTimer();
+        });
+
+        // Add cleanup logic here
+        onBeforeUnmount(() => {
+            if (timerInterval.value) {
+                clearInterval(timerInterval.value);
+            }
         });
 
         return {
@@ -333,54 +419,64 @@ export default {
             checkAnswer,
             timerWidth,
             startTimer,
-            questionNumber,
+            questionCount,
             totalQuestions,
             coins,
             timerFrozen,
             gameOver,
             completionMessage,
+            startGame,
             exitGame,
             restartGame,
             router,
             loadingNextQuestion,
             streakCount,
-            isStreak,
-            resetStreak
+            resetStreak,
+            resetLabel
         };
     }
 };
 </script>
   
 <style scoped>
-    /* Ordering Styles */
     * {
     font-family: 'Press Start 2P', sans-serif;
+    }   
+
+    .progress-container {
+        position: relative; /* To allow positioning of the child elements absolutely */
     }
 
-    /* Add/modify this CSS for styling */
+    .timer-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
     .game-over-overlay {
         position: fixed;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.8);
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.8);
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         z-index: 1000;
     }
 
     .game-over-content {
-        background: #fff;
-        padding: 40px;
-        width: 500px;
+        background-color: white;
+        padding: 2rem;
+        border-radius: 1rem;
         text-align: center;
     }
 
     .button-container button {
-        width: 150px;
-        margin: 0 20px;
+        width: 220px;
+        margin: 0 30px;
     }
 
     .tw-conveyor {
@@ -389,7 +485,7 @@ export default {
         justify-content: center;
         position: relative;
         height: 100px;
-        margin: 0 auto;
+        margin: 0;
     }
 
     .tw-conveyor img {
@@ -451,5 +547,21 @@ export default {
         background-color: red;
         color: white;
     }
-    /* Ordering Styles */
+    
+    .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+    }
+    .fade-enter, .fade-leave-to {
+    opacity: 0;
+    }
+
+    .streak-banner {
+    background-color: #ffd700;
+    color: #000;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    animation: pulse 1s infinite;
+    }
 </style>
