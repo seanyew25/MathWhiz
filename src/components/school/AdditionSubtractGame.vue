@@ -209,7 +209,13 @@
 
 <script>
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 const emojiSet = ["🚗", "🏀", "🌍", "💡", "📚", "💻", "🏫", "👨‍🏫", "📏", "🔢"];
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
@@ -383,6 +389,12 @@ export default {
           this.auth.currentUser.uid,
           this.coins + this.money
         );
+        this.updateCompletedTasks(
+          this.db,
+          "users",
+          this.auth.currentUser.uid,
+          "additionAndSubtraction"
+        );
         return;
       }
 
@@ -457,6 +469,19 @@ export default {
         console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
+      }
+    },
+    async updateCompletedTasks(db, collectionName, documentId, newTask) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        await setDoc(
+          docRef,
+          { completedTasks: arrayUnion(newTask) },
+          { merge: true }
+        );
+        console.log("Task successfully added to completedTasks!");
+      } catch (error) {
+        console.error("Error updating document: ", error);
       }
     },
 

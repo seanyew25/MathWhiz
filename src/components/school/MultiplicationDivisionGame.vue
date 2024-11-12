@@ -229,7 +229,7 @@
 
 <script>
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import { getFirestore, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import confetti from "canvas-confetti";
 import { useRouter } from "vue-router";
@@ -323,6 +323,25 @@ export default {
         console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
+      }
+    }
+
+    async function updateCompletedTasks(
+      db,
+      collectionName,
+      documentId,
+      newTask
+    ) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        await setDoc(
+          docRef,
+          { completedTasks: arrayUnion(newTask) },
+          { merge: true }
+        );
+        console.log("Task successfully added to completedTasks!");
+      } catch (error) {
+        console.error("Error updating document: ", error);
       }
     }
 
@@ -502,6 +521,12 @@ export default {
         "users",
         auth.value.currentUser.uid,
         money.value + medals.value
+      );
+      updateCompletedTasks(
+        db.value,
+        "users",
+        auth.value.currentUser.uid,
+        "multiplicationAndDivision"
       );
       clearInterval(timerInterval);
       console.log("Game over. Total questions answered: ", questionCount.value);

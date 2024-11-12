@@ -157,7 +157,13 @@
 import { ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 
 export default {
   name: "MarketCounting",
@@ -216,6 +222,25 @@ export default {
       }
     }
 
+    async function updateCompletedTasks(
+      db,
+      collectionName,
+      documentId,
+      newTask
+    ) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        await setDoc(
+          docRef,
+          { completedTasks: arrayUnion(newTask) },
+          { merge: true }
+        );
+        console.log("Task successfully added to completedTasks!");
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
+    }
+
     // Timer-related data
     const timerWidth = ref(20);
     const timerInterval = ref(null);
@@ -261,6 +286,12 @@ export default {
           "users",
           auth.value.currentUser.uid,
           money.value + coins.value
+        );
+        updateCompletedTasks(
+          db.value,
+          "users",
+          auth.value.currentUser.uid,
+          "counting"
         );
       }
     };
