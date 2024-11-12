@@ -142,7 +142,7 @@ export default {
           clearInterval(interval);
           this.isInputActive = true;
         }
-      }, 50);
+      }, 10);
     },
     async addMessage(text, type = 'normal') {// I think i shouldn't be using async at all
       //especially if flow is like user ans correctly,

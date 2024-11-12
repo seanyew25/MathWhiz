@@ -16,6 +16,11 @@
 .nav-item {
   padding-left: 15px;
 }
+@media (max-width: 991px) {
+  .nav-item.first-item {
+    padding-left: 27px !important;
+  }
+}
 
 .nav-item a {
   position: relative;
@@ -177,7 +182,7 @@
 
           <!-- END OF REMOVE -->
           <li
-            class="nav-item"
+            class="nav-item first-item"
             :class="{ active: isGameActive }"
             style="padding-left: 50px"
           >
