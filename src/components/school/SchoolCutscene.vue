@@ -61,6 +61,17 @@
             >
               Go to Multiplying and Dividing!
             </button>
+
+            <!-- Temporary button to test out new MD-->
+            <button
+              @click="
+                $emit('end-cutscene');
+                $emit('go-to-new-multiplication-division');
+              "
+              class="wiggle-button nes-btn is-success"
+            >
+              Go to NEW Multiplying and Dividing!
+            </button>
           </div>
         </div>
       </div>
