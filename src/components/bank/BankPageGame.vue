@@ -1,21 +1,32 @@
 <template>
   <div class="container-fluid math-game">
 
+
     <div class="row justify-content-center mb-3">
       <div class="col-lg-8">
-        <h3 class="text-center nes-container is-rounded" style="background-color:#FFF5CD">The person in front of you has
-          asked for <br>
-          your help to deposit ${{ targetAmount.toFixed(2) }}</h3>
+        <h3 class="text-center nes-container is-rounded" style="background-color:#FFF5CD">Help the boy
+          to deposit ${{ targetAmount.toFixed(2) }}</h3>
       </div>
     </div>
 
     <div class="row justify-content-center my-4">
       <div class="col-lg-8">
-        <TimerBar ref="timerBar" :initial-time="20" :is-running="isTimerRunning" @timerExpired="handleTimerExpired" />
+        <TimerBar ref="timerBar" :initial-time="10" :is-running="isTimerRunning" @timerExpired="handleTimerExpired" />
       </div>
     </div>
+    <transition name="fade">
+      <div class="row justify-content-center my-4">
+        <div class="col-lg-8">
+          <div v-if='currentQuestion > 5' class="bonus-round text-center mb-4"
+            style="align-items: center;">
+            <i class="nes-icon trophy is-medium"></i>
+            <span class="bonus-text">Bonus Round! Double coins for correct answers!</span>
+            <i class="nes-icon trophy is-medium"></i>
+          </div>
+        </div>
+      </div>
+    </transition>
 
-    <h2 class="text-center">Question {{ currentQuestion }} of 10</h2>
     <div class="row">
       <div class="left-portion col-lg-6 d-flex justify-content-lg-end justify-content-center">
         <div class="counter-container d-flex flex-column align-items-center">
@@ -39,7 +50,7 @@
 
 
           <!-- Counter Info Box -->
-          <div class="counter-info">
+          <div class="counter-info nes-container is-rounded">
             <h2>Counter</h2>
             <div class="total">Total: ${{ total.toFixed(2) }}</div>
             <div v-if="showMessage" :class="['message', messageClass, { 'vibrate': isVibrating }]">
@@ -64,16 +75,19 @@
     <div class="row justify-content-evenly">
       <div class="col-auto">
         <div class="button-container">
-          <button class="btn btn-custom px-5" @click="resetGame">Reset Coins</button>
-          <button class="btn btn-custom px-5" @click="submitAnswer">Submit Answer</button>
+          <button class="nes-btn btn px-5" @click="resetGame">Reset Coins</button>
+          <button class="nes-btn btn px-5" @click="submitAnswer">Submit Answer</button>
         </div>
       </div>
     </div>
 
     <div class="row justify-content-center">
       <div class="col coins-earned d-flex justify-content-center mt-5">
-        <i ref="earnedCoinIcon" class="nes-icon coin is-medium"></i>Coins earned: <span
-          :class="{ 'vibrate': isCoinsEarnedVibrating }">{{ coinsEarned }}</span>/15
+        <p class="tw-text-base tw-font-bold tw-text-gray-800 tw-text-center">Question {{ currentQuestion }}/10</p>
+      </div>
+      <div class="tw-text-base tw-font-bold tw-text-gray-800 tw-text-center"><i ref="earnedCoinIcon"
+          class="nes-icon coin is-small"></i> Coins earned: <span :class="{ 'vibrate': isCoinsEarnedVibrating }">{{
+          coinsEarned }}</span>/15
       </div>
     </div>
 
@@ -81,9 +95,20 @@
       <i class="nes-icon coin is-medium"></i>
     </div>
 
-    Money before game:{{ moneyBeforeGame }}... <br>
-    Money after game: {{ moneyAfterGame }}...previous + coins earned<br>
-    how many coins you have earned so far here:{{ coinsEarned }} Coins earned
+
+    <div v-if="gameOver" class="game-over-overlay">
+      <div class="game-over-content">
+        <h2>{{ completionMessage }}</h2>
+        <p>Total Coins Earned: {{ coinsEarned }}</p>
+        <button @click='this.$router.push("/game")' class="nes-btn is-primary">
+          Exit Game
+        </button>
+        <button @click="restartGame" class="nes-btn is-success">
+          Restart Game
+        </button>
+      </div>
+    </div>
+
   </div>
 
 </template>
@@ -95,6 +120,7 @@ import twentyCentsImage from '/assets/bankassets/20cents.png';
 import tenCentsImage from '/assets/bankassets/10cents.png';
 import fiveCentsImage from '/assets/bankassets/5cents.png';
 import TimerBar from '../Timerbar.vue';
+import confetti from "canvas-confetti";
 import { getAuth } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc } from "firebase/firestore";
 
@@ -132,8 +158,12 @@ export default {
       isCoinsEarnedVibrating: false,
       moneyBeforeGame: 0,
       moneyAfterGame: 0,
-      db: "",
-      auth: ""
+      db: getFirestore(),
+      collectionName: "users",
+      auth: "",
+      gameOver: false,
+      completionMessage: "Game Over! You've answered 10 questions.",
+      replayed: 0
     };
   },
   computed: {
@@ -281,9 +311,12 @@ export default {
       if (this.isCorrect && this.isOptimal) {
         this.message = `Correct! You have deposited $${this.targetAmount.toFixed(2)}`;
         this.setMessageClass('text-success');
+        this.playCoinSound(true);
+        thistriggerConfetti()
         await this.awardCoins();
         this.nextQuestion();
       } else {
+        this.playCoinSound(false);
         this.setMessageClass('text-danger')
         if (this.isCorrect && !this.isOptimal) {
           this.message = "Correct amount, but use fewer coins to reach the target.";
@@ -339,16 +372,26 @@ export default {
           setTimeout(() => {
             this.showAnimatedCoin = false;
             this.coinsEarned++;
-            this.playCoinSound();
           }, 1000);
         }, i * 1200);
       }
     },
 
-    // playCoinSound() {
-    //   const audio = new Audio('/assets/sounds/coin-clink.mp3');
-    //   audio.play();
-    // },
+    playCoinSound(correct) {
+      const audio = new Audio(
+        correct
+          ? "https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"
+          : "https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"
+      );
+      audio.play();
+    },
+    triggerConfetti() {
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    },
     vibrateCoinsEarned() {
       this.isCoinsEarnedVibrating = true;
       setTimeout(() => {
@@ -361,17 +404,20 @@ export default {
         await this.resetGame();      //make sure all coins have moved back to counter
         await this.generateTargetAmount(); //before we calculate optimalCoinCount
         this.resetTimer();                 //necessary to decalre await before this because theres animation here
-        this.moneyAfterGame = this.moneyBeforeGame + this.coinsEarned;
+        // this.moneyAfterGame = this.moneyBeforeGame + this.coinsEarned;
       } else { //Finished 10 qns
-        alert("Congratulations! You've completed all 10 questions! Awarded coins");
+        // alert("Congratulations! You've completed all 10 questions! Awarded coins");
+        // this.moneyBeforeGame = await this.getCurrency()
         this.$refs.timerBar.pauseTimer();
-        this.moneyBeforeGame += this.coinsEarned;
-        // this.getCurrency()
-        await this.updateCurrency(this.db,
-          "users",
-          this.auth.currentUser.uid,
-          this.moneyBeforeGame + this.coinsEarned)
-        this.$router.push("/game");
+
+        if (this.replayed == 0) {
+          this.moneyAfterGame = this.moneyBeforeGame + this.coinsEarned;
+        } else if (this.replayed >= 1) {
+          this.moneyAfterGame += this.coinsEarned;
+        }
+        await this.updateCurrency(this.moneyBeforeGame + this.coinsEarned)
+        this.gameOver = true;
+
         // this.moneyAfterGame = this.getCurrency(db, "users", auth.currentUser.uid);
       }
     },
@@ -383,8 +429,8 @@ export default {
       this.$refs.timerBar.resetTimer();
       this.isTimerRunning = true;
     },
-    async getCurrency(db, collectionName, documentId) {
-      const docRef = doc(db, collectionName, documentId);
+    async getCurrency() {
+      const docRef = doc(this.db, this.collectionName, this.documentId);
       try {
         const doc = await getDoc(docRef);
         console.log(doc);
@@ -400,8 +446,8 @@ export default {
         console.error("Error getting document:", error);
       }
     },
-    async updateCurrency(db, collectionName, documentId, currency) {
-      const docRef = doc(db, collectionName, documentId);
+    async updateCurrency(currency) {
+      const docRef = doc(this.db, this.collectionName, this.documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
         console.log("Currency successfully written!");
@@ -409,6 +455,14 @@ export default {
       } catch (error) {
         console.error("Error writing document: ", error);
       }
+    },
+    restartGame() {
+      this.coinsEarned = 0
+      this.replayed++
+      this.gameOver = false;
+      this.currentQuestion = 1;
+      this.resetTimer();
+      this.nextQuestion();
     }
   },
   created() {
@@ -422,11 +476,11 @@ export default {
   async mounted() {
     const auth = getAuth();
     console.log(`uid=${auth.currentUser.uid}`);
-    const db = getFirestore();
-    this.db = db;
-    this.auth = auth;
-    console.log(db);
-    this.moneyBeforeGame = await this.getCurrency(db, "users", auth.currentUser.uid);
+    // const db = getFirestore();
+    // this.db = db;
+    this.documentId = auth.currentUser.uid;
+    // console.log(db);
+    this.moneyBeforeGame = await this.getCurrency();
   },
 };
 </script>
@@ -689,5 +743,41 @@ export default {
 
 .coins-earned .nes-icon.coin.is-medium {
   animation: glow 1s ease-in-out;
+}
+
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.game-over-content {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+  text-align: center;
+}
+
+.bonus-round {
+  background-color: #ffd700;
+  color: #000;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  animation: pulse 1s infinite;
+}
+
+@media (max-width: 1347px) {
+  .bonus-text {
+    font-size: 0.7rem; /* Smaller font size for screens 768px or less */
+  }
 }
 </style>
