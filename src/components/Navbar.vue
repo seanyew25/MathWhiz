@@ -131,56 +131,6 @@
         id="navbarSupportedContent"
       >
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <!-- START OF REMOVE -->
-
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link"
-              to="/market"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Market</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <a>Test</a>
-            <RouterLink
-              class="nav-link"
-              to="/bakery"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Bakery</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link"
-              to="/bank"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Bank</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link"
-              to="/school"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >School</RouterLink
-            >
-          </li>
-          <li class="nav-item">
-            <RouterLink
-              class="nav-link"
-              to="/timerbar"
-              aria-current="page"
-              style="text-decoration: none; color: black"
-              >Timer</RouterLink
-            >
-          </li>
-
-          <!-- END OF REMOVE -->
           <li
             class="nav-item first-item"
             :class="{ active: isGameActive }"
@@ -447,7 +397,7 @@ const defaultPlayer = ref({
 
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
-    console.log(user);
+    // console.log(user);
     userData.value = user;
     isAuthenticated.value = user !== null;
     getEquippedPlayer(db, "users", userData.value.uid);
@@ -517,16 +467,16 @@ async function createUserProfile(userId) {
     },
     { merge: true }
   );
-  console.log(userRef);
+  // console.log(userRef);
 }
 
 async function getEquippedPlayer(db, collectionName, documentId) {
   const docRef = doc(db, collectionName, documentId);
   try {
     const doc = await getDoc(docRef);
-    console.log(doc);
+    // console.log(doc);
     if (doc.exists()) {
-      console.log("Document data:", doc.data());
+      // console.log("Document data:", doc.data());
       if (doc.data().equippedPlayer) {
         globalState.playerImgLink = doc.data().equippedPlayer.imgLocation;
       } else {

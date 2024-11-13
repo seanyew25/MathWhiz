@@ -46,19 +46,49 @@ export default {
   mounted() {
     this.router = useRouter();
     this.auth = getAuth();
-    console.log(this.auth.uid);
+    // console.log(this.auth.uid);
     this.db = getFirestore();
     this.checklistSetup();
     // this.setSpawnPoint();
     // this.handleGetSelectedOptions(this.db, "users", this.auth.currentUser.uid);
-    console.log(globalState.playerPosition);
+    // console.log(globalState.playerPosition);
     this.gameSetup();
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
     });
+    // updateNavbarHeight();
+    // window.addEventListener("resize", updateNavbarHeight);
+    const navbar = document.querySelector(".navbar");
+    if (navbar) {
+      this.navbarHeight = navbar.offsetHeight;
+    }
+
+    document.getElementById(
+      "phaser-container"
+    ).style.height = `calc(100vh - ${this.navbarHeight}px)`;
+
+    window.addEventListener("resize", () => {
+      if (navbar) {
+        this.navbarHeight = navbar.offsetHeight;
+      }
+      document.getElementById(
+        "phaser-container"
+      ).style.height = `calc(100vh - ${this.navbarHeight}px)`;
+    });
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (navbar) {
+        this.navbarHeight = navbar.offsetHeight;
+      }
+      document.getElementById(
+        "phaser-container"
+      ).style.height = `calc(100vh - ${this.navbarHeight}px)`;
+    });
+    resizeObserver.observe(navbar);
   },
   data() {
     return {
+      navbarHeight: 0,
       game: null,
       router: null,
       doorAnimationCompleted: false,
@@ -108,20 +138,20 @@ export default {
       const docRef = doc(this.db, "users", this.auth.currentUser.uid);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
+          // console.log("Document data:", doc.data());
           if (doc.data().completedTasks) {
             const completedTasks = doc.data().completedTasks;
             for (const task in this.allTasks) {
-              console.log(task);
+              // console.log(task);
               if (completedTasks.includes(task)) {
                 this.allTasks[task].completed = true;
               } else {
                 this.allTasks[task].completed = false;
               }
             }
-            console.log(this.completedTasks);
+            // console.log(this.completedTasks);
           } else {
             console.log("No completedTasks data!");
           }
@@ -136,23 +166,23 @@ export default {
       const docRef = doc(this.db, "users", this.auth.currentUser.uid);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
+          // console.log("Document data:", doc.data());
           if (doc.data().equippedCat && doc.data().equippedPlayer) {
             this.equippedCat = doc.data().equippedCat;
             const equippedPlayer = doc.data().equippedPlayer;
-            console.log(equippedPlayer);
-            console.log(this.equippedCat);
+            // console.log(equippedPlayer);
+            // console.log(this.equippedCat);
             this.game = initializePhaser(
               equippedPlayer.name,
               this.equippedCat.name,
               globalState.playerPosition
             );
             // this.game.scene.start("MainScene");
-            console.log(this.game.scene);
+            // console.log(this.game.scene);
             this.getSceneStatus().then(() => {
-              console.log(`scene: ${this.game.scene.getScene("MainScene")}`);
+              // console.log(`scene: ${this.game.scene.getScene("MainScene")}`);
               this.handleDoorCollision();
             });
           } else {
@@ -192,13 +222,13 @@ export default {
     handleDoorCollision() {
       // console.log(`from collision: ${this.game}`);
       let scene = this.game.scene.getScene("MainScene");
-      console.log(`main scene: ${scene}`);
+      // console.log(`main scene: ${scene}`);
 
       if (!scene) {
         console.error("Scene not found!");
         return;
       }
-      console.log(scene);
+      // console.log(scene);
 
       eventEmitter.on("playerMovement", (playerObj) => {
         // console.log(`player: ${playerObj.x}, ${playerObj.y}`);
@@ -206,7 +236,7 @@ export default {
       });
 
       scene.events.on("doorCollision", (doorObj) => {
-        console.log(`door: ${doorObj.name}`);
+        // console.log(`door: ${doorObj.name}`);
         const name = doorObj.name;
         if (name === "homeDoor" && !this.doorAnimationCompleted) {
           this.doorAnimationCompleted = true;
@@ -216,7 +246,7 @@ export default {
           //every time i collide with the door, anims will restart
           homeDoor.anims.play("homeDoor-open", false);
           homeDoor.once("animationcomplete", (animation, frame) => {
-            console.log(frame.index);
+            // console.log(frame.index);
             this.router.push("/profile");
           });
         } else if (name === "bankDoor" && !this.doorAnimationCompleted) {
@@ -272,7 +302,7 @@ export default {
         } else if (name === "bakeryDoor" && !this.doorAnimationCompleted) {
           console.log("bakery door");
           this.doorAnimationCompleted = true;
-          console.log(this.doorAnimationCompleted);
+          // console.log(this.doorAnimationCompleted);
           const bakeryDoor = scene.add.sprite(1048, 176, "bakeryDoor", 0);
           bakeryDoor.setDepth(10000);
 
@@ -356,6 +386,6 @@ export default {
 
 #phaser-container {
   overflow: hidden;
-  height: calc(100vh - 56px);
+  /* height: calc(100vh - var(--navbar-height)); */
 }
 </style>

@@ -7,7 +7,6 @@ class GameOverlayScene extends Phaser.Scene {
 
   preload() {
     this.load.image("minimap", `/assets/mainassets/gameMinimap.png`);
-    this.load.image("marker", `/assets/mainassets/marker.png`);
   }
 
   create() {
