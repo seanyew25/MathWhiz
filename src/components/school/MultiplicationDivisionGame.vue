@@ -55,8 +55,8 @@
           </form>
         </dialog>
 
-          <!-- Timer Bar -->
-          <div class="progress-container">
+        <!-- Timer Bar -->
+        <div class="progress-container">
           <progress
             class="nes-progress is-success"
             :value="timeRemaining"
@@ -115,114 +115,116 @@
               </transition-group>
             </div>
 
-          <transition name="fade">
-            <div
-              v-if="showMultiplicationGrid && currentQuestion.operator === '×'"
-              class="multiplication-grid"
-            >
-              <div class="grid-row grid-header">
-                <div class="grid-cell"></div>
-                <div
-                  v-for="col in currentQuestion.rightNumber"
-                  :key="'col-' + col"
-                  class="grid-cell"
-                >
-                  {{ col }}
-                </div>
-              </div>
+            <transition name="fade">
               <div
-                v-for="row in currentQuestion.leftNumber"
-                :key="'row-' + row"
-                class="grid-row"
+                v-if="
+                  showMultiplicationGrid && currentQuestion.operator === '×'
+                "
+                class="multiplication-grid"
               >
-                <div class="grid-cell grid-label">{{ row }}</div>
+                <div class="grid-row grid-header">
+                  <div class="grid-cell"></div>
+                  <div
+                    v-for="col in currentQuestion.rightNumber"
+                    :key="'col-' + col"
+                    class="grid-cell"
+                  >
+                    {{ col }}
+                  </div>
+                </div>
                 <div
-                  v-for="col in currentQuestion.rightNumber"
-                  :key="'col-' + col"
-                  class="grid-cell"
-                  :class="{ highlighted: isHighlighted(row, col) }"
-                  @mouseover="highlightCell(row, col)"
-                  @mouseleave="clearHighlight"
+                  v-for="row in currentQuestion.leftNumber"
+                  :key="'row-' + row"
+                  class="grid-row"
                 >
-                  {{ currentQuestion.leftItems[0] }}
+                  <div class="grid-cell grid-label">{{ row }}</div>
+                  <div
+                    v-for="col in currentQuestion.rightNumber"
+                    :key="'col-' + col"
+                    class="grid-cell"
+                    :class="{ highlighted: isHighlighted(row, col) }"
+                    @mouseover="highlightCell(row, col)"
+                    @mouseleave="clearHighlight"
+                  >
+                    {{ currentQuestion.leftItems[0] }}
+                  </div>
                 </div>
               </div>
-            </div>
-          </transition>
-        </div>
+            </transition>
+          </div>
 
-        <div class="nes-field tw-mb-2">
-          <input
-            type="number"
-            v-model="userInput"
-            @keyup.enter="checkAnswer"
-            class="nes-input is-success"
-            placeholder="Enter Your Answer"
-            :disabled="gameOver || !gameStarted"
-          />
-        </div>
+          <div class="nes-field tw-mb-2">
+            <input
+              type="number"
+              v-model="userInput"
+              @keyup.enter="checkAnswer"
+              class="nes-input is-success"
+              placeholder="Enter Your Answer"
+              :disabled="gameOver || !gameStarted"
+            />
+          </div>
 
-        <div class="tw-text-center tw-mb-2">
-          <button
-            @click="checkAnswer"
-            :class="{
-              'nes-btn': true,
-              'is-disabled': gameOver || !gameStarted,
-            }"
-            :disabled="gameOver || !gameStarted"
-          >
-            Submit Answer
-          </button>
-        </div>
-
-        <div class="tw-text-center tw-mb-2">
-          <p class="tw-test-md">
-            <br />
-            Question: {{ questionCount }} / 10 | Coins earned: {{ medals
-            }}<i class="nes-icon coin is-small"></i>
-          </p>
-        </div>
-
-        <div v-if="gameOver" class="game-over-overlay">
-          <div class="game-over-content">
-            <h2>{{ completionMessage }}</h2>
-            <br />
-            <p>You're one step closer to regaining Morgana's fur!</p>
-            <p>Play again?</p>
-            <button @click="exitGame" class="nes-btn is-primary">
-              Exit Game
-            </button>
-            <button @click="restartGame" class="nes-btn is-success">
-              Restart Game
+          <div class="tw-text-center tw-mb-2">
+            <button
+              @click="checkAnswer"
+              :class="{
+                'nes-btn': true,
+                'is-disabled': gameOver || !gameStarted,
+              }"
+              :disabled="gameOver || !gameStarted"
+            >
+              Submit Answer
             </button>
           </div>
-        </div>
 
-        <dialog class="nes-dialog" id="instructions-dialog">
-          <form method="dialog">
-            <p class="title" style="text-align: center">
-              Welcome to the Multiplication and Division Game!
+          <div class="tw-text-center tw-mb-2">
+            <p class="tw-test-md">
+              <br />
+              Question: {{ questionCount }} / 10 | Coins earned: {{ medals
+              }}<i class="nes-icon coin is-small"></i>
             </p>
-            <p style="text-align: center">
-              Answer 10 questions and earn Destress coins.<br /><br />
-              Answer 5 questions in a row correctly to active a streak! <br />
-              It earns you double coins!<br /><br />
-              You have <strong>{{ initialTimerSeconds }}</strong> seconds for
-              each question. Good luck!
-            </p>
-            <menu class="dialog-menu center-button">
-              <button
-                class="nes-btn is-primary"
-                style="text-align: center"
-                @click="startGame"
-              >
-                Start Game
+          </div>
+
+          <div v-if="gameOver" class="game-over-overlay">
+            <div class="game-over-content">
+              <h2>{{ completionMessage }}</h2>
+              <br />
+              <p>You're one step closer to regaining Morgana's fur!</p>
+              <p>Play again?</p>
+              <button @click="exitGame" class="nes-btn is-primary">
+                Exit Game
               </button>
-            </menu>
-          </form>
-        </dialog>
+              <button @click="restartGame" class="nes-btn is-success">
+                Restart Game
+              </button>
+            </div>
+          </div>
+
+          <dialog class="nes-dialog" id="instructions-dialog">
+            <form method="dialog">
+              <p class="title" style="text-align: center">
+                Welcome to the Multiplication and Division Game!
+              </p>
+              <p style="text-align: center">
+                Answer 10 questions and earn Destress coins.<br /><br />
+                Answer 5 questions in a row correctly to active a streak! <br />
+                It earns you double coins!<br /><br />
+                You have <strong>{{ initialTimerSeconds }}</strong> seconds for
+                each question. Good luck!
+              </p>
+              <menu class="dialog-menu center-button">
+                <button
+                  class="nes-btn is-primary"
+                  style="text-align: center"
+                  @click="startGame"
+                >
+                  Start Game
+                </button>
+              </menu>
+            </form>
+          </dialog>
+        </div>
       </div>
-    </div>
     </div>
   </div>
 </template>
@@ -352,14 +354,14 @@ export default {
       }
     }
 
-const startTimer = () => {
-    if (gameOver.value) return;
-    clearInterval(timerInterval);
+    const startTimer = () => {
+      if (gameOver.value) return;
+      clearInterval(timerInterval);
 
-    timerInterval = setInterval(() => {
+      timerInterval = setInterval(() => {
         if (gameOver.value) {
-            clearInterval(timerInterval);
-            return;
+          clearInterval(timerInterval);
+          return;
         }
         timerWidth.value = Math.max(
           0,
@@ -368,14 +370,13 @@ const startTimer = () => {
         timerSeconds.value = Math.max(0, timerSeconds.value - 0.1);
 
         if (timerSeconds.value <= 0) {
-            clearInterval(timerInterval);
-            handleTimerExpired();
-            playSound(false);
+          clearInterval(timerInterval);
+          handleTimerExpired();
+          playSound(false);
         }
-    }, 100);
-    console.log("Timer started"); // Debugging line
-};
-
+      }, 100);
+      console.log("Timer started"); // Debugging line
+    };
 
     const pauseTimer = () => {
       clearInterval(timerInterval);
@@ -434,35 +435,34 @@ const startTimer = () => {
       });
     };
 
-    
     const handleCorrectAnswer = () => {
       playSound(true);
       correctStreak.value += 1;
 
-  // Activate streak message on 5th consecutive correct answer
-  if (correctStreak.value >= 5) {
-    triggerConfetti();
-    isBonusRound.value = true;
-  } else {
-    isBonusRound.value = false;
-  }
+      // Activate streak message on 5th consecutive correct answer
+      if (correctStreak.value >= 5) {
+        triggerConfetti();
+        isBonusRound.value = true;
+      } else {
+        isBonusRound.value = false;
+      }
 
-  // Award coins
-  if (correctStreak.value >= 6) {
-    medals.value += 2; // Double coins from 6th correct answer
-  } else {
-    medals.value += 1;
-  }
+      // Award coins
+      if (correctStreak.value >= 6) {
+        medals.value += 2; // Double coins from 6th correct answer
+      } else {
+        medals.value += 1;
+      }
 
-  // Cap medals at 15
-  if (medals.value > 15) {
-    medals.value = 15;
-  }
+      // Cap medals at 15
+      if (medals.value > 15) {
+        medals.value = 15;
+      }
 
-  earnedMedal.value = true;
-  setTimeout(() => {
-    earnedMedal.value = false;
-  }, 1000);
+      earnedMedal.value = true;
+      setTimeout(() => {
+        earnedMedal.value = false;
+      }, 1000);
 
       nextQuestion();
     };
@@ -692,6 +692,44 @@ const startTimer = () => {
 <style scoped>
 * {
   font-family: "Press Start 2P";
+}
+
+.nes-container.is-rounded {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-btn {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-progress {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-input {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-input.is-success,
+.nes-textarea.is-success {
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(146,204,65)" /></svg>');
+  outline-color: #76c442;
 }
 
 .math-game {
