@@ -67,21 +67,6 @@
           </div>
         </div>
 
-        <!-- Hint Modal -->
-        <!-- <dialog v-if="showHintModal" class="nes-dialog" style="border-radius: 10px;">
-                    <form method="dialog">
-                        <p class="title tw-text-lg tw-mb-4 text-center">Hint</p>
-                        <p class="text-center tw-text-md tw-mb-4">
-                        In Hint Mode, click items to preview them in the target box with a counter.<br>
-                        Do you want to turn on Hint Mode?
-                        </p>
-                        <div class="tw-flex tw-gap-8 tw-justify-center">
-                            <button @click="getHint(true)" class="nes-btn is-success tw-w-32">Yes</button>
-                            <button @click="getHint(false)" class="nes-btn is-error tw-w-32">No</button>
-                        </div>
-                    </form>
-                </dialog> -->
-
         <!-- Timer Bar -->
         <div class="progress-container tw-w-full">
           <progress
@@ -89,7 +74,7 @@
             :value="timerWidth"
             :max="20"
           ></progress>
-          <p class="nes-text timer-text">{{ timerWidth.toFixed(0) }}s</p>
+          <p class="nes-text timer-text tw-font-bold">{{ timerWidth.toFixed(0) }}s</p>
         </div>
 
         <!-- Streak Message -->
@@ -179,7 +164,7 @@
         <p style="text-align: center">
           Pick the right number of items to match the target number.<br /><br />
           1 crate equals 100, 1 basket equals 10, and 1 apple equals 1.<br /><br />
-          Good luck!
+          You have <strong>20</strong> seconds for each question. Good luck!
         </p>
         <menu class="dialog-menu tw-mb-0 tw-px-0">
           <button
@@ -197,7 +182,11 @@
     <div v-if="gameOver" class="game-over-overlay">
       <div class="game-over-content">
         <h2>{{ completionMessage }}</h2>
+        <br />
         <p>Total Coins Earned: {{ coins }}</p>
+        <p>You're one step closer to regaining Morgana's fur!</p>
+        <p>Play again?</p>
+        <br>
         <div class="button-container">
           <button @click="exitGame" class="nes-btn is-primary">
             Exit Game
