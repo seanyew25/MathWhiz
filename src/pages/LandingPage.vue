@@ -94,26 +94,26 @@
         Join Mathwhiz today! Sign up now!
       </h1>
     </div>
-    <div class="tw-flex tw-flex-col tw-items-center">
-      <button
-          v-if="!isAuthenticated"
-          @click="openModal"
-          class="nes-btn is-primary"
-          type="submit"
-          data-bs-target="#getStartedModal"
-          data-bs-toggle="modal"
-        >
-          Get Started!
-        </button>
+      <div class="tw-flex tw-flex-col tw-items-center" style="padding:0px 0px 50px 0px"> <!-- Padding at the bottom, follows top right bottom left -->
         <button
-          v-else
-          class="nes-btn is-disabled"
-          disabled
-          title="You're already signed in!"
-        >
-          Already Signed In
-      </button>
-    </div>
+            v-if="!isAuthenticated"
+            @click="openModal"
+            class="nes-btn is-primary"
+            type="submit"
+            data-bs-target="#getStartedModal"
+            data-bs-toggle="modal"
+          >
+            Get Started!
+          </button>
+          <button
+            v-else
+            class="nes-btn is-disabled"
+            disabled
+            title="You're already signed in!"
+          >
+            Already Signed In
+        </button>
+      </div>
   </div>
 </template>
 
