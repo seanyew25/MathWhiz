@@ -7,7 +7,7 @@ class GameOverlayScene extends Phaser.Scene {
 
   preload() {
     this.load.image("minimap", `/assets/mainassets/gameMinimap.png`);
-    this.load.image("marker", `/assets/mainassets/marker.png`);
+    this.load.image("marker", `/assets/mainassets/playerStar.png`);
   }
 
   create() {
@@ -24,7 +24,7 @@ class GameOverlayScene extends Phaser.Scene {
     } else {
       minimapWidthAsFractionOfScreen = 0.2;
     }
-
+    // const playerStar = this.add.image(0, 0, "marker").setOrigin(0);
     const minimap = this.add.image(0, 0, "minimap").setOrigin(0);
     const initialScale =
       (this.scale.width * minimapWidthAsFractionOfScreen) / minimap.width;
@@ -45,7 +45,7 @@ class GameOverlayScene extends Phaser.Scene {
     if (!this.playerPosition) {
       this.playerPosition = this.add.graphics();
     }
-    this.playerPosition.clear(); // Clear previous drawings
+    // this.playerPosition.clear(); // Clear previous drawings
     this.playerPosition.fillStyle(0xff8c00, 1);
 
     // Define star parameters
