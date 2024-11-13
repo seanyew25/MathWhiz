@@ -160,16 +160,16 @@ export default {
         const loadingNextQuestion = ref(false);
         const streakCount = ref(0);
 
-        const labels = ["Hundreds", "Tens", "Ones"];
-        const grids = ref([]);
-        const objects = ref([]);
-        const hundredsBox = ref(null);
-        const tensBox = ref(null);
-        const onesBox = ref(null);
-        
-        const itemCounts = reactive({ hundreds: 0, tens: 0, ones: 0 });
-        const tempCounters = reactive({ hundreds: 0, tens: 0, ones: 0 });
-        const ghostCounters = reactive({ hundreds: 0, tens: 0, ones: 0 });
+    const labels = ["Hundreds", "Tens", "Ones"];
+    const grids = ref([]);
+    const objects = ref([]);
+    const hundredsBox = ref(null);
+    const tensBox = ref(null);
+    const onesBox = ref(null);
+
+    const itemCounts = reactive({ hundreds: 0, tens: 0, ones: 0 });
+    const tempCounters = reactive({ hundreds: 0, tens: 0, ones: 0 });
+    const ghostCounters = reactive({ hundreds: 0, tens: 0, ones: 0 });
 
         const timerWidth = ref(20);
         const timerInterval = ref(null);
@@ -191,10 +191,10 @@ export default {
             }, 100);
         };
 
-        const resetTimer = () => {
-            clearInterval(timerInterval.value);
-            startTimer();
-        };
+    const resetTimer = () => {
+      clearInterval(timerInterval.value);
+      startTimer();
+    };
 
         const handleTimeOut = () => {
             playSound(false);
@@ -231,10 +231,10 @@ export default {
             }
         };
 
-        const router = useRouter();
-        const exitGame = () => {
-            router.push("/game");
-        };
+    const router = useRouter();
+    const exitGame = () => {
+      router.push("/game");
+    };
 
         const restartGame = () => {
             coins.value = 0;
@@ -248,121 +248,163 @@ export default {
         };
 
 
-        const clearTargetBoxes = () => {
-            [hundredsBox, tensBox, onesBox].forEach(box => {
-                if (box.value) {
-                    box.value.innerHTML = ''; // Clear all items from each target box
-                    const countOverlay = box.value.querySelector('.tw-count-overlay');
-                    if (countOverlay) countOverlay.remove(); // Remove the item count overlay if it exists
-                }
-            });
-        };
+    const clearTargetBoxes = () => {
+      [hundredsBox, tensBox, onesBox].forEach((box) => {
+        if (box.value) {
+          box.value.innerHTML = ""; // Clear all items from each target box
+          const countOverlay = box.value.querySelector(".tw-count-overlay");
+          if (countOverlay) countOverlay.remove(); // Remove the item count overlay if it exists
+        }
+      });
+    };
 
-        const resetGameObjects = () => {
-            generateObjects();
-            generateGrids();
-            itemCounts.hundreds = itemCounts.tens = itemCounts.ones = 0;
-            tempCounters.hundreds = tempCounters.tens = tempCounters.ones = 0;
-            ghostCounters.hundreds = ghostCounters.tens = ghostCounters.ones = 0;
-            objects.value.forEach(obj => obj.selected = false);
-        };
+    const resetGameObjects = () => {
+      generateObjects();
+      generateGrids();
+      itemCounts.hundreds = itemCounts.tens = itemCounts.ones = 0;
+      tempCounters.hundreds = tempCounters.tens = tempCounters.ones = 0;
+      ghostCounters.hundreds = ghostCounters.tens = ghostCounters.ones = 0;
+      objects.value.forEach((obj) => (obj.selected = false));
+    };
 
-        const getRandomNumber = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const getRandomNumber = (min, max) =>
+      Math.floor(Math.random() * (max - min + 1)) + min;
 
-        const generateObjects = () => {
-            let idCounter = 0;
-            objects.value = [
-                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'apple', value: 1, selected: false, visible: true, image: '/assets/marketassets/apple.png' })),
-                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'basket', value: 10, selected: false, visible: true, image: '/assets/marketassets/basket.png' })),
-                ...Array.from({ length: 9 }, () => ({ id: idCounter++, type: 'crate', value: 100, selected: false, visible: true, image: '/assets/marketassets/crate.png' }))
-            ];
-        };
+    const generateObjects = () => {
+      let idCounter = 0;
+      objects.value = [
+        ...Array.from({ length: 9 }, () => ({
+          id: idCounter++,
+          type: "apple",
+          value: 1,
+          selected: false,
+          visible: true,
+          image: "/assets/marketassets/apple.png",
+        })),
+        ...Array.from({ length: 9 }, () => ({
+          id: idCounter++,
+          type: "basket",
+          value: 10,
+          selected: false,
+          visible: true,
+          image: "/assets/marketassets/basket.png",
+        })),
+        ...Array.from({ length: 9 }, () => ({
+          id: idCounter++,
+          type: "crate",
+          value: 100,
+          selected: false,
+          visible: true,
+          image: "/assets/marketassets/crate.png",
+        })),
+      ];
+    };
 
-        const generateGrids = () => {
-            grids.value = ['crate', 'basket', 'apple'].map(type => objects.value.filter(obj => obj.type === type));
-        };
+    const generateGrids = () => {
+      grids.value = ["crate", "basket", "apple"].map((type) =>
+        objects.value.filter((obj) => obj.type === type)
+      );
+    };
 
-        const toggleHintMode = () => {
-            hintMode.value = true;
-            objects.value.forEach(object => {
-                if (object.selected) {
-                    const boxType = object.value === 100 ? 'hundreds' : object.value === 10 ? 'tens' : 'ones';
-                    ghostCounters[boxType]++;
-                    addGhostImageToBox(object, boxType, true);
-                }
-            });
-        };
+    const toggleHintMode = () => {
+      hintMode.value = true;
+      objects.value.forEach((object) => {
+        if (object.selected) {
+          const boxType =
+            object.value === 100
+              ? "hundreds"
+              : object.value === 10
+              ? "tens"
+              : "ones";
+          ghostCounters[boxType]++;
+          addGhostImageToBox(object, boxType, true);
+        }
+      });
+    };
 
-        const toggleSelectById = (id) => {
-            const object = objects.value.find(obj => obj.id === id);
-            if (object) {
-                object.selected = !object.selected;
-                const boxType = object.value === 100 ? 'hundreds' : object.value === 10 ? 'tens' : 'ones';
+    const toggleSelectById = (id) => {
+      const object = objects.value.find((obj) => obj.id === id);
+      if (object) {
+        object.selected = !object.selected;
+        const boxType =
+          object.value === 100
+            ? "hundreds"
+            : object.value === 10
+            ? "tens"
+            : "ones";
 
-                if (hintMode.value) {
-                    object.selected ? addGhostImageToBox(object, boxType) : removeGhostImageFromBox(boxType);
-                }
-            }
-        };
+        if (hintMode.value) {
+          object.selected
+            ? addGhostImageToBox(object, boxType)
+            : removeGhostImageFromBox(boxType);
+        }
+      }
+    };
 
-        const addGhostImageToBox = (object, boxType, skipCounter = false) => {
-            const box = getTargetBoxByType(boxType);
-            const img = document.createElement('img');
-            img.src = object.image;
-            img.classList.add('tw-box-object', 'tw-opacity-30');
-            img.style.width = '41px'; 
-            img.style.height = '41px';
-            img.style.margin = '5px'; 
-            img.style.objectFit = 'contain';
-            img.dataset.ghost = true;
-            box.appendChild(img);
+    const addGhostImageToBox = (object, boxType, skipCounter = false) => {
+      const box = getTargetBoxByType(boxType);
+      const img = document.createElement("img");
+      img.src = object.image;
+      img.classList.add("tw-box-object", "tw-opacity-30");
+      img.style.width = "41px";
+      img.style.height = "41px";
+      img.style.margin = "5px";
+      img.style.objectFit = "contain";
+      img.dataset.ghost = true;
+      box.appendChild(img);
 
-            if (!skipCounter) {
-                ghostCounters[boxType]++;
-            }
-            showGhostCounterOverlay(box, ghostCounters[boxType]);
-        };
+      if (!skipCounter) {
+        ghostCounters[boxType]++;
+      }
+      showGhostCounterOverlay(box, ghostCounters[boxType]);
+    };
 
-        const removeGhostImageFromBox = (boxType) => {
-            const box = getTargetBoxByType(boxType);
-            const ghosts = box.querySelectorAll('img[data-ghost]');
-            if (ghosts.length > 0) {
-                ghosts[ghosts.length - 1].remove();
-            }
-            showGhostCounterOverlay(box, --ghostCounters[boxType]);
-        };
+    const removeGhostImageFromBox = (boxType) => {
+      const box = getTargetBoxByType(boxType);
+      const ghosts = box.querySelectorAll("img[data-ghost]");
+      if (ghosts.length > 0) {
+        ghosts[ghosts.length - 1].remove();
+      }
+      showGhostCounterOverlay(box, --ghostCounters[boxType]);
+    };
 
-        const showGhostCounterOverlay = (box, count) => {
-            let overlay = box.querySelector('.tw-ghost-counter-overlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.classList.add('tw-ghost-counter-overlay');
-                box.appendChild(overlay);
-            }
-            Object.assign(overlay.style, {
-                fontFamily: "'Press Start 2P', sans-serif",
-                fontSize: '18px',
-                color: 'gray',
-                position: 'absolute',
-                bottom: '-2px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: '10'
-            });
-            overlay.textContent = count;
-        };
+    const showGhostCounterOverlay = (box, count) => {
+      let overlay = box.querySelector(".tw-ghost-counter-overlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.classList.add("tw-ghost-counter-overlay");
+        box.appendChild(overlay);
+      }
+      Object.assign(overlay.style, {
+        fontFamily: "'Press Start 2P', sans-serif",
+        fontSize: "18px",
+        color: "gray",
+        position: "absolute",
+        bottom: "-2px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: "10",
+      });
+      overlay.textContent = count;
+    };
 
-        const submitAnswer = () => {
-            timerFrozen.value = true; // Freeze timer on submit
-            loadingNextQuestion.value = true;
-            if (hintMode.value) {
-                document.querySelectorAll('.tw-ghost-counter-overlay').forEach(el => el.remove());
-                document.querySelectorAll('img[data-ghost]').forEach(el => el.remove());
-                hintMode.value = false;
-            }
+    const submitAnswer = () => {
+      timerFrozen.value = true; // Freeze timer on submit
+      loadingNextQuestion.value = true;
+      if (hintMode.value) {
+        document
+          .querySelectorAll(".tw-ghost-counter-overlay")
+          .forEach((el) => el.remove());
+        document
+          .querySelectorAll("img[data-ghost]")
+          .forEach((el) => el.remove());
+        hintMode.value = false;
+      }
 
-            const selectedObjects = objects.value.filter(obj => obj.selected && obj.visible);
-            itemCounts.hundreds = itemCounts.tens = itemCounts.ones = 0;
+      const selectedObjects = objects.value.filter(
+        (obj) => obj.selected && obj.visible
+      );
+      itemCounts.hundreds = itemCounts.tens = itemCounts.ones = 0;
 
             // If no items are selected, show zeros in target boxes sequentially
             if (selectedObjects.length === 0) {
@@ -383,32 +425,36 @@ export default {
                 return;
             }
 
-            const groups = { 
-                ones: selectedObjects.filter(obj => obj.type === 'apple'), 
-                tens: selectedObjects.filter(obj => obj.type === 'basket'), 
-                hundreds: selectedObjects.filter(obj => obj.type === 'crate') 
-            };
+      const groups = {
+        ones: selectedObjects.filter((obj) => obj.type === "apple"),
+        tens: selectedObjects.filter((obj) => obj.type === "basket"),
+        hundreds: selectedObjects.filter((obj) => obj.type === "crate"),
+      };
 
-            if (groups.ones.length > 0) {
-                animateItems(groups.ones, 'ones', handleTensAnimationOrZero);
-            } else if (groups.tens.length > 0 || groups.hundreds.length > 0) {
-                setTimeout(() => showItemCountOverlay(onesBox.value, 0), 50);
-                handleTensAnimationOrZero();
-            }
-        };
+      if (groups.ones.length > 0) {
+        animateItems(groups.ones, "ones", handleTensAnimationOrZero);
+      } else if (groups.tens.length > 0 || groups.hundreds.length > 0) {
+        setTimeout(() => showItemCountOverlay(onesBox.value, 0), 50);
+        handleTensAnimationOrZero();
+      }
+    };
 
-        const handleTensAnimationOrZero = () => {
-            const tensGroup = objects.value.filter(obj => obj.type === 'basket' && obj.selected);
-            const hundredsGroup = objects.value.filter(obj => obj.type === 'crate' && obj.selected);
-            if (tensGroup.length > 0) {
-                animateItems(tensGroup, 'tens', handleHundredsAnimation);
-            } else if (hundredsGroup.length > 0) {
-                setTimeout(() => showItemCountOverlay(tensBox.value, 0), 150);
-                handleHundredsAnimation();
-            } else {
-                handleHundredsAnimation();
-            }
-        };
+    const handleTensAnimationOrZero = () => {
+      const tensGroup = objects.value.filter(
+        (obj) => obj.type === "basket" && obj.selected
+      );
+      const hundredsGroup = objects.value.filter(
+        (obj) => obj.type === "crate" && obj.selected
+      );
+      if (tensGroup.length > 0) {
+        animateItems(tensGroup, "tens", handleHundredsAnimation);
+      } else if (hundredsGroup.length > 0) {
+        setTimeout(() => showItemCountOverlay(tensBox.value, 0), 150);
+        handleHundredsAnimation();
+      } else {
+        handleHundredsAnimation();
+      }
+    };
 
         const handleHundredsAnimation = () => {
             const hundredsGroup = objects.value.filter(obj => obj.type === 'crate' && obj.selected);
@@ -435,149 +481,169 @@ export default {
                     resetStreak();
                 }
 
-                setTimeout(() => loadNextQuestion(), 1000);
-            });
-        };
+        setTimeout(() => loadNextQuestion(), 1000);
+      });
+    };
 
         const resetStreak = () => {
             streakCount.value = 0;
         };
 
-        const animateItems = (items, boxType, onComplete) => {
-            if (!items.length) return onComplete();
-        
-            const targetBox = getTargetBoxByType(boxType);
-            items.forEach((object, index) => {
-                setTimeout(() => {
-                    animateFlyingObject(object, () => {
-                        tempCounters[boxType] = ++itemCounts[boxType];
-                        showTempCounterOverlay(targetBox, tempCounters[boxType]);
+    const animateItems = (items, boxType, onComplete) => {
+      if (!items.length) return onComplete();
 
-                        if (index + 1 === items.length) {
-                            showItemCountOverlay(targetBox, itemCounts[boxType]);
-                            hideTempCounterOverlay(targetBox);
-                            onComplete();
-                        }
-                    });
-                }, index * 200);
-            });
-        };
+      const targetBox = getTargetBoxByType(boxType);
+      items.forEach((object, index) => {
+        setTimeout(() => {
+          animateFlyingObject(object, () => {
+            tempCounters[boxType] = ++itemCounts[boxType];
+            showTempCounterOverlay(targetBox, tempCounters[boxType]);
 
-        const showTempCounterOverlay = (box, count) => {
-            let tempCounter = box.querySelector('.tw-temp-counter-overlay');
-            if (!tempCounter) {
-                tempCounter = document.createElement('div');
-                tempCounter.classList.add('tw-temp-counter-overlay');
-                box.appendChild(tempCounter);
+            if (index + 1 === items.length) {
+              showItemCountOverlay(targetBox, itemCounts[boxType]);
+              hideTempCounterOverlay(targetBox);
+              onComplete();
             }
-            Object.assign(tempCounter.style, {
-                fontFamily: "'Press Start 2P', sans-serif",
-                fontSize: '18px',
-                color: 'black',
-                position: 'absolute',
-                bottom: '-2px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                zIndex: '10'
-            });
-            tempCounter.textContent = count;
-        };
+          });
+        }, index * 200);
+      });
+    };
 
-        const hideTempCounterOverlay = (box) => {
-            const tempCounter = box.querySelector('.tw-temp-counter-overlay');
-            if (tempCounter) tempCounter.remove();
-            
-            box.querySelectorAll('.tw-box-object').forEach(item => {
-                item.style.filter = 'blur(4px)'; // Directly apply blur effect
-            });
-        };
-        
-        const animateFlyingObject = (object, onComplete) => {
-            const objectElement = getObjectElementById(object.id);
-            if (!objectElement) return onComplete();
+    const showTempCounterOverlay = (box, count) => {
+      let tempCounter = box.querySelector(".tw-temp-counter-overlay");
+      if (!tempCounter) {
+        tempCounter = document.createElement("div");
+        tempCounter.classList.add("tw-temp-counter-overlay");
+        box.appendChild(tempCounter);
+      }
+      Object.assign(tempCounter.style, {
+        fontFamily: "'Press Start 2P', sans-serif",
+        fontSize: "18px",
+        color: "black",
+        position: "absolute",
+        bottom: "-2px",
+        left: "50%",
+        transform: "translateX(-50%)",
+        zIndex: "10",
+      });
+      tempCounter.textContent = count;
+    };
 
-            const targetBox = getTargetBox(object.value);
-            const objectRect = objectElement.getBoundingClientRect();
-            const targetRect = targetBox.getBoundingClientRect();
+    const hideTempCounterOverlay = (box) => {
+      const tempCounter = box.querySelector(".tw-temp-counter-overlay");
+      if (tempCounter) tempCounter.remove();
 
-            const newTop = targetRect.top + window.scrollY + targetRect.height / 2 - objectRect.height / 2;
-            const newLeft = targetRect.left + window.scrollX + targetRect.width / 2 - objectRect.width / 2;
+      box.querySelectorAll(".tw-box-object").forEach((item) => {
+        item.style.filter = "blur(4px)"; // Directly apply blur effect
+      });
+    };
 
-            const clonedElement = objectElement.cloneNode(true);
-            clonedElement.style.position = 'absolute';
-            clonedElement.style.top = `${objectRect.top + window.scrollY}px`;
-            clonedElement.style.left = `${objectRect.left + window.scrollX}px`;
-            clonedElement.style.width = `${objectRect.width}px`;
-            clonedElement.style.height = `${objectRect.height}px`;
-            clonedElement.style.transition = 'none';
-            document.body.appendChild(clonedElement);
+    const animateFlyingObject = (object, onComplete) => {
+      const objectElement = getObjectElementById(object.id);
+      if (!objectElement) return onComplete();
 
-            clonedElement.getBoundingClientRect();
-            clonedElement.style.transition = 'top 0.15s ease-in-out, left 0.15s ease-in-out';
+      const targetBox = getTargetBox(object.value);
+      const objectRect = objectElement.getBoundingClientRect();
+      const targetRect = targetBox.getBoundingClientRect();
 
-            requestAnimationFrame(() => {
-                clonedElement.style.top = `${newTop}px`;
-                clonedElement.style.left = `${newLeft}px`;
+      const newTop =
+        targetRect.top +
+        window.scrollY +
+        targetRect.height / 2 -
+        objectRect.height / 2;
+      const newLeft =
+        targetRect.left +
+        window.scrollX +
+        targetRect.width / 2 -
+        objectRect.width / 2;
 
-                clonedElement.addEventListener('transitionend', () => {
-                    clonedElement.remove();
-                    moveObjectToBox(object);
-                    object.visible = false;
-                    onComplete();
-                }, { once: true });
-            });
+      const clonedElement = objectElement.cloneNode(true);
+      clonedElement.style.position = "absolute";
+      clonedElement.style.top = `${objectRect.top + window.scrollY}px`;
+      clonedElement.style.left = `${objectRect.left + window.scrollX}px`;
+      clonedElement.style.width = `${objectRect.width}px`;
+      clonedElement.style.height = `${objectRect.height}px`;
+      clonedElement.style.transition = "none";
+      document.body.appendChild(clonedElement);
 
-            objectElement.style.visibility = 'hidden';
-        };
+      clonedElement.getBoundingClientRect();
+      clonedElement.style.transition =
+        "top 0.15s ease-in-out, left 0.15s ease-in-out";
 
-        const getObjectElementById = (id) => {
-            return [...document.querySelectorAll('[data-id]')].find(el => el.dataset.id == id && el.style.visibility !== 'hidden');
-        };
+      requestAnimationFrame(() => {
+        clonedElement.style.top = `${newTop}px`;
+        clonedElement.style.left = `${newLeft}px`;
 
-        const moveObjectToBox = (object) => {
-            const box = getTargetBox(object.value);
-            const imgElement = document.createElement('img');
-            imgElement.src = object.image;
-            imgElement.className = 'tw-box-object';
-            imgElement.style.width = '41px'; 
-            imgElement.style.height = '41px';
-            imgElement.style.margin = '5px'; 
-            imgElement.style.objectFit = 'contain';
-            box.appendChild(imgElement);
-        };
+        clonedElement.addEventListener(
+          "transitionend",
+          () => {
+            clonedElement.remove();
+            moveObjectToBox(object);
+            object.visible = false;
+            onComplete();
+          },
+          { once: true }
+        );
+      });
 
-        const getTargetBox = (value) => {
-            return value === 100 ? hundredsBox.value 
-                : value === 10 ? tensBox.value 
-                : onesBox.value;
-        };
-        
-        const getTargetBoxByType = (boxType) => {
-            return boxType === 'hundreds' ? hundredsBox.value 
-                : boxType === 'tens' ? tensBox.value 
-                : onesBox.value;
-        };
+      objectElement.style.visibility = "hidden";
+    };
 
-        const showItemCountOverlay = (box, count) => {
-            if (!box || typeof box.querySelector !== 'function') return;
+    const getObjectElementById = (id) => {
+      return [...document.querySelectorAll("[data-id]")].find(
+        (el) => el.dataset.id == id && el.style.visibility !== "hidden"
+      );
+    };
 
-            let overlay = box.querySelector('.tw-count-overlay');
-            if (!overlay) {
-                overlay = document.createElement('div');
-                overlay.classList.add('tw-count-overlay');
-                box.appendChild(overlay);
-            }
-            Object.assign(overlay.style, {
-                fontSize: '120px',
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-45%, -45%)',
-                zIndex: '10',
-                textShadow: '3px 3px 0px white, -3px 3px 0px white, 3px -3px 0px white, -3px -3px 0px white'
-            });
-            overlay.textContent = count;
-        };
+    const moveObjectToBox = (object) => {
+      const box = getTargetBox(object.value);
+      const imgElement = document.createElement("img");
+      imgElement.src = object.image;
+      imgElement.className = "tw-box-object";
+      imgElement.style.width = "41px";
+      imgElement.style.height = "41px";
+      imgElement.style.margin = "5px";
+      imgElement.style.objectFit = "contain";
+      box.appendChild(imgElement);
+    };
+
+    const getTargetBox = (value) => {
+      return value === 100
+        ? hundredsBox.value
+        : value === 10
+        ? tensBox.value
+        : onesBox.value;
+    };
+
+    const getTargetBoxByType = (boxType) => {
+      return boxType === "hundreds"
+        ? hundredsBox.value
+        : boxType === "tens"
+        ? tensBox.value
+        : onesBox.value;
+    };
+
+    const showItemCountOverlay = (box, count) => {
+      if (!box || typeof box.querySelector !== "function") return;
+
+      let overlay = box.querySelector(".tw-count-overlay");
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.classList.add("tw-count-overlay");
+        box.appendChild(overlay);
+      }
+      Object.assign(overlay.style, {
+        fontSize: "120px",
+        position: "absolute",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-45%, -45%)",
+        zIndex: "10",
+        textShadow:
+          "3px 3px 0px white, -3px 3px 0px white, 3px -3px 0px white, -3px -3px 0px white",
+      });
+      overlay.textContent = count;
+    };
 
         const getHint = (answer) => {
             showHintModal.value = false;
@@ -748,7 +814,7 @@ export default {
     }
 };
 </script>
-  
+
 <style scoped>
     * {
     font-family: 'Press Start 2P', sans-serif;
@@ -790,36 +856,36 @@ export default {
         margin: 0 30px;
     }
 
-    /* Game Box and Object Grid */
-    .target-box {
-    width: 180px;
-    height: 180px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    position: relative;
-    }
+/* Game Box and Object Grid */
+.target-box {
+  width: 180px;
+  height: 180px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
 
-    .grid-container {
-    display: flex;
-    justify-content: space-around;
-    gap: 40px;
-    }
+.grid-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 40px;
+}
 
-    .object-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    }
+.object-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
 
-    .object {
-    width: 65px;
-    height: 65px;
-    transition: transform 1s ease-in-out, top 1s ease-in-out, left 1s ease-in-out;
-    position: relative;
-    }
+.object {
+  width: 65px;
+  height: 65px;
+  transition: transform 1s ease-in-out, top 1s ease-in-out, left 1s ease-in-out;
+  position: relative;
+}
 
     .selected { animation: wiggle 0.5s infinite; }
 

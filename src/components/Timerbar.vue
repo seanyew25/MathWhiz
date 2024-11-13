@@ -5,7 +5,7 @@
     </div>
     <p class="timer-text position-absolute top-50 start-50 translate-middle">{{ Math.ceil(timerSeconds) }}s</p>
   </div>
-</template> 
+</template>
 
 <script>
 export default {
@@ -27,21 +27,9 @@ export default {
       timerInterval: null
     };
   },
-  watch: {
-    isRunning: {
-      immediate: true,
-      handler(newValue) {
-        if (newValue) {
-          this.startTimer();
-        } else {
-          this.pauseTimer();
-        }
-      }
-    }
-  },
   methods: {
     startTimer() {
-      if (this.timerInterval) return; // Prevent multiple intervals
+      if (this.timerInterval) return;
       this.timerInterval = setInterval(() => {
         if (this.timerSeconds > 0) {
           this.timerSeconds = Math.max(0, this.timerSeconds - 0.1);
@@ -64,7 +52,23 @@ export default {
       this.pauseTimer();
       this.timerSeconds = this.initialTime;
       this.timerWidth = 100;
-      this.startTimer()
+      if (this.isRunning) {
+        this.startTimer();
+      }
+    }
+  },
+  watch: {
+    isRunning(newValue) {
+      if (newValue) {
+        this.startTimer();
+      } else {
+        this.pauseTimer();
+      }
+    }
+  },
+  mounted() {
+    if (this.isRunning) {
+      this.startTimer();
     }
   },
   beforeUnmount() {

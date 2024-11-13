@@ -38,24 +38,41 @@
                         <img src="/assets/marketassets/conveyor start.png">
                         </div>
 
-                        <img src="/assets/marketassets/conveyor middle.png" alt="Conveyor Middle" v-for="n in 9" />
+            <img
+              src="/assets/marketassets/conveyor middle.png"
+              alt="Conveyor Middle"
+              v-for="n in 9"
+            />
 
-                        <div class="tw-conveyor conveyor-end">
-                        <img src="/assets/marketassets/conveyor end.png"/>
-                        </div>
-                        
-                        <div class="tw-grocery-container" :id="'grocery-' + index">
-                            <img :src="conveyor.image" class="tw-grocery" :alt="'Basket ' + index" />
-                            <div v-if="!conveyor.showCross && conveyor.assignedOrdinal" 
-                                :class="['tw-label-circle', conveyor.labelClass]" 
-                                @click="resetLabel(index)">
-                                {{ conveyor.assignedOrdinal }}
-                            </div>
-                            <span v-else-if="submitted && (!conveyor.assignedOrdinal || conveyor.showCross)" 
-                                class="tw-text-red-500 tw-text-5xl tw-font-bold tw-absolute" style="top: 20px;" @click="resetLabel(index)">❌</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="tw-conveyor conveyor-end">
+              <img src="/assets/marketassets/conveyor end.png" />
+            </div>
+
+            <div class="tw-grocery-container" :id="'grocery-' + index">
+              <img
+                :src="conveyor.image"
+                class="tw-grocery"
+                :alt="'Basket ' + index"
+              />
+              <div
+                v-if="!conveyor.showCross && conveyor.assignedOrdinal"
+                :class="['tw-label-circle', conveyor.labelClass]"
+                @click="resetLabel(index)"
+              >
+                {{ conveyor.assignedOrdinal }}
+              </div>
+              <span
+                v-else-if="
+                  submitted && (!conveyor.assignedOrdinal || conveyor.showCross)
+                "
+                class="tw-text-red-500 tw-text-5xl tw-font-bold tw-absolute"
+                style="top: 20px"
+                @click="resetLabel(index)"
+                >❌</span
+              >
+            </div>
+          </div>
+        </div>
 
                 <!-- Ordinal Labels to Drag -->
                 <div class="tw-flex tw-justify-center tw-mb-4 tw-gap-10">
@@ -72,10 +89,16 @@
                     </div>
                 </div>
 
-                <div class="tw-text-center">
-                    <button class="nes-btn" @click="checkAnswer" :disabled="loadingNextQuestion">Submit Answer</button>
-                </div>
-            </div>
+        <div class="tw-text-center">
+          <button
+            class="nes-btn"
+            @click="checkAnswer"
+            :disabled="loadingNextQuestion"
+          >
+            Submit Answer
+          </button>
+        </div>
+      </div>
 
             <!-- Question Count and Coins Display -->
             <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-4">
@@ -134,16 +157,18 @@ import {
 
 
 export default {
-    name: "MarketOrdering",
-    setup() {
-        const conveyors = reactive(Array.from({ length: 4 }, (_, i) => ({
-            id: i,
-            correctOrdinal: null,
-            assignedOrdinal: null,
-            image: '',
-            labelClass: '',
-            showCross: false,
-        })));
+  name: "MarketOrdering",
+  setup() {
+    const conveyors = reactive(
+      Array.from({ length: 4 }, (_, i) => ({
+        id: i,
+        correctOrdinal: null,
+        assignedOrdinal: null,
+        image: "",
+        labelClass: "",
+        showCross: false,
+      }))
+    );
 
         const ordinalNumbers = ref([
             { text: "1st", disabled: false, hidden: false },
@@ -164,13 +189,13 @@ export default {
         const loadingNextQuestion = ref(true);
         const streakCount = ref(0);
 
-        const assignRandomImages = () => {
-            let availableImages = [...basketImages];
-            conveyors.forEach(conveyor => {
-                const randomIndex = Math.floor(Math.random() * availableImages.length);
-                conveyor.image = availableImages.splice(randomIndex, 1)[0];
-            });
-        };
+    const assignRandomImages = () => {
+      let availableImages = [...basketImages];
+      conveyors.forEach((conveyor) => {
+        const randomIndex = Math.floor(Math.random() * availableImages.length);
+        conveyor.image = availableImages.splice(randomIndex, 1)[0];
+      });
+    };
 
         const resetGroceries = () => {
             conveyors.forEach((conveyor, index) => {
@@ -190,24 +215,24 @@ export default {
             });
         };
 
-        const startRace = () => {
-            const shuffledConveyors = [...conveyors].sort(() => Math.random() - 0.5);
-            const ordinals = ["1st", "2nd", "3rd", "4th"];
-            shuffledConveyors.forEach((conveyor, position) => {
-                conveyor.correctOrdinal = ordinals[position];
-            });
+    const startRace = () => {
+      const shuffledConveyors = [...conveyors].sort(() => Math.random() - 0.5);
+      const ordinals = ["1st", "2nd", "3rd", "4th"];
+      shuffledConveyors.forEach((conveyor, position) => {
+        conveyor.correctOrdinal = ordinals[position];
+      });
 
-            let cumulativeDelay = 0;
-            shuffledConveyors.forEach((conveyor, index) => {
-                const grocery = document.getElementById(`grocery-${conveyor.id}`);
+      let cumulativeDelay = 0;
+      shuffledConveyors.forEach((conveyor, index) => {
+        const grocery = document.getElementById(`grocery-${conveyor.id}`);
 
-                // Animation
-                grocery.style.transition = "left 4s linear";
+        // Animation
+        grocery.style.transition = "left 4s linear";
 
-                setTimeout(() => {
-                    // End position
-                    grocery.style.left = `735px`;
-                }, cumulativeDelay);
+        setTimeout(() => {
+          // End position
+          grocery.style.left = `735px`;
+        }, cumulativeDelay);
 
                 cumulativeDelay += Math.random() * 800 + 300; // Introduce random delays for each item
             });
@@ -227,9 +252,9 @@ export default {
             }
         };
 
-        const allowDrop = (event) => {
-            event.preventDefault();
-        };
+    const allowDrop = (event) => {
+      event.preventDefault();
+    };
 
         const drop = (event, index) => {
             event.preventDefault(); // Prevent default behavior
@@ -258,17 +283,17 @@ export default {
             timerFrozen.value = true;
             loadingNextQuestion.value = true;
 
-            let allCorrect = true;
-            conveyors.forEach((conveyor) => {
-                if (conveyor.assignedOrdinal === conveyor.correctOrdinal) {
-                    conveyor.labelClass = 'tw-correct';
-                    conveyor.showCross = false;
-                } else {
-                    conveyor.labelClass = 'tw-incorrect';
-                    conveyor.showCross = true;
-                    allCorrect = false;
-                }
-            });
+      let allCorrect = true;
+      conveyors.forEach((conveyor) => {
+        if (conveyor.assignedOrdinal === conveyor.correctOrdinal) {
+          conveyor.labelClass = "tw-correct";
+          conveyor.showCross = false;
+        } else {
+          conveyor.labelClass = "tw-incorrect";
+          conveyor.showCross = true;
+          allCorrect = false;
+        }
+      });
 
             if (allCorrect) {
                 playSound(true);
@@ -340,10 +365,10 @@ export default {
             }, 1000);
         };
 
-        const router = useRouter();
-        const exitGame = () => {
-            router.push("/game");
-        };
+    const router = useRouter();
+    const exitGame = () => {
+      router.push("/game");
+    };
 
         const restartGame = () => {
             gameOver.value = false;
@@ -356,13 +381,13 @@ export default {
         const timerWidth = ref(20);
         const timerInterval = ref(null);
 
-        const startTimer = () => {
-            timerWidth.value = 20;
-            timerFrozen.value = false;
+    const startTimer = () => {
+      timerWidth.value = 20;
+      timerFrozen.value = false;
 
-            timerInterval.value = setInterval(() => {
-                if (!timerFrozen.value) {
-                    timerWidth.value = Math.max(0, timerWidth.value - 0.1);
+      timerInterval.value = setInterval(() => {
+        if (!timerFrozen.value) {
+          timerWidth.value = Math.max(0, timerWidth.value - 0.1);
 
                     if (timerWidth.value == 0) {
                         timerFrozen.value = true;
@@ -372,10 +397,10 @@ export default {
             }, 100);
         };
 
-        const resetTimer = () => {
-            clearInterval(timerInterval.value);
-            startTimer();
-        };
+    const resetTimer = () => {
+      clearInterval(timerInterval.value);
+      startTimer();
+    };
 
         const handleTimeOut = () => {
             if (questionCount.value < totalQuestions) {
@@ -518,7 +543,7 @@ export default {
     }
 };
 </script>
-  
+
 <style scoped>
     * {
     font-family: 'Press Start 2P', sans-serif;
@@ -569,60 +594,61 @@ export default {
         margin: 0;
     }
 
-    .tw-conveyor img {
-        height: 100%;
-        width: auto;
-    }
+.tw-conveyor img {
+  height: 100%;
+  width: auto;
+}
 
-    .tw-grocery-container {
-        position: absolute;
-        top: -20px;
-        left: 10px;
-        width: 72px;
-        height: 120px;
-        transition: left 3s linear;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+.tw-grocery-container {
+  position: absolute;
+  top: -20px;
+  left: 10px;
+  width: 72px;
+  height: 120px;
+  transition: left 3s linear;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-    .tw-grocery {
-        width: 72px !important;
-        height: 120px !important;
-        user-select: none;
-    }
+.tw-grocery {
+  width: 72px !important;
+  height: 120px !important;
+  user-select: none;
+}
 
-    .tw-label-circle {
-        position: absolute;
-        width: 55px;
-        height: 55px;
-        background-color: white;
-        color: black;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        font-size: 16px;
-        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
-        top: 25px;
-        transition: transform 0.2s, background-color 0.2s;
-    }
+.tw-label-circle {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  background-color: white;
+  color: black;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 16px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  top: 25px;
+  transition: transform 0.2s, background-color 0.2s;
+}
 
-    .tw-label-circle.tw-correct {
-        background-color: green;
-        color: white;
-        animation: tw-pulse 0.6s ease-in-out infinite; /* Apply pulse animation for correct answers */
-    }
+.tw-label-circle.tw-correct {
+  background-color: green;
+  color: white;
+  animation: tw-pulse 0.6s ease-in-out infinite; /* Apply pulse animation for correct answers */
+}
 
-    @keyframes tw-pulse {
-        0%, 100% {
-            transform: scale(1);
-        }
-        50% {
-            transform: scale(1.2);
-        }
-    }
+@keyframes tw-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
 
     .tw-label-circle.tw-incorrect {
         background-color: red;
