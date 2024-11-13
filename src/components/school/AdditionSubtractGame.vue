@@ -39,17 +39,25 @@
           >
             <p class="title">Hint</p>
             <p class="tw-text-lg tw-mb-4">
-              Click on the addition or subtraction operator to visualise the question!<br>
-              For <strong>addition</strong>, you'll see a table with rows and column. <br>
-              For <strong>subtraction</strong>, you'll see the remaining amount after the corresponding amount has faded away
+              Click on the addition or subtraction operator to visualise the
+              question!<br />
+              For <strong>addition</strong>, you'll see a table with rows and
+              column. <br />
+              For <strong>subtraction</strong>, you'll see the remaining amount
+              after the corresponding amount has faded away
             </p>
-              
+
             <!-- Button-->
-              <div class="tw-flex tw-gap-8 tw-justify-center">
-                <button @click="showHintModal = false" class="nes-btn is-success tw-w-auto">I Understand!</button>
-              </div>
+            <div class="tw-flex tw-gap-8 tw-justify-center">
+              <button
+                @click="showHintModal = false"
+                class="nes-btn is-success tw-w-auto"
+              >
+                I Understand!
+              </button>
             </div>
           </div>
+        </div>
 
         <!-- Timer Bar -->
         <div class="progress-container">
@@ -107,7 +115,7 @@
                   >
                     {{ item.item }}
                   </span>
-                </transition-group> 
+                </transition-group>
 
                 <!-- Equals Sign -->
                 <span>=</span>
@@ -203,8 +211,8 @@
           </div>
         </div>
 
-              <!-- Start Game Dialogue Box-->
-              <dialog class="nes-dialog" id="instructions-dialog">
+        <!-- Start Game Dialogue Box-->
+        <dialog class="nes-dialog" id="instructions-dialog">
           <form method="dialog">
             <p class="title" style="text-align: center">
               Welcome to the Multiplication and Division Game!
@@ -227,7 +235,6 @@
             </menu>
           </form>
         </dialog>
-
       </div>
     </div>
   </div>
@@ -235,7 +242,14 @@
 
 <script>
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
+import { useRouter } from "vue-router";
 const emojiSet = ["🚗", "🏀", "🌍", "💡", "📚", "💻", "🏫", "👨‍🏫", "📏", "🔢"];
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
@@ -264,7 +278,15 @@ const generateQuestion = () => {
     .fill(selectedEmoji)
     .map((item) => ({ item, hide: false }));
 
-    return { leftItems, rightItems, operator, leftNumber, rightNumber, correct, selectedEmoji, };
+  return {
+    leftItems,
+    rightItems,
+    operator,
+    leftNumber,
+    rightNumber,
+    correct,
+    selectedEmoji,
+  };
 };
 
 export default {
