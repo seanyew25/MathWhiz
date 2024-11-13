@@ -1,3 +1,66 @@
+<style scoped>
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fff5cd;
+  transition: transform 0.2s ease;
+  transform: translateY(0);
+  width: 100vw;
+}
+
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
+.nav-item {
+  padding-left: 15px;
+}
+@media (max-width: 991px) {
+  .nav-item.first-item {
+    padding-left: 27px !important;
+  }
+}
+
+.nav-item a {
+  position: relative;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-item a:hover {
+  transform: scale(1.1);
+  color: #ffcfb3;
+}
+
+.nav-item a:hover::after,
+.nav-item.active a::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.9;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+}
+.profile-icon:hover {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+</style>
 <template>
   <nav
     class="navbar navbar-expand-lg"
@@ -20,8 +83,14 @@
         /></RouterLink>
       </a>
       <div class="d-flex order-lg-2 gap-2">
-        <button v-if="!isAuthenticated" @click="openModal" class="nes-btn is-primary" type="submit"
-          data-bs-target="#getStartedModal" data-bs-toggle="modal">
+        <button
+          v-if="!isAuthenticated"
+          @click="openModal"
+          class="nes-btn is-primary"
+          type="submit"
+          data-bs-target="#getStartedModal"
+          data-bs-toggle="modal"
+        >
           Get Started!
         </button>
 
@@ -113,7 +182,7 @@
 
           <!-- END OF REMOVE -->
           <li
-            class="nav-item"
+            class="nav-item first-item"
             :class="{ active: isGameActive }"
             style="padding-left: 50px"
           >

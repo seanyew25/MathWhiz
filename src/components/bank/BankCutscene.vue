@@ -7,9 +7,15 @@
       class="nes-container is-rounded is-centered with-title tw-max-w-3xl"
       style="background-color: rgba(255, 245, 205, 1)"
     >
-      <p class="title" style="background-color: rgba(255, 245, 205, 1)">
-        Supermarket
-      </p>
+      <p class="title" style="background-color: rgba(255, 245, 205, 1)">Bank</p>
+      <button
+        class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn"
+        @click="skipCutscene"
+        v-if="currentAnimation != 'finished'"
+      >
+        Skip
+      </button>
+
       <div
         class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center"
         @click="toggleAnimation"
@@ -18,9 +24,12 @@
           <!-- Character Image with Animation -->
           <img
             :src="currentImage"
-            :class="{ shake: currentAnimation.value === 'alerted' }"
+            :class="[
+              { shake: currentAnimation.value === 'alerted' },
+              currentAnimation.value === 'fall' ? 'tw-my-auto' : 'tw-mx-auto',
+            ]"
             alt="Character Animation"
-            class="character-size tw-object-contain tw-mx-auto"
+            class="character-size tw-object-contain"
           />
 
           <!-- Exclamation Icon for Alerted State, with custom position -->
@@ -53,20 +62,11 @@
             <button
               @click="
                 $emit('end-cutscene');
-                $emit('go-to-counting');
+                $emit('go-to-bank-game');
               "
               class="wiggle-button nes-btn is-primary"
             >
-              Go to Counting!
-            </button>
-            <button
-              @click="
-                $emit('end-cutscene');
-                $emit('go-to-ordering');
-              "
-              class="wiggle-button nes-btn is-success"
-            >
-              Go to Ordering!
+              Go to Counting Money!
             </button>
           </div>
         </div>
@@ -89,28 +89,28 @@ export default {
         dialogueText.value === "Thank you very much!"
     );
 
-    // Running Animation Frames
-    const totalRunFrames = 6;
-    const runFrame = ref(1);
+    // walking Animation Frames
+    const totalWalkFrames = 5;
+    const walkFrame = ref(0);
 
-    // Breathing Animation Frames
-    const breatheFrames = [1, 2, 3, 4, 4, 4, 3, 2];
-    let breatheIndex = 0;
+    // headache Animation Frames
+    const phoneFrames = [0, 1, 2, 3, 4, 5];
+    let phoneIndex = 0;
 
-    // Shocked Animation Frames
-    const shockedFrames = [1, 2, 2];
-    let shockedIndex = 0;
+    // headache Animation Frames
+    const headacheFrames = [1, 1, 2, 2, 3, 3];
+    let headacheIndex = 0;
 
     // Standing Animation Frames
-    const standingFrames = [
-      1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 3, 3, 3, 2, 2, 2,
-    ];
+    const standingFrames = [1, 1, 1, 2, 2, 2, 3, 3, 3, 3, 2, 2, 2];
     let standingIndex = 0;
     let standingClickCount = 0; // Track consecutive clicks in standing mode
 
     // Animation State
-    const currentAnimation = ref("running"); // Initial animation
-    const currentImage = ref(`/assets/marketassets/run${runFrame.value}.png`);
+    const currentAnimation = ref("walking"); // Initial animation
+    const currentImage = ref(
+      `/assets/bankassets/cutscene/walk${walkFrame.value}.png`
+    );
 
     const isAlerted = computed(() => currentAnimation.value === "alerted");
 
@@ -122,31 +122,32 @@ export default {
     );
 
     // Dialogue Text and Display
-    const dialogueText = ref("NOOOOOOOOOOOO!!"); // Initial text for running
+    const dialogueText = ref("Today I will deposit my piggybank at the bank!"); // Initial text for walking
     const displayedText = ref("");
     let index = 0;
 
-    // Function to cycle through running frames
+    // Function to cycle through walking frames
     function runAnimation() {
-      currentImage.value = `/assets/marketassets/run${runFrame.value}.png`;
-      runFrame.value = runFrame.value < totalRunFrames ? runFrame.value + 1 : 1;
+      currentImage.value = `/assets/bankassets/cutscene/walk${walkFrame.value}.png`;
+      walkFrame.value =
+        walkFrame.value < totalWalkFrames ? walkFrame.value + 1 : 1;
     }
 
-    // Function to cycle through breathing frames
-    function breatheAnimation() {
-      currentImage.value = `/assets/marketassets/breathe${breatheFrames[breatheIndex]}.png`;
-      breatheIndex = (breatheIndex + 1) % breatheFrames.length;
+    // Function to cycle through headache frames
+    function phoneAnimation() {
+      currentImage.value = `/assets/bankassets/cutscene/phone${phoneFrames[phoneIndex]}.png`;
+      phoneIndex = (phoneIndex + 1) % phoneFrames.length;
     }
 
-    // Function to cycle through shocked frames
-    function shockedAnimation() {
-      currentImage.value = `/assets/marketassets/shocked${shockedFrames[shockedIndex]}.png`;
-      shockedIndex = (shockedIndex + 1) % shockedFrames.length;
+    // Function to cycle through headache frames
+    function headacheAnimation() {
+      currentImage.value = `/assets/bankassets/cutscene/headache${headacheFrames[headacheIndex]}.png`;
+      headacheIndex = (headacheIndex + 1) % headacheFrames.length;
     }
 
     // Function to cycle through standing frames
     function standingAnimation() {
-      currentImage.value = `/assets/marketassets/standing${standingFrames[standingIndex]}.png`;
+      currentImage.value = `/assets/bankassets/cutscene/standing${standingFrames[standingIndex]}.png`;
       standingIndex = (standingIndex + 1) % standingFrames.length;
     }
 
@@ -158,18 +159,19 @@ export default {
 
       if (!cutsceneActive.value) return; // Prevent advancing if cutscene is complete
 
-      if (currentAnimation.value === "running") {
-        currentAnimation.value = "breathing";
-        dialogueText.value = "huff... puff... gasp...";
-      } else if (currentAnimation.value === "breathing") {
-        currentAnimation.value = "shocked";
-        dialogueText.value = "The apples!!!!";
-      } else if (currentAnimation.value === "shocked") {
-        if (dialogueText.value === "The apples!!!!") {
-          dialogueText.value = "The queues!!!!";
+      if (currentAnimation.value === "walking") {
+        currentAnimation.value = "phone";
+        dialogueText.value = "It's time to use my phone to count the money!";
+      } else if (currentAnimation.value === "phone") {
+        currentAnimation.value = "headache";
+        dialogueText.value = "NOOOOO!!! There's no battery left!!";
+      } else if (currentAnimation.value === "headache") {
+        if (dialogueText.value === "NOOOOO!!! There's no battery left!!") {
+          dialogueText.value =
+            "Mummy is going to scold me if I don't deposit this...";
         } else {
           currentAnimation.value = "alerted";
-          currentImage.value = `/assets/marketassets/alert1.png`;
+          currentImage.value = `/assets/bankassets/cutscene/alerted.png`;
           dialogueText.value = "Hey, you over there!";
 
           const imgElement = document.querySelector("img");
@@ -185,20 +187,18 @@ export default {
           }, 750);
         }
       } else if (currentAnimation.value === "standing") {
-        if (
-          dialogueText.value === "The market's apples have spilt everywhere..."
-        ) {
-          dialogueText.value = "The queues are out of control...";
+        if (dialogueText.value === "Hey, you over there!") {
+          dialogueText.value =
+            "My math is bad and I need to deposit my piggybank";
         } else if (standingClickCount < 2) {
-          dialogueText.value = "The market's apples have spilt everywhere...";
+          dialogueText.value = "Can you please help me?";
           standingClickCount++;
-        } else {
-          currentAnimation.value = "carrying";
-          currentImage.value = `/assets/marketassets/carrying1.png`;
-          dialogueText.value = "Could you help me with the apples and queues?";
+          currentAnimation.value = "neutral";
+          currentImage.value = `/assets/bankassets/cutscene/standing1.png`;
+          //   dialogueText.value = "Thank you very much!";
           standingClickCount = 0;
         }
-      } else if (currentAnimation.value === "carrying") {
+      } else if (currentAnimation.value === "neutral") {
         currentAnimation.value = "finished";
         dialogueText.value = "Thank you very much!";
 
@@ -209,7 +209,7 @@ export default {
           imgElement.classList.remove("tw-shake");
         }, 1500);
       } else {
-        currentAnimation.value = "running";
+        currentAnimation.value = "walking";
         dialogueText.value = "NOOOOOOOOOOOO!!";
       }
 
@@ -238,6 +238,14 @@ export default {
       isSmallScreen.value = window.innerWidth < 768;
     };
 
+    const skipCutscene = () => {
+      currentAnimation.value = "finished";
+      currentImage.value = `/assets/bankassets/cutscene/standing1.png`;
+      dialogueText.value = "Thank you very much!";
+      displayedText.value = dialogueText.value;
+      cutsceneActive.value = false;
+    };
+
     onBeforeUnmount(() => {
       window.removeEventListener("resize", updateScreenSize);
     });
@@ -251,12 +259,12 @@ export default {
 
       // Start the appropriate animation based on currentAnimation state
       setInterval(() => {
-        if (currentAnimation.value === "running") {
+        if (currentAnimation.value === "walking") {
           runAnimation();
-        } else if (currentAnimation.value === "breathing") {
-          breatheAnimation();
-        } else if (currentAnimation.value === "shocked") {
-          shockedAnimation();
+        } else if (currentAnimation.value === "phone") {
+          phoneAnimation();
+        } else if (currentAnimation.value === "headache") {
+          headacheAnimation();
         } else if (currentAnimation.value === "standing") {
           standingAnimation();
         }
@@ -275,43 +283,13 @@ export default {
       endCutscene,
       isSmallScreen,
       updateScreenSize,
+      skipCutscene,
     };
   },
 };
 </script>
 
 <style scoped>
-/* .nes-container {
-  position: relative;
-  padding: 1.5rem 2rem;
-  border-color: black;
-  border-style: solid;
-  border-width: 4px;
-} */
-.nes-container.is-rounded {
-  border-image-slice: 3;
-  border-image-width: 3;
-  border-image-repeat: stretch;
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
-  border-image-outset: 2;
-  padding: 1rem 1.5rem;
-  margin: 4px;
-}
-
-.nes-balloon {
-  border-image-slice: 3;
-  border-image-width: 3;
-  border-image-repeat: stretch;
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
-  border-image-outset: 2;
-  position: relative;
-  display: inline-block;
-  padding: 1rem 1.5rem;
-  margin: 8px;
-  margin-bottom: 30px;
-  background-color: #fff;
-}
-
 .cutscene {
   font-family: "Press Start 2P", sans-serif;
   z-index: 1; /* Ensure the cutscene is below the navbar */

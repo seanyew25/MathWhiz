@@ -1,50 +1,76 @@
 <template>
-  <div class="math-game md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
+  <div
+    class="math-game md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]"
+  >
     <!-- Game Container -->
-    <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 90%; padding: 10px;">
-      <p class="title" style="background-color: rgba(255, 245, 205, 1);">Multiplication and Division</p>
+    <div
+      class="nes-container is-rounded is-centered with-title"
+      style="
+        background-color: rgba(255, 245, 205, 1);
+        width: 90%;
+        padding: 10px;
+      "
+    >
+      <p class="title" style="background-color: rgba(255, 245, 205, 1)">
+        Multiplication and Division
+      </p>
 
-      <div class="tw-w-full">
+      <div class="p-6 w-[400px] h-[300px] mx-auto">
         <!-- Instructions and Hint -->
-        <div class="tw-flex tw-items-center tw-justify-center tw-mb-2">
+        <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
           <h1 class="tw-text-3xl text-center align-center">
-            {{ currentQuestion.operator === "×" ? "Multiply the numbers!" : "Divide the numbers!" }}
+            {{
+              currentQuestion.operator === "×"
+                ? "Multiply the numbers!"
+                : "Divide the numbers!"
+            }}
           </h1>
-          <button @click="showHintDialog" class="nes-btn is-primary tw-text-sm tw-mx-4">Hint</button>
+          <button
+            @click="showHintDialog"
+            class="nes-btn is-primary tw-text-sm tw-mx-4"
+          >
+            Hint
+          </button>
         </div>
 
         <!-- Hint Modal -->
-        <dialog class="nes-dialog" id="dialog-default" style="border-radius: 10px;">
+        <dialog
+          class="nes-dialog"
+          id="dialog-default"
+          style="border-radius: 10px"
+        >
           <form method="dialog">
             <p class="title tw-text-lg tw-mb-4 text-center">Hint</p>
             <p class="text-center tw-text-md tw-mb-4">
-              Hover over the <strong>bottom row of emojis</strong> to visualise the question!<br>
-              For <strong>multiplication</strong>, you'll see a grid. <br>
+              Hover over the <strong>bottom row of emojis</strong> to visualise
+              the question!<br />
+              For <strong>multiplication</strong>, you'll see a grid. <br />
               For <strong>division</strong>, you'll see coloured groups.
             </p>
-            <menu class="dialog-menu" style="align-items: center;">
-              <button class="nes-btn is-success" @click="closeHintDialog">I Understand!</button>
+            <menu class="dialog-menu" style="align-items: center">
+              <button class="nes-btn is-success" @click="closeHintDialog">
+                I Understand!
+              </button>
             </menu>
           </form>
         </dialog>
 
-        <!-- Timer Bar -->
-        <div class="progress-container tw-relative tw-mb-2">
+          <!-- Timer Bar -->
+          <div class="progress-container">
           <progress
-            class="nes-progress is-success tw-w-full"
-            :value="timerWidth"
-            :max="100"
+            class="nes-progress is-success"
+            :value="timeRemaining"
+            :max="totalTime"
           ></progress>
-          <p class="nes-text tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw-translate-x-[-50%] tw-translate-y-[-50%] tw-text-center">
+          <p
+            class="nes-text tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw-translate-x-[-50%] tw-translate-y-[-50%] tw-text-center"
+          >
             {{ Math.ceil(timerSeconds) }}s
           </p>
         </div>
 
         <transition name="fade">
-          <div
-            v-if="isBonusRound"
-            class="bonus-round text-center mb-4"
-          >
+          <div v-if="isBonusRound" class="bonus-round text-center mb-4">
             Bonus Round! Double coins for correct answers!
           </div>
         </transition>
@@ -72,8 +98,8 @@
 
             <div class="tw-text-4xl">{{ currentQuestion.operator }}</div>
 
-            <div 
-              class="bottom-emojis" 
+            <div
+              class="bottom-emojis"
               ref="bottomEmojis"
               @mouseover="handleBottomEmojisHover"
               @mouseleave="handleBottomEmojisLeave"
@@ -88,13 +114,19 @@
                 </span>
               </transition-group>
             </div>
-          </div>
 
           <transition name="fade">
-            <div v-if="showMultiplicationGrid && currentQuestion.operator === '×'" class="multiplication-grid">
+            <div
+              v-if="showMultiplicationGrid && currentQuestion.operator === '×'"
+              class="multiplication-grid"
+            >
               <div class="grid-row grid-header">
                 <div class="grid-cell"></div>
-                <div v-for="col in currentQuestion.rightNumber" :key="'col-' + col" class="grid-cell">
+                <div
+                  v-for="col in currentQuestion.rightNumber"
+                  :key="'col-' + col"
+                  class="grid-cell"
+                >
                   {{ col }}
                 </div>
               </div>
@@ -108,7 +140,7 @@
                   v-for="col in currentQuestion.rightNumber"
                   :key="'col-' + col"
                   class="grid-cell"
-                  :class="{ 'highlighted': isHighlighted(row, col) }"
+                  :class="{ highlighted: isHighlighted(row, col) }"
                   @mouseover="highlightCell(row, col)"
                   @mouseleave="clearHighlight"
                 >
@@ -133,7 +165,10 @@
         <div class="tw-text-center tw-mb-2">
           <button
             @click="checkAnswer"
-            :class="{ 'nes-btn': true, 'is-disabled': gameOver || !gameStarted }"
+            :class="{
+              'nes-btn': true,
+              'is-disabled': gameOver || !gameStarted,
+            }"
             :disabled="gameOver || !gameStarted"
           >
             Submit Answer
@@ -142,16 +177,16 @@
 
         <div class="tw-text-center tw-mb-2">
           <p class="tw-test-md">
-            <br>
-            Question: {{ questionCount }} / 10 |
-            Coins earned: {{ medals }}<i class="nes-icon coin is-small"></i>
+            <br />
+            Question: {{ questionCount }} / 10 | Coins earned: {{ medals
+            }}<i class="nes-icon coin is-small"></i>
           </p>
         </div>
 
         <div v-if="gameOver" class="game-over-overlay">
           <div class="game-over-content">
             <h2>{{ completionMessage }}</h2>
-            <br>
+            <br />
             <p>You're one step closer to regaining Morgana's fur!</p>
             <p>Play again?</p>
             <button @click="exitGame" class="nes-btn is-primary">
@@ -162,33 +197,52 @@
             </button>
           </div>
         </div>
-        
+
         <dialog class="nes-dialog" id="instructions-dialog">
           <form method="dialog">
-            <p class="title" style="text-align:center;">Welcome to the Multiplication and Division Game!</p>
-            <p style="text-align: center;">
-              Answer 10 questions and earn Destress coins.<br><br>
-              Answer 5 questions in a row correctly to active a streak! <br>
-              It earns you double coins!<br><br>
-              You have <strong>{{ initialTimerSeconds }}</strong> seconds for each question. Good luck!
+            <p class="title" style="text-align: center">
+              Welcome to the Multiplication and Division Game!
+            </p>
+            <p style="text-align: center">
+              Answer 10 questions and earn Destress coins.<br /><br />
+              Answer 5 questions in a row correctly to active a streak! <br />
+              It earns you double coins!<br /><br />
+              You have <strong>{{ initialTimerSeconds }}</strong> seconds for
+              each question. Good luck!
             </p>
             <menu class="dialog-menu center-button">
-              <button class="nes-btn is-primary" style="text-align:center;" @click="startGame">Start Game</button>
+              <button
+                class="nes-btn is-primary"
+                style="text-align: center"
+                @click="startGame"
+              >
+                Start Game
+              </button>
             </menu>
           </form>
         </dialog>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import confetti from "canvas-confetti";
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const emojiSet = ["😀", "🐶", "🍕", "🚗", "🎉", "🏀", "🌍", "💡", "📚", "💻"];
-const getRandomEmoji = () => emojiSet[Math.floor(Math.random() * emojiSet.length)];
+const getRandomEmoji = () =>
+  emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
 const tables = [2, 3, 4, 5, 6, 7];
 
@@ -220,7 +274,13 @@ export default {
     const gameOver = ref(false);
     const gameStarted = ref(false);
     const completionMessage = ref("");
-    const colors = ["hover-red", "hover-blue", "hover-yellow", "hover-green", "hover-purple"];
+    const colors = [
+      "hover-red",
+      "hover-blue",
+      "hover-yellow",
+      "hover-green",
+      "hover-purple",
+    ];
     const earnedMedal = ref(false);
     const isBonusRound = ref(false);
 
@@ -228,8 +288,9 @@ export default {
     const correctStreak = ref(0);
     const questionCount = ref(0);
     const medals = ref(0);
+    const totalMedals = ref(0);
     const timerWidth = ref(100);
-    const initialTimerSeconds = 10;
+    const initialTimerSeconds = 20; // Updated from 10 to 20
     const timerSeconds = ref(initialTimerSeconds);
     const pausedTimerSeconds = ref(0);
     const userInput = ref("");
@@ -237,31 +298,84 @@ export default {
     let timerInterval = null;
 
     const hasCorrectStreak = computed(() => correctStreak.value > 0);
-    
+
     const showMultiplicationGrid = ref(false);
     const highlightedRow = ref(0);
     const highlightedCol = ref(0);
     const bottomEmojis = ref(null);
+    const db = ref(null);
+    const auth = ref(null);
+    const money = ref(0);
 
-    const startTimer = () => {
-      if (gameOver.value) return;
-      clearInterval(timerInterval);
-
-      timerInterval = setInterval(() => {
-        if (gameOver.value) {
-          clearInterval(timerInterval);
-          return;
+    async function getCurrency(db, collectionName, documentId) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        const doc = await getDoc(docRef);
+        console.log(doc);
+        if (doc.exists()) {
+          console.log("Document data:", doc.data());
+          money.value = doc.data().currency;
+        } else {
+          console.log("No such document!");
         }
-        timerWidth.value = Math.max(0, (timerSeconds.value / initialTimerSeconds) * 100);
+      } catch (error) {
+        console.error("Error getting document:", error);
+      }
+    }
+
+    async function updateCurrency(db, collectionName, documentId, currency) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        await setDoc(docRef, { currency: currency }, { merge: true });
+        console.log("Currency successfully written!");
+      } catch (error) {
+        console.error("Error writing document: ", error);
+      }
+    }
+
+    async function updateCompletedTasks(
+      db,
+      collectionName,
+      documentId,
+      newTask
+    ) {
+      const docRef = doc(db, collectionName, documentId);
+      try {
+        await setDoc(
+          docRef,
+          { completedTasks: arrayUnion(newTask) },
+          { merge: true }
+        );
+        console.log("Task successfully added to completedTasks!");
+      } catch (error) {
+        console.error("Error updating document: ", error);
+      }
+    }
+
+const startTimer = () => {
+    if (gameOver.value) return;
+    clearInterval(timerInterval);
+
+    timerInterval = setInterval(() => {
+        if (gameOver.value) {
+            clearInterval(timerInterval);
+            return;
+        }
+        timerWidth.value = Math.max(
+          0,
+          (timerSeconds.value / initialTimerSeconds) * 100
+        );
         timerSeconds.value = Math.max(0, timerSeconds.value - 0.1);
 
         if (timerSeconds.value <= 0) {
-          clearInterval(timerInterval);
-          handleTimerExpired();
-          playSound(false);
+            clearInterval(timerInterval);
+            handleTimerExpired();
+            playSound(false);
         }
-      }, 100);
-    };
+    }, 100);
+    console.log("Timer started"); // Debugging line
+};
+
 
     const pauseTimer = () => {
       clearInterval(timerInterval);
@@ -320,27 +434,35 @@ export default {
       });
     };
 
+    
     const handleCorrectAnswer = () => {
       playSound(true);
       correctStreak.value += 1;
 
-      if (correctStreak.value === 5) {
-        triggerConfetti();
-        isBonusRound.value = true;
-      }
+  // Activate streak message on 5th consecutive correct answer
+  if (correctStreak.value >= 5) {
+    triggerConfetti();
+    isBonusRound.value = true;
+  } else {
+    isBonusRound.value = false;
+  }
 
-      if (medals.value < 15) {
-        medals.value += correctStreak.value > 5 ? 2 : 1;
-      }
+  // Award coins
+  if (correctStreak.value >= 6) {
+    medals.value += 2; // Double coins from 6th correct answer
+  } else {
+    medals.value += 1;
+  }
 
-      if (medals.value > 15) {
-        medals.value = 15;
-      }
+  // Cap medals at 15
+  if (medals.value > 15) {
+    medals.value = 15;
+  }
 
-      earnedMedal.value = true;
-      setTimeout(() => {
-        earnedMedal.value = false;
-      }, 1000);
+  earnedMedal.value = true;
+  setTimeout(() => {
+    earnedMedal.value = false;
+  }, 1000);
 
       nextQuestion();
     };
@@ -400,13 +522,29 @@ export default {
       currentQuestion.value = generateUniqueQuestion();
       timerSeconds.value = initialTimerSeconds;
       startTimer();
-      console.log("Next question! Current question count:", questionCount.value);
+      console.log(
+        "Next question! Current question count:",
+        questionCount.value
+      );
     };
 
     const endGame = () => {
       if (gameOver.value) return;
       gameOver.value = true;
-      completionMessage.value = "You've obtained " + medals.value + " Destress coins!";
+      completionMessage.value =
+        "You've obtained " + medals.value + " Destress coins!";
+      updateCurrency(
+        db.value,
+        "users",
+        auth.value.currentUser.uid,
+        money.value + totalMedals.value + medals.value
+      );
+      updateCompletedTasks(
+        db.value,
+        "users",
+        auth.value.currentUser.uid,
+        "multiplicationAndDivision"
+      );
       clearInterval(timerInterval);
       console.log("Game over. Total questions answered: ", questionCount.value);
     };
@@ -415,6 +553,7 @@ export default {
       gameOver.value = false;
       gameStarted.value = true;
       completionMessage.value = "";
+      totalMedals.value += medals.value;
       medals.value = 0;
       correctStreak.value = 0;
       questionCount.value = 0;
@@ -433,21 +572,21 @@ export default {
 
     const showHintDialog = () => {
       pauseTimer();
-      document.getElementById('dialog-default').showModal();
+      document.getElementById("dialog-default").showModal();
     };
 
     const closeHintDialog = () => {
-      document.getElementById('dialog-default').close();
+      document.getElementById("dialog-default").close();
       resumeTimer();
     };
 
     const showInstructions = () => {
-      document.getElementById('instructions-dialog').showModal();
+      document.getElementById("instructions-dialog").showModal();
     };
 
     const startGame = () => {
       gameStarted.value = true;
-      document.getElementById('instructions-dialog').close();
+      document.getElementById("instructions-dialog").close();
       setInitialQuestion();
     };
 
@@ -462,9 +601,9 @@ export default {
     const updateGridPosition = () => {
       if (bottomEmojis.value && showMultiplicationGrid.value) {
         const rect = bottomEmojis.value.getBoundingClientRect();
-        const grid = document.querySelector('.multiplication-grid');
+        const grid = document.querySelector(".multiplication-grid");
         if (grid) {
-          grid.style.position = 'absolute';
+          grid.style.position = "absolute";
           grid.style.top = `${rect.top - grid.offsetHeight}px`;
           grid.style.left = `${rect.left}px`;
           grid.style.width = `${rect.width}px`;
@@ -473,12 +612,12 @@ export default {
     };
 
     const handleBottomEmojisHover = () => {
-      if (currentQuestion.value.operator === '×') {
+      if (currentQuestion.value.operator === "×") {
         showMultiplicationGrid.value = true;
         nextTick(() => {
           updateGridPosition();
         });
-      } else if (currentQuestion.value.operator === '÷') {
+      } else if (currentQuestion.value.operator === "÷") {
         hoverIndex.value = 0;
       }
     };
@@ -498,12 +637,19 @@ export default {
 
     onMounted(() => {
       showInstructions();
-      window.addEventListener('resize', updateGridPosition);
+      window.addEventListener("resize", updateGridPosition);
+      const authObj = getAuth();
+      console.log(`uid=${authObj.currentUser.uid}`);
+      const dbInstance = getFirestore();
+      db.value = dbInstance;
+      auth.value = authObj;
+      console.log(db);
+      getCurrency(dbInstance, "users", authObj.currentUser.uid);
     });
 
     onUnmounted(() => {
       clearInterval(timerInterval);
-      window.removeEventListener('resize', updateGridPosition);
+      window.removeEventListener("resize", updateGridPosition);
     });
 
     return {
@@ -593,11 +739,21 @@ export default {
 }
 
 @keyframes math-game-shake {
-  0% { transform: translate(1px, 1px) rotate(0deg); }
-  25% { transform: translate(-1px, -2px) rotate(-1deg); }
-  50% { transform: translate(-3px, 0px) rotate(1deg); }
-  75% { transform: translate(3px, 2px) rotate(0deg); }
-  100% { transform: translate(1px, -1px) rotate(-1deg); }
+  0% {
+    transform: translate(1px, 1px) rotate(0deg);
+  }
+  25% {
+    transform: translate(-1px, -2px) rotate(-1deg);
+  }
+  50% {
+    transform: translate(-3px, 0px) rotate(1deg);
+  }
+  75% {
+    transform: translate(3px, 2px) rotate(0deg);
+  }
+  100% {
+    transform: translate(1px, -1px) rotate(-1deg);
+  }
 }
 
 .math-game .bonus-round {
@@ -611,9 +767,15 @@ export default {
 }
 
 @keyframes math-game-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .math-game .game-over-overlay {
@@ -636,11 +798,21 @@ export default {
   text-align: center;
 }
 
-.math-game .hover-red { background-color: #D81B60; }
-.math-game .hover-blue { background-color: #1E88E5; }
-.math-game .hover-yellow { background-color: #FFC107; }
-.math-game .hover-green { background-color: #004D40; }
-.math-game .hover-purple { background-color: #994F00; }
+.math-game .hover-red {
+  background-color: #d81b60;
+}
+.math-game .hover-blue {
+  background-color: #1e88e5;
+}
+.math-game .hover-yellow {
+  background-color: #ffc107;
+}
+.math-game .hover-green {
+  background-color: #004d40;
+}
+.math-game .hover-purple {
+  background-color: #994f00;
+}
 
 .center-button {
   display: flex;
@@ -688,10 +860,12 @@ export default {
   display: inline-block;
 }
 
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: opacity 0.5s;
 }
-.fade-enter, .fade-leave-to {
+.fade-enter,
+.fade-leave-to {
   opacity: 0;
 }
 </style>
