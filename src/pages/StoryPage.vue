@@ -212,6 +212,10 @@
                     src="/assets/mainassets/warning.png"
                     class="tw-h-[100px]"
                   />
+                  <img
+                    src="/assets/mainassets/exclamation.png"
+                    class="tw-h-[100px]"
+                  />
                 </div>
               </section>
             </section>
