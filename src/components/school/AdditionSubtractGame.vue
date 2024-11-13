@@ -23,10 +23,12 @@
           >
             <p class="title">Hint</p>
             <p class="tw-text-lg tw-mb-4">
-              Click on the addition or subtraction operator to visualise the question!
+              Click on the addition or subtraction operator to visualise the question!<br>
+              For <strong>addition</strong>, you'll see a table with rows and column. <br>
+              For <strong>subtraction</strong>, you'll see the remaining amount after the corresponding amount has faded away
             </p>
               
-              <!-- Button-->
+            <!-- Button-->
               <div class="tw-flex tw-gap-8 tw-justify-center">
                 <button @click="showHintModal = false" class="nes-btn is-success tw-w-auto">I Understand!</button>
               </div>
