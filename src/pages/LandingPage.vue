@@ -208,4 +208,18 @@ video {
 }
 </style>
 
-<script setup></script>
+<script setup>
+import { ref, onMounted } from "vue";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+const auth = getAuth();
+const isAuthenticated = ref("");
+onMounted(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      isAuthenticated.value = true;
+    } else {
+      isAuthenticated.value = false;
+    }
+  });
+});
+</script>
