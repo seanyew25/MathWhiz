@@ -3,12 +3,13 @@
 
         <!-- Cutscene Container -->
         <div class="nes-container is-rounded is-centered with-title tw-max-w-3xl" style="background-color: rgba(255, 245, 205, 1);">
-            <p class="title" style="background-color: rgba(255, 245, 205, 1);">Supermarket</p>
+            <p class="title" style="background-color: rgba(255, 245, 205, 1); margin-bottom: 0;">Supermarket</p>
+            <button class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn" @click="skipCutscene" v-if="currentAnimation != 'finished'">Skip</button>
             <div class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center" @click="toggleAnimation">
                 <div class="tw-relative tw-inline-block tw-text-center">
 
                     <!-- Character Image with Animation -->
-                    <img :src="currentImage" :class="{ shake: currentAnimation.value === 'alerted' }" 
+                    <img :src="currentImage" :class="{ shake: isAlerted }" 
                         alt="Character Animation" class="character-size tw-object-contain tw-mx-auto"/>
 
                     <!-- Exclamation Icon for Alerted State, with custom position -->
@@ -20,7 +21,7 @@
                     <div v-if="!isAlerted"
                         :class="[
                             'dialogue-position',
-                            isSmallScreen ? 'nes-container is-rounded' : 'nes-balloon from-left',
+                            isSmallScreen ? 'nes-container is-rounded tw-bg-white' : 'nes-balloon from-left',
                         ]">
                         <p>{{ displayedText }}</p>
                     </div>
@@ -149,6 +150,7 @@ export default {
           }
       } else if (currentAnimation.value === "carrying") {
           currentAnimation.value = "finished";
+          currentImage.value = `/assets/marketassets/carrying1.png`;
           dialogueText.value = "Thank you very much!";
     
           const imgElement = document.querySelector("img");
@@ -166,6 +168,14 @@ export default {
       index = 0;
       typeText();
     }
+
+    const skipCutscene = () => {
+        currentAnimation.value = "finished";
+        currentImage.value = `/assets/marketassets/carrying1.png`;
+        dialogueText.value = "Thank you very much!";
+        displayedText.value = dialogueText.value;
+        cutsceneActive.value = false;
+    };
 
     // Emit end-cutscene event to the parent component
     function endCutscene() {
@@ -223,7 +233,8 @@ export default {
       toggleAnimation,
       endCutscene,
       isSmallScreen,
-      updateScreenSize
+      updateScreenSize,
+      skipCutscene
     };
   }
 };

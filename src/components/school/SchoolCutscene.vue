@@ -3,7 +3,8 @@
 
     <!-- Cutscene Container -->
     <div class="nes-container is-rounded is-centered with-title tw-max-w-3xl" style="background-color: rgba(255, 245, 205, 1);">
-      <p class="title" style="background-color: rgba(255, 245, 205, 1);">School</p>
+      <p class="title" style="background-color: rgba(255, 245, 205, 1); margin-bottom: 0">School</p>
+      <button class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn" @click="skipCutscene" v-if="currentAnimation!='finished'">Skip</button>
       <div class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center" @click="toggleAnimation">
         <div class="tw-relative tw-inline-block tw-text-center">
 
@@ -29,7 +30,7 @@
             v-if="!isAlerted"
             :class="[
               'dialogue-position',
-              isSmallScreen ? 'nes-container is-rounded' : 'nes-balloon from-left',
+              isSmallScreen ? 'nes-container is-rounded tw-bg-white' : 'nes-balloon from-left',
             ]"
           >
             <p>{{ displayedText }}</p>
@@ -46,6 +47,7 @@
                 $emit('go-to-addition-subtraction');
               "
               class="wiggle-button nes-btn is-primary"
+              style="width: 300px;"
             >
               Go to Adding and Subtracting!
             </button>
@@ -55,6 +57,7 @@
                 $emit('go-to-multiplication-division');
               "
               class="wiggle-button nes-btn is-success"
+              style="width: 300px;"
             >
               Go to Multiplying and Dividing!
             </button>
@@ -214,14 +217,24 @@ export default {
       }
     }
 
+    const skipCutscene = () => {
+        currentAnimation.value = "finished";
+        currentImage.value = `/assets/schoolassets/carrying1.png`;
+        dialogueText.value = "Thank you very much!";
+        displayedText.value = dialogueText.value;
+        cutsceneActive.value = false;
+    };
+
     return {
       currentImage,
       displayedText,
       isAlerted,
       isShaking,
+      currentAnimation,
       toggleAnimation,
       showEndButtons,
       isSmallScreen,
+      skipCutscene
     };
   },
 };
@@ -270,10 +283,6 @@ export default {
   padding: 1rem;
   overflow-wrap: break-word;
   text-align: left;
-}
-
-.nes-btn {
-  width: 300px;
 }
 
 /* Responsive Adjustments */
