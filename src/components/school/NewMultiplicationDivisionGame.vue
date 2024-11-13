@@ -1,3 +1,4 @@
+<!--this is correct, jus modify relevant logic areas from left side-->
 <template>
   <div
     class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]"
@@ -8,7 +9,7 @@
       style="background-color: rgba(255, 245, 205, 1); width: 800px"
     >
       <p class="title" style="background-color: rgba(255, 245, 205, 1)">
-        Addition and Subtraction
+        Multiplication and Division
       </p>
 
       <div class="p-6 w-[400px] h-[300px] mx-auto">
@@ -16,9 +17,9 @@
         <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
           <h1 class="tw-text-3xl text-center align-center">
             {{
-              currentQuestion.operator === "+"
-                ? "Add the numbers!"
-                : "Subtract the numbers!"
+              currentQuestion.operator === "×"
+                ? "Multiply the numbers!"
+                : "Divide the numbers!"
             }}
           </h1>
           <button
@@ -39,9 +40,9 @@
           >
             <p class="title">Hint</p>
             <p class="tw-text-lg tw-mb-4">
-              Click on the addition or subtraction operator to visualise the question!<br>
-              For <strong>addition</strong>, you'll see a table with rows and column. <br>
-              For <strong>subtraction</strong>, you'll see the remaining amount after the corresponding amount has faded away
+              Click on the multiplication or division operator to visualise the question!<br>
+              For <strong>multiplication</strong>, you'll see a table with rows and column <br>
+              For <strong>division</strong>, you'll see a number of different coloured groups corresponding to the quotient of the equation
             </p>
               
             <!-- Button-->
@@ -113,39 +114,44 @@
                 <span>=</span>
               </div>
 
-              <!-- Addition hover table showing total in rows of 10 as overlay -->
-              <div v-if="showAdditionTable" class="addition-table-overlay">
-                <!-- Column headers for 1 to 10 -->
-                <div class="addition-grid-header">
-                  <span class="row-label"></span>
-                  <!-- Empty cell for alignment with row labels -->
-                  <span
-                    v-for="col in 10"
-                    :key="'col-' + col"
-                    class="column-number"
-                    >{{ col }}</span
-                  >
-                </div>
-                <!-- Rows with row labels and emojis -->
-                <div
-                  v-for="(row, rowIndex) in additionTableRows"
-                  :key="rowIndex"
-                  class="addition-grid-row"
-                >
-                  <span class="row-label">{{ rowIndex + 1 }}</span>
-                  <!-- Row label -->
-                  <span
-                    v-for="(emoji, index) in row"
-                    :key="index"
-                    class="addition-emoji"
-                  >
-                    {{ emoji }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </transition>
+              <!-- Multiplication Table Overlay -->
+
+  <div
+    v-if="showMultiplicationGrid && currentQuestion.operator === '×'"
+    class="multiplication-table-overlay"
+  >
+    <!-- Column headers for 1 to 10 -->
+    <div class="multiplication-grid-header">
+      <span class="row-label"></span>
+      <!-- Column numbers from 1 to 10 -->
+      <span
+        v-for="col in 10"
+        :key="'col-' + col"
+        class="column-number"
+      >
+        {{ col }}
+      </span>
+    </div>
+    <!-- Rows with row labels and emojis -->
+    <div
+      v-for="(row, rowIndex) in multiplicationTableRows"
+      :key="rowIndex"
+      class="multiplication-grid-row"
+    >
+      <span class="row-label">{{ rowIndex + 1 }}</span>
+      <!-- Row label -->
+      <span
+        v-for="(emoji, index) in row"
+        :key="index"
+        class="multiplication-emoji"
+      >
+        {{ emoji }}
+      </span>
+    </div>
+  </div>
+</div>
+</div>
+</transition>
 
         <div class="nes-field is-inline mb-4">
           <input
@@ -177,14 +183,16 @@
         </h2>
 
         <!-- Streak Message -->
+        <transition name="fade">
         <div
           v-if="streakActive"
-          class="tw-flex tw-items-center tw-justify-center"
+          class="bonus-round text-center mb-4"
         >
           <i class="nes-icon trophy is-large"></i>
           <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
           <i class="nes-icon trophy is-large"></i>
         </div>
+        </transition>
 
         <!--Game Over Dialogue Box-->
         <div v-if="gameOver" class="game-over-overlay">
@@ -203,8 +211,8 @@
           </div>
         </div>
 
-              <!-- Start Game Dialogue Box-->
-              <dialog class="nes-dialog" id="instructions-dialog">
+        <!-- Start Game Dialogue Box-->
+        <dialog class="nes-dialog" id="instructions-dialog">
           <form method="dialog">
             <p class="title" style="text-align: center">
               Welcome to the Multiplication and Division Game!
@@ -240,21 +248,23 @@ const emojiSet = ["🚗", "🏀", "🌍", "💡", "📚", "💻", "🏫", "👨�
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
+const tables = [2, 3, 4, 5, 6, 7];
+
 const generateQuestion = () => {
-  const operators = ["+", "-"];
+  const operators = ["×", "÷"];
   const operator = operators[Math.floor(Math.random() * operators.length)];
   let leftNumber, rightNumber, correct, leftItems, rightItems, selectedEmoji;
 
   selectedEmoji = getRandomEmoji();
 
-  if (operator === "+") {
-    leftNumber = Math.floor(Math.random() * 50) + 1;
-    rightNumber = Math.floor(Math.random() * 50) + 1;
-    correct = leftNumber + rightNumber;
+  if (operator === "×") {
+    leftNumber = tables[Math.floor(Math.random() * tables.length)];
+    rightNumber = Math.floor(Math.random() * 8) + 2;
+    correct = leftNumber * rightNumber;
   } else {
-    leftNumber = Math.floor(Math.random() * 50) + 1;
-    rightNumber = Math.floor(Math.random() * leftNumber);
-    correct = leftNumber - rightNumber;
+    rightNumber = tables[Math.floor(Math.random() * tables.length)];
+    leftNumber = rightNumber * (Math.floor(Math.random() * 4) + 2);
+    correct = leftNumber / rightNumber;
   }
 
   leftItems = Array(leftNumber)
@@ -264,7 +274,8 @@ const generateQuestion = () => {
     .fill(selectedEmoji)
     .map((item) => ({ item, hide: false }));
 
-    return { leftItems, rightItems, operator, leftNumber, rightNumber, correct, selectedEmoji, };
+
+  return { leftItems, rightItems, operator, leftNumber, rightNumber, correct, selectedEmoji, };
 };
 
 export default {
