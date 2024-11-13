@@ -1,46 +1,42 @@
 <template>
-  <div
-    class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]"
-  >
-    <!-- Game Container -->
-    <div
-      class="nes-container is-rounded is-centered with-title"
-      style="background-color: rgba(255, 245, 205, 1); width: 768px"
-    >
-      <p class="title" style="background-color: rgba(255, 245, 205, 1)">
-        Ordering
-      </p>
-      <div
-        class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center"
-      >
-        <!-- Instructions -->
-        <h2 class="tw-text-3xl tw-mb-2 tw-text-center">
-          Label the items in order!
-        </h2>
+    <div class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
 
-        <!-- Timer Bar Logic -->
-        <div class="progress-container tw-w-full">
-          <progress
-            class="nes-progress is-success tw-w-full"
-            :value="timerWidth"
-            :max="20"
-          ></progress>
-          <p class="nes-text is-primary">{{ Math.round(timerWidth) }}s</p>
-        </div>
+        <!-- Game Container -->
+        <div class="nes-container is-rounded is-centered with-title" style="background-color: rgba(255, 245, 205, 1); width: 768px;">
+            <p class="title" style="background-color: rgba(255, 245, 205, 1);">Ordering</p>
+            <div class="tw-max-w-3xl tw-flex tw-flex-col tw-items-center tw-justify-center">
 
-        <!-- Conveyor Belts and Groceries -->
-        <div class="tw-mb-2">
-          <div
-            v-for="(conveyor, index) in conveyors"
-            :key="index"
-            class="tw-conveyor tw-mx-auto tw-scale-75"
-            @dragover="allowDrop"
-            @drop="drop($event, index)"
-            @click="resetLabel(index)"
-          >
-            <div class="tw-conveyor conveyor-start">
-              <img src="/assets/marketassets/conveyor start.png" />
-            </div>
+                <!-- Instructions -->
+                <h2 class="tw-text-2xl tw-mb-2 tw-text-center">Label the items in order!</h2>
+
+                <!-- Timer Bar Logic -->
+                <div class="progress-container tw-w-full">
+                    <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
+                    <p class="nes-text timer-text">{{ timerWidth.toFixed(0) }}s</p>
+                </div>  
+
+                <!-- Streak Message -->
+                <transition name="fade">
+                <div v-if="streakCount >= 5" class="streak-banner text-center my-2 tw-flex tw-items-center tw-justify-center">
+                    <i class="nes-icon trophy is-large"></i>
+                    <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
+                    <i class="nes-icon trophy is-large"></i>
+                </div>
+                </transition>
+
+                <!-- Conveyor Belts and Groceries -->
+                <div>
+                    <div
+                        v-for="(conveyor, index) in conveyors"
+                        :key="index"
+                        class="tw-conveyor tw-scale-75"
+                        @dragover="allowDrop"
+                        @drop="drop($event, index)"
+                        @click="resetLabel(index)"
+                    >   
+                        <div class="tw-conveyor conveyor-start">
+                        <img src="/assets/marketassets/conveyor start.png">
+                        </div>
 
             <img
               src="/assets/marketassets/conveyor middle.png"
@@ -78,19 +74,20 @@
           </div>
         </div>
 
-        <!-- Ordinal Labels to Drag -->
-        <div class="tw-flex tw-justify-center tw-mb-6 tw-gap-10">
-          <div
-            v-for="(label, index) in ordinalNumbers"
-            :key="index"
-            class="tw-draggable nes-btn tw-font-bold"
-            :class="[label.disabled ? 'is error' : 'is-primary']"
-            :draggable="!label.disabled"
-            @dragstart="!label.disabled && dragStart($event, label.text)"
-          >
-            {{ label.text }}
-          </div>
-        </div>
+                <!-- Ordinal Labels to Drag -->
+                <div class="tw-flex tw-justify-center tw-mb-4 tw-gap-10">
+                    <div
+                        v-for="(label, index) in ordinalNumbers"
+                        :key="index"
+                        v-show="!label.hidden"
+                        class="tw-draggable nes-btn tw-font-bold"
+                        :class="[label.disabled ? 'is error' : 'is-primary']"
+                        :draggable="!label.disabled"
+                        @dragstart="!label.disabled && dragStart($event, label.text)"
+                    >
+                        {{ label.text }}
+                    </div>
+                </div>
 
         <div class="tw-text-center">
           <button
@@ -103,44 +100,52 @@
         </div>
       </div>
 
-      <!-- Question and Coins Display -->
-      <h2
-        class="tw-text-sm tw-font-bold tw-text-gray-800 tw-text-center tw-mt-6"
-      >
-        Question {{ questionNumber }}/{{ totalQuestions }} - Coins: {{ coins
-        }}<i class="nes-icon coin is-small"></i>
-      </h2>
-
-      <!-- Streak Message -->
-      <div
-        v-if="streakCount >= 5"
-        class="tw-flex tw-items-center tw-justify-center"
-      >
-        <i class="nes-icon trophy is-large"></i>
-        <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
-        <i class="nes-icon trophy is-large"></i>
-      </div>
-    </div>
-
-    <!-- Game Over Modal -->
-    <div v-if="gameOver" class="game-over-overlay">
-      <div class="game-over-content nes-container is-rounded">
-        <h2>{{ completionMessage }}</h2>
-        <p>Coins Earned: {{ coins }}</p>
-        <div class="button-container">
-          <button @click="exitGame" class="nes-btn is-primary">Exit</button>
-          <button @click="restartGame" class="nes-btn is-success">
-            Restart
-          </button>
+            <!-- Question Count and Coins Display -->
+            <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-4">
+            Question {{ questionCount }}/10
+            </h2>
+            <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mb-0">
+                Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+            </h2>
         </div>
-      </div>
+
+        <!-- Game Over Modal -->
+        <div v-if="gameOver" class="game-over-overlay">
+                <div class="game-over-content">
+                    <h2>{{ completionMessage }}</h2>
+                    <p>Total Coins Earned: {{ coins }}</p>
+                    <div class="button-container">
+                        <button @click="exitGame" class="nes-btn is-primary">
+                            Exit Game
+                        </button>
+                        <button @click="restartGame" class="nes-btn is-success">
+                            Restart Game
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        <!-- Tutorial Modal-->
+        <dialog class="nes-dialog" id="tutorial">
+          <form method="dialog">
+            <h5 class="title tw-mb-4" style="text-align:center;">Welcome to the Ordering Game!</h5>
+            <p style="text-align: center;">
+                The grocery baskets will start moving at different times.<br><br>
+                Drag the labels onto the conveyor belts to show <br>which basket goes 1st, 2nd, 3rd, and 4th.<br><br> 
+                Good luck!
+            </p>
+            <menu class="dialog-menu tw-mb-0 tw-px-0">
+              <button class="nes-btn is-primary" style="text-align:center;" @click="startGame">Start Game</button>
+            </menu>
+          </form>
+        </dialog>
     </div>
-  </div>
 </template>
 
 <script>
-import { ref, reactive, onMounted } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import confetti from "canvas-confetti";
+import { useRouter } from 'vue-router';
 import { getAuth } from "firebase/auth";
 import {
   getFirestore,
@@ -149,6 +154,7 @@ import {
   getDoc,
   arrayUnion,
 } from "firebase/firestore";
+
 
 export default {
   name: "MarketOrdering",
@@ -164,77 +170,24 @@ export default {
       }))
     );
 
-    const ordinalNumbers = ref([
-      { text: "1st", disabled: false },
-      { text: "2nd", disabled: false },
-      { text: "3rd", disabled: false },
-      { text: "4th", disabled: false },
-    ]);
+        const ordinalNumbers = ref([
+            { text: "1st", disabled: false, hidden: false },
+            { text: "2nd", disabled: false, hidden: false },
+            { text: "3rd", disabled: false, hidden: false },
+            { text: "4th", disabled: false, hidden: false },
+        ]);
 
-    const draggedOrdinal = ref(null);
-    const submitted = ref(false);
-    const basketImages = Array.from(
-      { length: 8 },
-      (_, i) => `/assets/marketassets/basket${i + 1}.png`
-    );
-    const coins = ref(0);
-    const questionNumber = ref(1);
-    const totalQuestions = 10;
-    const timerFrozen = ref(false);
-    const gameOver = ref(false);
-    const completionMessage = ref("Game Over");
-    const loadingNextQuestion = ref(false);
-    const isStreak = ref(false);
-    const streakCount = ref(0);
-
-    const db = ref(null);
-    const auth = ref(null);
-    const money = ref(0);
-
-    async function getCurrency(db, collectionName, documentId) {
-      const docRef = doc(db, collectionName, documentId);
-      try {
-        const doc = await getDoc(docRef);
-        console.log(doc);
-        if (doc.exists()) {
-          console.log("Document data:", doc.data());
-          money.value = doc.data().currency;
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.error("Error getting document:", error);
-      }
-    }
-
-    async function updateCurrency(db, collectionName, documentId, currency) {
-      const docRef = doc(db, collectionName, documentId);
-      try {
-        await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log("Currency successfully written!");
-      } catch (error) {
-        console.error("Error writing document: ", error);
-      }
-    }
-
-    async function updateCompletedTasks(
-      db,
-      collectionName,
-      documentId,
-      newTask
-    ) {
-      const docRef = doc(db, collectionName, documentId);
-      try {
-        await setDoc(
-          docRef,
-          { completedTasks: arrayUnion(newTask) },
-          { merge: true }
-        );
-        console.log("Task successfully added to completedTasks!");
-      } catch (error) {
-        console.error("Error updating document: ", error);
-      }
-    }
+        const draggedOrdinal = ref(null);
+        const submitted = ref(false);
+        const basketImages = Array.from({ length: 8 }, (_, i) => `/assets/marketassets/basket${i + 1}.png`);
+        const coins = ref(0); 
+        const questionCount = ref(1);
+        const totalQuestions = 10;
+        const timerFrozen = ref(false);
+        const gameOver = ref(false);
+        const completionMessage = ref("Game Over! You've answered 10 questions.")
+        const loadingNextQuestion = ref(true);
+        const streakCount = ref(0);
 
     const assignRandomImages = () => {
       let availableImages = [...basketImages];
@@ -244,20 +197,23 @@ export default {
       });
     };
 
-    const resetGroceries = () => {
-      conveyors.forEach((conveyor, index) => {
-        const grocery = document.getElementById(`grocery-${conveyor.id}`);
+        const resetGroceries = () => {
+            conveyors.forEach((conveyor, index) => {
+                const grocery = document.getElementById(`grocery-${conveyor.id}`);
 
-        // No animation
-        grocery.style.transition = "none";
+                if (grocery) {
+                    // No animation
+                    
+                    grocery.style.transition = "none";
 
-        // Start position
-        grocery.style.left = `20px`;
+                    // Start position
+                    grocery.style.left = `20px`;
 
-        // Force reflow to apply the positioning immediately
-        grocery.offsetHeight;
-      });
-    };
+                    // Force reflow to apply the positioning immediately
+                    grocery.offsetHeight;
+                }
+            });
+        };
 
     const startRace = () => {
       const shuffledConveyors = [...conveyors].sort(() => Math.random() - 0.5);
@@ -278,41 +234,54 @@ export default {
           grocery.style.left = `735px`;
         }, cumulativeDelay);
 
-        cumulativeDelay += Math.random() * 800 + 200; // Introduce random delays for each item
-      });
-    };
+                cumulativeDelay += Math.random() * 800 + 300; // Introduce random delays for each item
+            });
+        };
 
-    const dragStart = (event, number) => {
-      draggedOrdinal.value = number;
-    };
+        const dragStart = (event, number) => {
+            draggedOrdinal.value = number;
+        };
+
+        const resetLabel = (index) => {
+            const previousLabel = conveyors[index].assignedOrdinal;
+            if (previousLabel) {
+                ordinalNumbers.value = ordinalNumbers.value.map(label =>
+                    label.text === previousLabel ? { ...label, disabled: false, hidden: false } : label
+                );
+                conveyors[index].assignedOrdinal = null;
+            }
+        };
 
     const allowDrop = (event) => {
       event.preventDefault();
     };
 
-    const drop = (event, index) => {
-      if (draggedOrdinal.value) {
-        if (conveyors[index].assignedOrdinal) {
-          const previousLabel = conveyors[index].assignedOrdinal;
-          ordinalNumbers.value = ordinalNumbers.value.map((label) =>
-            label.text === previousLabel ? { ...label, disabled: false } : label
-          );
-        }
+        const drop = (event, index) => {
+            event.preventDefault(); // Prevent default behavior
 
-        conveyors[index].assignedOrdinal = draggedOrdinal.value;
-        ordinalNumbers.value = ordinalNumbers.value.map((label) =>
-          label.text === draggedOrdinal.value
-            ? { ...label, disabled: true }
-            : label
-        );
-        draggedOrdinal.value = null;
-      }
-    };
+            if (draggedOrdinal.value) {
+                if (conveyors[index].assignedOrdinal) {
+                    resetLabel(index); // Reset the current label if it's already assigned
+                }
 
-    const checkAnswer = () => {
-      submitted.value = true;
-      timerFrozen.value = true;
-      loadingNextQuestion.value = true;
+                // Assign the dragged label to the conveyor
+                conveyors[index].assignedOrdinal = draggedOrdinal.value;
+
+                // Update the ordinalNumbers array to mark the dragged label as disabled
+                ordinalNumbers.value = ordinalNumbers.value.map(label =>
+                    label.text === draggedOrdinal.value ? { ...label, disabled: true, hidden: true } : label
+                );
+
+                // Clear the draggedOrdinal after it's assigned
+                draggedOrdinal.value = null;
+            }
+        };
+
+        const totalCoins = ref(0);
+        const checkAnswer = () => {
+            submitted.value = true;
+            timerFrozen.value = true;
+            loadingNextQuestion.value = true;
 
       let allCorrect = true;
       conveyors.forEach((conveyor) => {
@@ -326,78 +295,91 @@ export default {
         }
       });
 
-      if (allCorrect) {
-        // Increment streak count on correct answer
-        streakCount.value += 1;
+            if (allCorrect) {
+                playSound(true);
+                streakCount.value += 1;
 
-        // Enter streak state if correct answers in a row reach 5
-        if (streakCount.value > 5) {
-          isStreak.value = true;
-        }
+                if (streakCount.value == 5){
+                    triggerConfetti();
+                }
 
-        // Double coins if in streak state
-        coins.value += isStreak.value ? 20 : 10;
-      } else {
-        // Reset streak on incorrect answer
-        resetStreak();
-      }
+                // Check if user is on a streak
+                if (streakCount.value > 5) {
+                    coins.value += 2;
+                } else {
+                    coins.value += 1;
+                }
+            } else {
+                console.log("ordering, wrong, playing sound")
+                playSound(false);
+                resetStreak();
+            }
 
-      if (questionNumber.value < totalQuestions) {
-        questionNumber.value += 1;
-        setTimeout(loadNextQuestion, 1000);
-      } else {
-        gameOver.value = true;
-        updateCurrency(
-          db.value,
-          "users",
-          auth.value.currentUser.uid,
-          money.value + coins.value
-        );
-        updateCompletedTasks(
-          db.value,
-          "users",
-          auth.value.currentUser.uid,
-          "ordering"
-        );
-      }
-    };
+            if (questionCount.value < totalQuestions) {
+                setTimeout(loadNextQuestion, 1000);
+            } else {
+                gameOver.value = true;
+                totalCoins.value += coins.value;
+                updateCurrency(
+                    db.value,
+                    "users",
+                    auth.value.currentUser.uid,
+                    money.value + totalCoins.value
+                );
+                updateCompletedTasks(
+                    db.value,
+                    "users",
+                    auth.value.currentUser.uid,
+                    "counting"
+                );
+            }
+        };
 
-    const resetStreak = () => {
-      streakCount.value = 0;
-      isStreak.value = false;
-    };
+        const resetStreak = () => {
+            streakCount.value = 0;
+        };
 
-    const loadNextQuestion = () => {
-      submitted.value = false;
-      ordinalNumbers.value.forEach((label) => (label.disabled = false));
-      conveyors.forEach((conveyor) => {
-        conveyor.assignedOrdinal = null;
-        conveyor.labelClass = "";
-        conveyor.showCross = false;
-      });
+        const loadNextQuestion = () => {
+            submitted.value = false;
+            
+            // Ensure all labels are visible and enabled
+            ordinalNumbers.value.forEach(label => {
+                label.disabled = false;
+                label.hidden = false;
+            });
 
-      assignRandomImages();
-      resetGroceries();
-      setTimeout(startRace, 1000);
-      resetTimer();
-      loadingNextQuestion.value = false;
-    };
+            // Reset conveyor belts
+            conveyors.forEach(conveyor => {
+                conveyor.assignedOrdinal = null;
+                conveyor.labelClass = '';
+                conveyor.showCross = false;
+            });
+
+            questionCount.value += 1;
+            assignRandomImages();
+            resetGroceries();
+            setTimeout(() => {
+                startRace();
+                resetTimer();
+                setTimeout(() => loadingNextQuestion.value = false, 300);
+            }, 1000);
+        };
 
     const router = useRouter();
     const exitGame = () => {
       router.push("/game");
     };
 
-    const restartGame = () => {
-      gameOver.value = false;
-      questionNumber.value = 1;
-      coins.value = 0;
-      loadNextQuestion();
-    };
+        const restartGame = () => {
+            gameOver.value = false;
+            questionCount.value = 0;
+            coins.value = 0;
+            resetStreak();
+            loadNextQuestion();
+        };
 
-    const navbarHeight = ref(0);
-    const timerWidth = ref(20);
-    const timerInterval = ref(null);
+        const timerWidth = ref(20);
+        const timerInterval = ref(null);
 
     const startTimer = () => {
       timerWidth.value = 20;
@@ -407,114 +389,210 @@ export default {
         if (!timerFrozen.value) {
           timerWidth.value = Math.max(0, timerWidth.value - 0.1);
 
-          if (timerWidth.value <= 0) {
-            handleTimeOut();
-          }
-        }
-      }, 100);
-    };
+                    if (timerWidth.value == 0) {
+                        timerFrozen.value = true;
+                        handleTimeOut();
+                    }
+                }
+            }, 100);
+        };
 
     const resetTimer = () => {
       clearInterval(timerInterval.value);
       startTimer();
     };
 
-    const handleTimeOut = () => {
-      if (questionNumber.value < totalQuestions) {
-        questionNumber.value += 1;
-        loadNextQuestion();
-      } else {
-        gameOver.value = true;
-      }
-    };
+        const handleTimeOut = () => {
+            if (questionCount.value < totalQuestions) {
+                playSound(false);
+                console.log("handling timeout")
+                resetStreak();
+                loadNextQuestion();
+            } else {
+                gameOver.value = true;
+            }
+        };
 
-    onMounted(() => {
-      const authObj = getAuth();
-      console.log(`uid=${authObj.currentUser.uid}`);
-      const dbInstance = getFirestore();
-      db.value = dbInstance;
-      auth.value = authObj;
-      console.log(db);
-      getCurrency(dbInstance, "users", authObj.currentUser.uid);
-      assignRandomImages();
-      resetGroceries();
-      setTimeout(resetGroceries, 200);
-      setTimeout(startRace, 1000);
-      startTimer();
-    });
+        const playSound = (correct) => {
+            const audio = new Audio(
+                correct
+                ? 'https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3'
+                : 'https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3'
+            );
+            audio.play();
+        };
 
-    return {
-      conveyors,
-      ordinalNumbers,
-      draggedOrdinal,
-      submitted,
-      assignRandomImages,
-      resetGroceries,
-      startRace,
-      dragStart,
-      allowDrop,
-      drop,
-      checkAnswer,
-      timerWidth,
-      startTimer,
-      questionNumber,
-      totalQuestions,
-      coins,
-      timerFrozen,
-      gameOver,
-      completionMessage,
-      exitGame,
-      restartGame,
-      router,
-      loadingNextQuestion,
-      streakCount,
-      isStreak,
-      resetStreak,
-    };
-  },
+        const triggerConfetti = () => {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+            });
+        };
+
+        const showTutorial = () => {
+            document.getElementById('tutorial').showModal();
+        };
+
+        const startGame = () => {
+            document.getElementById('tutorial').close();
+            startRace();
+            resetTimer();
+            setTimeout(() => loadingNextQuestion.value = false, 300);
+        };
+
+        const db = ref(null);
+        const auth = ref(null);
+        const money = ref(0);
+
+        async function getCurrency(db, collectionName, documentId) {
+            const docRef = doc(db, collectionName, documentId);
+            try {
+                const doc = await getDoc(docRef);
+                console.log(doc);
+                if (doc.exists()) {
+                console.log("Document data:", doc.data());
+                money.value = doc.data().currency;
+                } else {
+                console.log("No such document!");
+                }
+            } catch (error) {
+                console.error("Error getting document:", error);
+            }
+        }
+
+        async function updateCurrency(db, collectionName, documentId, currency) {
+            const docRef = doc(db, collectionName, documentId);
+            try {
+                await setDoc(docRef, { currency: currency }, { merge: true });
+                console.log(currency);
+                console.log("Currency successfully written!");
+            } catch (error) {
+                console.error("Error writing document: ", error);
+            }
+        }
+
+        async function updateCompletedTasks(
+            db,
+            collectionName,
+            documentId,
+            newTask
+            ) {
+            const docRef = doc(db, collectionName, documentId);
+            try {
+                await setDoc(
+                docRef,
+                { completedTasks: arrayUnion(newTask) },
+                { merge: true }
+                );
+                console.log("Task successfully added to completedTasks!");
+            } catch (error) {
+                console.error("Error updating document: ", error);
+            }
+        }
+
+        onMounted(() => {
+            const authObj = getAuth();
+            console.log(`uid=${authObj.currentUser.uid}`);
+            const dbInstance = getFirestore();
+            db.value = dbInstance;
+            auth.value = authObj;
+            console.log(db);
+            getCurrency(dbInstance, "users", authObj.currentUser.uid);
+            showTutorial();
+            assignRandomImages();
+            resetGroceries();
+        });
+
+        // Add cleanup logic here
+        onBeforeUnmount(() => {
+            if (timerInterval.value) {
+                clearInterval(timerInterval.value);
+            }
+        });
+
+        return {
+            conveyors,
+            ordinalNumbers,
+            draggedOrdinal,
+            submitted,
+            assignRandomImages,
+            resetGroceries,
+            startRace,
+            dragStart,
+            allowDrop,
+            drop,
+            checkAnswer,
+            timerWidth,
+            startTimer,
+            questionCount,
+            totalQuestions,
+            coins,
+            timerFrozen,
+            gameOver,
+            completionMessage,
+            startGame,
+            exitGame,
+            restartGame,
+            router,
+            loadingNextQuestion,
+            streakCount,
+            resetStreak,
+            resetLabel
+        };
+    }
 };
 </script>
 
 <style scoped>
-/* Ordering Styles */
-* {
-  font-family: "Press Start 2P", sans-serif;
-}
+    * {
+    font-family: 'Press Start 2P', sans-serif;
+    }   
 
-/* Add/modify this CSS for styling */
-.game-over-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
+    .progress-container {
+        position: relative; /* To allow positioning of the child elements absolutely */
+    }
 
-.game-over-content {
-  background: #fff;
-  padding: 40px;
-  width: 500px;
-  text-align: center;
-}
+    .timer-text {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
 
-.button-container button {
-  width: 150px;
-  margin: 0 20px;
-}
+    .game-over-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
 
-.tw-conveyor {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  height: 100px;
-  margin: 0 auto;
-}
+    .game-over-content {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+    }
+
+    .button-container button {
+        width: 220px;
+        margin: 0 30px;
+    }
+
+    .tw-conveyor {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        height: 100px;
+        margin: 0;
+    }
 
 .tw-conveyor img {
   height: 100%;
@@ -572,9 +650,25 @@ export default {
   }
 }
 
-.tw-label-circle.tw-incorrect {
-  background-color: red;
-  color: white;
-}
-/* Ordering Styles */
+    .tw-label-circle.tw-incorrect {
+        background-color: red;
+        color: white;
+    }
+    
+    .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.5s;
+    }
+    .fade-enter, .fade-leave-to {
+    opacity: 0;
+    }
+
+    .streak-banner {
+    background-color: #ffd700;
+    color: #000;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    animation: pulse 1s infinite;
+    }
 </style>

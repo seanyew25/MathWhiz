@@ -15,9 +15,9 @@
         Multiplication and Division
       </p>
 
-      <div class="tw-w-full">
+      <div class="p-6 w-[400px] h-[300px] mx-auto">
         <!-- Instructions and Hint -->
-        <div class="tw-flex tw-items-center tw-justify-center tw-mb-2">
+        <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
           <h1 class="tw-text-3xl text-center align-center">
             {{
               currentQuestion.operator === "×"
@@ -55,12 +55,12 @@
           </form>
         </dialog>
 
-        <!-- Timer Bar -->
-        <div class="progress-container tw-relative tw-mb-2">
+          <!-- Timer Bar -->
+          <div class="progress-container">
           <progress
-            class="nes-progress is-success tw-w-full"
-            :value="timerWidth"
-            :max="100"
+            class="nes-progress is-success"
+            :value="timeRemaining"
+            :max="totalTime"
           ></progress>
           <p
             class="nes-text tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw-translate-x-[-50%] tw-translate-y-[-50%] tw-text-center"
@@ -114,7 +114,6 @@
                 </span>
               </transition-group>
             </div>
-          </div>
 
           <transition name="fade">
             <div
@@ -224,6 +223,7 @@
         </dialog>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
@@ -290,7 +290,7 @@ export default {
     const medals = ref(0);
     const totalMedals = ref(0);
     const timerWidth = ref(100);
-    const initialTimerSeconds = 10;
+    const initialTimerSeconds = 20; // Updated from 10 to 20
     const timerSeconds = ref(initialTimerSeconds);
     const pausedTimerSeconds = ref(0);
     const userInput = ref("");
@@ -352,14 +352,14 @@ export default {
       }
     }
 
-    const startTimer = () => {
-      if (gameOver.value) return;
-      clearInterval(timerInterval);
+const startTimer = () => {
+    if (gameOver.value) return;
+    clearInterval(timerInterval);
 
-      timerInterval = setInterval(() => {
+    timerInterval = setInterval(() => {
         if (gameOver.value) {
-          clearInterval(timerInterval);
-          return;
+            clearInterval(timerInterval);
+            return;
         }
         timerWidth.value = Math.max(
           0,
@@ -368,12 +368,14 @@ export default {
         timerSeconds.value = Math.max(0, timerSeconds.value - 0.1);
 
         if (timerSeconds.value <= 0) {
-          clearInterval(timerInterval);
-          handleTimerExpired();
-          playSound(false);
+            clearInterval(timerInterval);
+            handleTimerExpired();
+            playSound(false);
         }
-      }, 100);
-    };
+    }, 100);
+    console.log("Timer started"); // Debugging line
+};
+
 
     const pauseTimer = () => {
       clearInterval(timerInterval);
@@ -432,27 +434,35 @@ export default {
       });
     };
 
+    
     const handleCorrectAnswer = () => {
       playSound(true);
       correctStreak.value += 1;
 
-      if (correctStreak.value === 5) {
-        triggerConfetti();
-        isBonusRound.value = true;
-      }
+  // Activate streak message on 5th consecutive correct answer
+  if (correctStreak.value >= 5) {
+    triggerConfetti();
+    isBonusRound.value = true;
+  } else {
+    isBonusRound.value = false;
+  }
 
-      if (medals.value < 15) {
-        medals.value += correctStreak.value > 5 ? 2 : 1;
-      }
+  // Award coins
+  if (correctStreak.value >= 6) {
+    medals.value += 2; // Double coins from 6th correct answer
+  } else {
+    medals.value += 1;
+  }
 
-      if (medals.value > 15) {
-        medals.value = 15;
-      }
+  // Cap medals at 15
+  if (medals.value > 15) {
+    medals.value = 15;
+  }
 
-      earnedMedal.value = true;
-      setTimeout(() => {
-        earnedMedal.value = false;
-      }, 1000);
+  earnedMedal.value = true;
+  setTimeout(() => {
+    earnedMedal.value = false;
+  }, 1000);
 
       nextQuestion();
     };
