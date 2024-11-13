@@ -16,7 +16,7 @@
       <div
         v-if="checklistToggled"
         id="checklist"
-        class="tw-absolute tw-left-[10px] tw-top-[60px] md:tw-top-[70px] xl:tw-top-[75px] tw-p-2 tw-bg-[#B7E0FF] tw-max-w-[30%] border border-3 border-white"
+        class="tw-absolute tw-left-[10px] tw-top-[60px] md:tw-top-[70px] xl:tw-top-[75px] tw-p-2 tw-bg-[#B7E0FF] tw-max-w-[30%] border border-3 border-white tw-opacity-75"
       >
         <ul class="tw-ml-[-10px] tw-mb-0 tw-mr-2 tw-overflow-hidden">
           <li
@@ -98,7 +98,7 @@ export default {
   methods: {
     checkCompletion(task) {
       return {
-        "tw-line-through custom-strikethrough tw-opacity-60": task.completed,
+        "tw-line-through custom-strikethrough tw-opacity-50": task.completed,
       };
     },
     handleToDoClick() {

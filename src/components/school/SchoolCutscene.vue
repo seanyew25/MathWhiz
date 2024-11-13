@@ -1,13 +1,30 @@
 <template>
-  <div class="cutscene md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]">
-
+  <div
+    class="cutscene md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]"
+  >
     <!-- Cutscene Container -->
-    <div class="nes-container is-rounded is-centered with-title tw-max-w-3xl" style="background-color: rgba(255, 245, 205, 1);">
-      <p class="title" style="background-color: rgba(255, 245, 205, 1); margin-bottom: 0">School</p>
-      <button class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn" @click="skipCutscene" v-if="currentAnimation!='finished'">Skip</button>
-      <div class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center" @click="toggleAnimation">
+    <div
+      class="nes-container is-rounded is-centered with-title tw-max-w-3xl"
+      style="background-color: rgba(255, 245, 205, 1)"
+    >
+      <p
+        class="title"
+        style="background-color: rgba(255, 245, 205, 1); margin-bottom: 0"
+      >
+        School
+      </p>
+      <button
+        class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn"
+        @click="skipCutscene"
+        v-if="currentAnimation != 'finished'"
+      >
+        Skip
+      </button>
+      <div
+        class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center"
+        @click="toggleAnimation"
+      >
         <div class="tw-relative tw-inline-block tw-text-center">
-
           <!-- Character Image with Animation -->
           <img
             :src="currentImage"
@@ -15,7 +32,7 @@
             alt="Character Animation"
             class="character-size tw-object-contain tw-mx-auto"
           />
- 
+
           <!-- Exclamation Icon for Alerted State -->
           <img
             v-if="isAlerted"
@@ -30,7 +47,9 @@
             v-if="!isAlerted"
             :class="[
               'dialogue-position',
-              isSmallScreen ? 'nes-container is-rounded tw-bg-white' : 'nes-balloon from-left',
+              isSmallScreen
+                ? 'nes-container is-rounded tw-bg-white'
+                : 'nes-balloon from-left',
             ]"
           >
             <p>{{ displayedText }}</p>
@@ -38,8 +57,8 @@
 
           <!-- End Buttons, appear only when cutscene finishes -->
           <div
-          v-if="showEndButtons"
-          class="tw-absolute tw-bottom-[-6rem] tw-left-1/2 tw-transform tw--translate-x-1/2 tw-flex tw-gap-10"
+            v-if="showEndButtons"
+            class="tw-absolute tw-bottom-[-6rem] tw-left-1/2 tw-transform tw--translate-x-1/2 tw-flex tw-gap-10"
           >
             <button
               @click="
@@ -47,7 +66,7 @@
                 $emit('go-to-addition-subtraction');
               "
               class="wiggle-button nes-btn is-primary"
-              style="width: 300px;"
+              style="width: 300px"
             >
               Go to Adding and Subtracting!
             </button>
@@ -57,7 +76,7 @@
                 $emit('go-to-multiplication-division');
               "
               class="wiggle-button nes-btn is-success"
-              style="width: 300px;"
+              style="width: 300px"
             >
               Go to Multiplying and Dividing!
             </button>
@@ -219,11 +238,11 @@ export default {
     }
 
     const skipCutscene = () => {
-        currentAnimation.value = "finished";
-        currentImage.value = `/assets/schoolassets/carrying1.png`;
-        dialogueText.value = "Thank you very much!";
-        displayedText.value = dialogueText.value;
-        cutsceneActive.value = false;
+      currentAnimation.value = "finished";
+      currentImage.value = `/assets/schoolassets/carrying1.png`;
+      dialogueText.value = "Thank you very much!";
+      displayedText.value = dialogueText.value;
+      cutsceneActive.value = false;
     };
 
     return {
@@ -235,13 +254,37 @@ export default {
       toggleAnimation,
       showEndButtons,
       isSmallScreen,
-      skipCutscene
+      skipCutscene,
     };
   },
 };
 </script>
 
 <style scoped>
+.nes-btn {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-container.is-rounded {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-balloon {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
 .cutscene {
   font-family: "Press Start 2P", sans-serif;
   z-index: 1; /* Ensure the cutscene is below the navbar */
@@ -331,12 +374,19 @@ export default {
 }
 
 @keyframes tw-wiggle {
-        0%, 100% { transform: rotate(0); }
-        25% { transform: rotate(-3deg); }
-        75% { transform: rotate(3deg); }
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-3deg);
+  }
+  75% {
+    transform: rotate(3deg);
+  }
 }
 
 .wiggle-button:hover {
-        animation: tw-wiggle 0.5s infinite;
+  animation: tw-wiggle 0.5s infinite;
 }
 </style>
