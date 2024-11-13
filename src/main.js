@@ -26,7 +26,7 @@ import BankPage from "./pages/BankPage.vue";
 import StoryPage from "./pages/StoryPage.vue";
 import ShopPage from "./pages/ShopPage.vue";
 import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
-import TimerBar from "./pages/Timerbar.vue";
+// import TimerBar from "./pages/Timerbar.vue";
 import CharacterChangingRoom from "./pages/profile/CharacterChangingRoom.vue";
 
 // import BankPage from "./components/BankPage.vue";
@@ -62,7 +62,7 @@ const routes = [
   { path: "/shop", component: ShopPage },
   { path: "/catchangingroom", component: CatChangingRoom },
   { path: "/characterchangingroom", component: CharacterChangingRoom },
-  { path: "/timerbar", component: TimerBar },
+  // { path: "/timerbar", component: TimerBar },
 ];
 
 const router = createRouter({

@@ -16,6 +16,11 @@
 .nav-item {
   padding-left: 15px;
 }
+@media (max-width: 991px) {
+  .nav-item.first-item {
+    padding-left: 27px !important;
+  }
+}
 
 .nav-item a {
   position: relative;
@@ -78,8 +83,14 @@
         /></RouterLink>
       </a>
       <div class="d-flex order-lg-2 gap-2">
-        <button v-if="!isAuthenticated" @click="openModal" class="nes-btn is-primary" type="submit"
-          data-bs-target="#getStartedModal" data-bs-toggle="modal">
+        <button
+          v-if="!isAuthenticated"
+          @click="openModal"
+          class="nes-btn is-primary"
+          type="submit"
+          data-bs-target="#getStartedModal"
+          data-bs-toggle="modal"
+        >
           Get Started!
         </button>
 
@@ -171,7 +182,7 @@
 
           <!-- END OF REMOVE -->
           <li
-            class="nav-item"
+            class="nav-item first-item"
             :class="{ active: isGameActive }"
             style="padding-left: 50px"
           >
