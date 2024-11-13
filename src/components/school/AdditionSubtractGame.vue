@@ -39,9 +39,9 @@
           >
             <p class="title">Hint</p>
             <p class="tw-text-lg tw-mb-4">
-              Click on the addition or subtraction operator to visualise the question!<br>
-              For <strong>addition</strong>, you'll see a table with rows and column. <br>
-              For <strong>subtraction</strong>, you'll see the remaining amount after the corresponding amount has faded away
+              Click on the addition or subtraction operator to visualize the question!<br>
+              For <strong>addition</strong>, you'll see a table with rows and columns.<br>
+              For <strong>subtraction</strong>, you'll see the remaining amount after the corresponding amount has faded away.
             </p>
               
             <!-- Button-->
@@ -52,15 +52,21 @@
           </div>
 
         <!-- Timer Bar -->
-        <div class="progress-container">
-          <progress
-            class="nes-progress is-success"
-            :value="timeRemaining"
-            :max="totalTime"
-          ></progress>
-          <p class="nes-text is-primary">
-            {{ timeRemaining.toFixed(1) }} seconds
-          </p>
+        <TimerBar
+          ref="timerBar"
+          :initial-time="initialTimerSeconds"
+          :is-running="isTimerRunning"
+          @timerExpired="handleTimerExpired"
+        />
+
+        <!-- Streak Message -->
+        <div
+          v-if="streakActive"
+          class="tw-flex tw-items-center tw-justify-center streak-message"
+        >
+          <i class="nes-icon trophy is-large"></i>
+          <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
+          <i class="nes-icon trophy is-large"></i>
         </div>
 
         <transition name="fade" mode="out-in">
@@ -176,16 +182,6 @@
           Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
         </h2>
 
-        <!-- Streak Message -->
-        <div
-          v-if="streakActive"
-          class="tw-flex tw-items-center tw-justify-center"
-        >
-          <i class="nes-icon trophy is-large"></i>
-          <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
-          <i class="nes-icon trophy is-large"></i>
-        </div>
-
         <!--Game Over Dialogue Box-->
         <div v-if="gameOver" class="game-over-overlay">
           <div class="game-over-content">
@@ -203,15 +199,15 @@
           </div>
         </div>
 
-              <!-- Start Game Dialogue Box-->
-              <dialog class="nes-dialog" id="instructions-dialog">
+        <!-- Start Game Dialogue Box-->
+        <dialog class="nes-dialog" id="instructions-dialog">
           <form method="dialog">
             <p class="title" style="text-align: center">
-              Welcome to the Multiplication and Division Game!
+              Welcome to the Addition and Subtraction Game!
             </p>
             <p style="text-align: center">
               Answer 10 questions and earn Destress coins.<br /><br />
-              Answer 5 questions in a row correctly to active a streak! <br />
+              Answer 5 questions in a row correctly to activate a streak! <br />
               It earns you double coins!<br /><br />
               You have <strong>{{ initialTimerSeconds }}</strong> seconds for
               each question. Good luck!
@@ -236,6 +232,9 @@
 <script>
 import { getAuth } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
+import { useRouter } from "vue-router";
+import TimerBar from '../TimerBar.vue'; // Adjust the path as needed
+
 const emojiSet = ["🚗", "🏀", "🌍", "💡", "📚", "💻", "🏫", "👨‍🏫", "📏", "🔢"];
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
@@ -264,10 +263,13 @@ const generateQuestion = () => {
     .fill(selectedEmoji)
     .map((item) => ({ item, hide: false }));
 
-    return { leftItems, rightItems, operator, leftNumber, rightNumber, correct, selectedEmoji, };
+  return { leftItems, rightItems, operator, leftNumber, rightNumber, correct, selectedEmoji };
 };
 
 export default {
+  components: {
+    TimerBar,
+  },
   data() {
     return {
       router: useRouter(),
@@ -281,28 +283,21 @@ export default {
       money: 0,
       correctAnswersInRow: 0,
       questionsAnswered: 0,
-      questions: [
-        generateQuestion(),
-        generateQuestion(),
-        generateQuestion(),
-        generateQuestion(),
-      ],
-      questionIndex: 0,
+      currentQuestion: generateQuestion(),
       userInput: "",
       showAdditionTable: false,
       additionTableRows: [],
-      timerInterval: null,
-      showHintModal: false,
-      timeRemaining: 20,
-      totalTime: 20,
+      isTimerRunning: false,
+      initialTimerSeconds: 20,
       operatorEffectActive: false,
+      showHintModal: false,
       db: "",
       auth: "",
     };
   },
   computed: {
-    currentQuestion() {
-      return this.questions[this.questionIndex];
+    questionIndex() {
+      return this.questionsAnswered;
     },
   },
   methods: {
@@ -355,21 +350,18 @@ export default {
         this.clearOperatorEffect();
       }
     },
-    startTimer(resume = false) {
-      if (!resume) {
-        this.timeRemaining = this.totalTime;
-      }
-      clearInterval(this.timerInterval);
-
-      this.timerInterval = setInterval(() => {
-        if (!this.showHintModal) {
-          this.timeRemaining = Math.max(0, this.timeRemaining - 0.1);
-          if (this.timeRemaining <= 0) {
-            clearInterval(this.timerInterval);
-            this.handleIncorrectAnswer();
-          }
-        }
-      }, 100);
+    startTimer() {
+      this.isTimerRunning = true;
+      this.$refs.timerBar.resetTimer();
+    },
+    pauseTimer() {
+      this.isTimerRunning = false;
+    },
+    handleTimerExpired() {
+      this.playSound(false);
+      this.correctAnswersInRow = 0;
+      this.streakActive = false;
+      this.handleIncorrectAnswer();
     },
     playSound(correct) {
       const audio = new Audio(
@@ -427,37 +419,21 @@ export default {
     },
     nextQuestion() {
       this.userInput = "";
-      this.questionIndex = (this.questionIndex + 1) % this.questions.length;
+      this.currentQuestion = generateQuestion();
 
-      this.currentQuestion.leftItems.forEach((item) => {
-        item.hide = false;
-      });
-      this.currentQuestion.rightItems.forEach((item) => {
-        item.hide = false;
-      });
+      // Reset any visual effects
+      this.operatorEffectActive = false;
       this.showAdditionTable = false;
       this.additionTableRows = [];
 
-      if (this.questionIndex === 0) {
-        this.questions = [
-          generateQuestion(),
-          generateQuestion(),
-          generateQuestion(),
-          generateQuestion(),
-        ];
-      }
-
-      this.timeRemaining = this.totalTime;
       this.startTimer();
     },
     async getCurrency(db, collectionName, documentId) {
       const docRef = doc(db, collectionName, documentId);
       try {
-        const doc = await getDoc(docRef);
-        console.log(doc);
-        if (doc.exists()) {
-          console.log("Document data:", doc.data());
-          this.money = doc.data().currency;
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          this.money = docSnap.data().currency;
         } else {
           console.log("No such document!");
         }
@@ -489,7 +465,6 @@ export default {
     },
 
     endGame() {
-      // console.log(`total coins: ${this.totalCoins}`);
       this.updateCurrency(
         this.db,
         "users",
@@ -504,64 +479,65 @@ export default {
       );
       this.gameOver = true;
       this.completionMessage = "Game Over! You've answered 10 questions.";
-      clearInterval(this.timerInterval);
+      this.pauseTimer();
     },
     restartGame() {
       this.gameOver = false;
       this.completionMessage = "";
       this.totalCoins += this.coins;
-      console.log(this.coins);
       this.coins = 0;
       this.correctAnswersInRow = 0;
       this.streakActive = false;
       this.questionsAnswered = 0;
       this.userInput = "";
-      this.questions = [
-        generateQuestion(),
-        generateQuestion(),
-        generateQuestion(),
-        generateQuestion(),
-      ];
-      this.questionIndex = 0;
+      this.currentQuestion = generateQuestion();
       this.startTimer();
     },
     exitGame() {
       this.router.push("/game");
       console.log("Exiting game");
     },
+    startGame() {
+      this.startTimer();
+    },
   },
   watch: {
     showHintModal(newVal) {
       if (newVal) {
-        clearInterval(this.timerInterval);
+        this.pauseTimer();
       } else {
-        this.startTimer(true);
+        this.startTimer();
       }
     },
   },
   mounted() {
-    this.startTimer();
+    // Show the instructions dialog
+    const instructionsDialog = document.getElementById("instructions-dialog");
+    if (instructionsDialog && typeof instructionsDialog.showModal === "function") {
+      instructionsDialog.showModal();
+    }
+
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
     const auth = getAuth();
     console.log(`uid=${auth.currentUser.uid}`);
     const db = getFirestore();
     this.db = db;
     this.auth = auth;
-    console.log(db);
     this.getCurrency(db, "users", auth.currentUser.uid);
   },
   beforeUnmount() {
-    clearInterval(this.timerInterval);
+    this.pauseTimer();
     document.removeEventListener("click", this.handleOutsideClick);
   },
 };
 </script>
 
 <style scoped>
+/* ... existing styles ... */
 /* @import url("https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css");
   @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"); */
 
-* {
+  * {
   font-family: "Press Start 2P", sans-serif;
 }
 
@@ -777,4 +753,51 @@ body {
 .operator-symbol:hover {
   transform: scale(1.2);
 }
+
+/* Timer Bar Styles */
+.progress-container {
+  width: 100%;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.progress {
+  height: 50px;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+}
+
+.progress-bar {
+  transition: width 0.1s ease;
+  background-color: #8bc34a;
+}
+
+.timer-text {
+  margin: 0;
+  color: #000;
+  font-weight: bold;
+}
+
+/* Streak Message Styles */
+.streak-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ... existing styles ... */
 </style>
+
