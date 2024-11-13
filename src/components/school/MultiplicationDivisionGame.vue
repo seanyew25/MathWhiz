@@ -1,15 +1,11 @@
 <template>
   <div
-    class="math-game md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]"
+    class="md:tw-overflow-hidden tw-flex tw-flex-col tw-items-center tw-justify-center tw-text-center tw-min-h-[calc(100vh-56px)]"
   >
     <!-- Game Container -->
     <div
       class="nes-container is-rounded is-centered with-title"
-      style="
-        background-color: rgba(255, 245, 205, 1);
-        width: 90%;
-        padding: 10px;
-      "
+      style="background-color: rgba(255, 245, 205, 1); width: 800px"
     >
       <p class="title" style="background-color: rgba(255, 245, 205, 1)">
         Multiplication and Division
@@ -26,7 +22,7 @@
             }}
           </h1>
           <button
-            @click="showHintDialog"
+            @click="showHintModal = true"
             class="nes-btn is-primary tw-text-sm tw-mx-4"
           >
             Hint
@@ -34,196 +30,212 @@
         </div>
 
         <!-- Hint Modal -->
-        <dialog
-          class="nes-dialog"
-          id="dialog-default"
-          style="border-radius: 10px"
+        <div
+          v-if="showHintModal"
+          class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50"
         >
-          <form method="dialog">
-            <p class="title tw-text-lg tw-mb-4 text-center">Hint</p>
-            <p class="text-center tw-text-md tw-mb-4">
-              Hover over the <strong>bottom row of emojis</strong> to visualise
-              the question!<br />
-              For <strong>multiplication</strong>, you'll see a grid. <br />
-              For <strong>division</strong>, you'll see coloured groups.
+          <div
+            class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6"
+          >
+            <p class="title">Hint</p>
+            <p class="tw-text-lg tw-mb-4">
+              Click on the multiplication or division operator to visualise the
+              question!<br />
+              For <strong>multiplication</strong>, you'll see a table with rows
+              and columns.<br />
+              For <strong>division</strong>, you'll see different coloured groups
+              corresponding to the quotient of the equation.
             </p>
-            <menu class="dialog-menu" style="align-items: center">
-              <button class="nes-btn is-success" @click="closeHintDialog">
+
+            <!-- Button-->
+            <div class="tw-flex tw-gap-8 tw-justify-center">
+              <button
+                @click="showHintModal = false"
+                class="nes-btn is-success tw-w-auto"
+              >
                 I Understand!
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Timer Bar -->
+        <TimerBar
+          ref="timerBar"
+          :initial-time="initialTimerSeconds"
+          :is-running="isTimerRunning"
+          @timerExpired="handleTimerExpired"
+        />
+
+        <!-- Streak Message -->
+        <div
+          v-if="streakActive"
+          class="tw-flex tw-items-center tw-justify-center streak-message"
+        >
+          <i class="nes-icon trophy is-large"></i>
+          <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
+          <i class="nes-icon trophy is-large"></i>
+        </div>
+
+        <transition name="fade" mode="out-in">
+          <div :key="'question-' + questionIndex" class="question-container">
+            <div class="text-center mb-4">
+              <div class="text-4xl" v-if="currentQuestion">
+                <span>{{ currentQuestion.leftNumber }}</span>
+                <span class="mx-2">{{ currentQuestion.operator }}</span>
+                <span>{{ currentQuestion.rightNumber }}</span>
+              </div>
+            </div>
+
+            <!-- Emoji and Operator Display -->
+            <div class="text-center mb-6" style="position: relative">
+              <div class="text-4xl mb-4">
+                <!-- Left Emojis -->
+                <transition-group name="bounce" tag="div">
+                  <span
+                    v-for="(item, index) in currentQuestion.leftItems"
+                    :key="'left-' + index"
+                    :class="['emoji-group', getEmojiClass(index)]"
+                  >
+                    {{ item.item }}
+                  </span>
+                </transition-group>
+
+                <!-- Operator with Click Events -->
+                <div
+                  class="text-4xl operator-symbol"
+                  @click="handleOperatorClick($event)"
+                  ref="operatorSymbol"
+                >
+                  {{ currentQuestion.operator }}
+                </div>
+
+                <!-- Right Emojis -->
+                <transition-group name="bounce" tag="div">
+                  <span
+                    v-for="(item, index) in currentQuestion.rightItems"
+                    :key="'right-' + index"
+                    class="emoji-group"
+                  >
+                    {{ item.item }}
+                  </span>
+                </transition-group>
+
+                <!-- Equals Sign -->
+                <span>=</span>
+              </div>
+
+              <!-- Multiplication Table Overlay -->
+              <div
+                v-if="showMultiplicationGrid && currentQuestion.operator === '×'"
+                class="multiplication-table-overlay"
+              >
+                <!-- Column headers -->
+                <div class="multiplication-grid-header">
+                  <span class="row-label"></span>
+                  <!-- Column numbers -->
+                  <span
+                    v-for="col in multiplicationGridColNumbers"
+                    :key="'col-' + col"
+                    class="column-number"
+                  >
+                    {{ col }}
+                  </span>
+                </div>
+                <!-- Rows with row labels and emojis -->
+                <div
+                  v-for="(row, rowIndex) in multiplicationTableRows"
+                  :key="rowIndex"
+                  class="multiplication-grid-row"
+                >
+                  <!-- Row label -->
+                  <span class="row-label">
+                    {{ multiplicationGridRowNumbers[rowIndex] }}
+                  </span>
+                  <span
+                    v-for="(emoji, index) in row"
+                    :key="'cell-' + rowIndex + '-' + index"
+                    class="multiplication-emoji"
+                  >
+                    {{ emoji }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
+
+        <div class="nes-field is-inline mb-4">
+          <input
+            type="number"
+            v-model="userInput"
+            @keyup.enter="checkAnswer"
+            class="nes-input is-success"
+            placeholder="Enter Your Answer"
+            :disabled="gameOver"
+          />
+        </div>
+
+        <div class="text-center mb-6">
+          <button
+            @click="checkAnswer"
+            :class="{ 'nes-btn': true, 'is-disabled': gameOver }"
+            :disabled="gameOver"
+          >
+            Submit Answer
+          </button>
+        </div>
+
+        <!-- Question and Coins Display -->
+        <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-6">
+          Question {{ questionsAnswered }}/10
+        </h2>
+        <h2 class="tw-text-base tw-text-gray-800 tw-text-center">
+          Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
+        </h2>
+
+        <!--Game Over Dialogue Box-->
+        <div v-if="gameOver" class="game-over-overlay">
+          <div class="game-over-content">
+            <h2>{{ completionMessage }}</h2>
+            <br />
+            <p>Total Coins Earned: {{ coins }}</p>
+            <p>You're one step closer to regaining Morgana's fur!</p>
+            <p>Play again?</p>
+            <button @click="exitGame" class="nes-btn is-primary">
+              Exit Game
+            </button>
+            <button @click="restartGame" class="nes-btn is-success">
+              Restart Game
+            </button>
+          </div>
+        </div>
+
+        <!-- Start Game Dialogue Box-->
+        <dialog class="nes-dialog" id="instructions-dialog">
+          <form method="dialog">
+            <p class="title" style="text-align: center">
+              Welcome to the Multiplication and Division Game!
+            </p>
+            <p style="text-align: center">
+              Answer 10 questions and earn Destress coins.<br /><br />
+              Answer 5 questions in a row correctly to activate a streak!
+              <br />
+              It earns you double coins!<br /><br />
+              You have <strong>{{ initialTimerSeconds }}</strong> seconds for
+              each question. Good luck!
+            </p>
+            <menu class="dialog-menu center-button">
+              <button
+                class="nes-btn is-primary"
+                style="text-align: center"
+                @click="startGame"
+              >
+                Start Game
               </button>
             </menu>
           </form>
         </dialog>
-
-        <!-- Timer Bar -->
-        <div class="progress-container">
-          <progress
-            class="nes-progress is-success"
-            :value="timeRemaining"
-            :max="totalTime"
-          ></progress>
-          <p
-            class="nes-text tw-absolute tw-top-1/2 tw-left-1/2 tw-transform tw-translate-x-[-50%] tw-translate-y-[-50%] tw-text-center"
-          >
-            {{ Math.ceil(timerSeconds) }}s
-          </p>
-        </div>
-
-        <transition name="fade">
-          <div v-if="isBonusRound" class="bonus-round text-center mb-4">
-            Bonus Round! Double coins for correct answers!
-          </div>
-        </transition>
-
-        <div class="text-center tw-mb-2">
-          <div class="text-4xl" v-if="currentQuestion">
-            <span>{{ currentQuestion.leftNumber }}</span>
-            <span class="mx-2">{{ currentQuestion.operator }}</span>
-            <span>{{ currentQuestion.rightNumber }}</span>
-          </div>
-        </div>
-
-        <div class="text-center tw-mb-3">
-          <div class="tw-text-4xl tw-mb-4" v-if="currentQuestion">
-            <transition-group name="bounce" tag="div">
-              <span
-                v-for="(item, index) in currentQuestion.leftItems"
-                :key="'left-' + index"
-                :class="getEmojiClass(index)"
-                class="emoji-group"
-              >
-                {{ item }}
-              </span>
-            </transition-group>
-
-            <div class="tw-text-4xl">{{ currentQuestion.operator }}</div>
-
-            <div
-              class="bottom-emojis"
-              ref="bottomEmojis"
-              @mouseover="handleBottomEmojisHover"
-              @mouseleave="handleBottomEmojisLeave"
-            >
-              <transition-group name="bounce" tag="div">
-                <span
-                  v-for="(item, index) in currentQuestion.rightItems"
-                  :key="'right-' + index"
-                  class="emoji-group"
-                >
-                  {{ item }}
-                </span>
-              </transition-group>
-            </div>
-
-            <transition name="fade">
-              <div
-                v-if="
-                  showMultiplicationGrid && currentQuestion.operator === '×'
-                "
-                class="multiplication-grid"
-              >
-                <div class="grid-row grid-header">
-                  <div class="grid-cell"></div>
-                  <div
-                    v-for="col in currentQuestion.rightNumber"
-                    :key="'col-' + col"
-                    class="grid-cell"
-                  >
-                    {{ col }}
-                  </div>
-                </div>
-                <div
-                  v-for="row in currentQuestion.leftNumber"
-                  :key="'row-' + row"
-                  class="grid-row"
-                >
-                  <div class="grid-cell grid-label">{{ row }}</div>
-                  <div
-                    v-for="col in currentQuestion.rightNumber"
-                    :key="'col-' + col"
-                    class="grid-cell"
-                    :class="{ highlighted: isHighlighted(row, col) }"
-                    @mouseover="highlightCell(row, col)"
-                    @mouseleave="clearHighlight"
-                  >
-                    {{ currentQuestion.leftItems[0] }}
-                  </div>
-                </div>
-              </div>
-            </transition>
-          </div>
-
-          <div class="nes-field tw-mb-2">
-            <input
-              type="number"
-              v-model="userInput"
-              @keyup.enter="checkAnswer"
-              class="nes-input is-success"
-              placeholder="Enter Your Answer"
-              :disabled="gameOver || !gameStarted"
-            />
-          </div>
-
-          <div class="tw-text-center tw-mb-2">
-            <button
-              @click="checkAnswer"
-              :class="{
-                'nes-btn': true,
-                'is-disabled': gameOver || !gameStarted,
-              }"
-              :disabled="gameOver || !gameStarted"
-            >
-              Submit Answer
-            </button>
-          </div>
-
-          <div class="tw-text-center tw-mb-2">
-            <p class="tw-test-md">
-              <br />
-              Question: {{ questionCount }} / 10 | Coins earned: {{ medals
-              }}<i class="nes-icon coin is-small"></i>
-            </p>
-          </div>
-
-          <div v-if="gameOver" class="game-over-overlay">
-            <div class="game-over-content">
-              <h2>{{ completionMessage }}</h2>
-              <br />
-              <p>You're one step closer to regaining Morgana's fur!</p>
-              <p>Play again?</p>
-              <button @click="exitGame" class="nes-btn is-primary">
-                Exit Game
-              </button>
-              <button @click="restartGame" class="nes-btn is-success">
-                Restart Game
-              </button>
-            </div>
-          </div>
-
-          <dialog class="nes-dialog" id="instructions-dialog">
-            <form method="dialog">
-              <p class="title" style="text-align: center">
-                Welcome to the Multiplication and Division Game!
-              </p>
-              <p style="text-align: center">
-                Answer 10 questions and earn Destress coins.<br /><br />
-                Answer 5 questions in a row correctly to active a streak! <br />
-                It earns you double coins!<br /><br />
-                You have <strong>{{ initialTimerSeconds }}</strong> seconds for
-                each question. Good luck!
-              </p>
-              <menu class="dialog-menu center-button">
-                <button
-                  class="nes-btn is-primary"
-                  style="text-align: center"
-                  @click="startGame"
-                >
-                  Start Game
-                </button>
-              </menu>
-            </form>
-          </dialog>
-        </div>
       </div>
     </div>
   </div>
@@ -238,11 +250,21 @@ import {
   getDoc,
   arrayUnion,
 } from "firebase/firestore";
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
-import confetti from "canvas-confetti";
 import { useRouter } from "vue-router";
+import TimerBar from '../TimerBar.vue'; // Adjust the path as needed
 
-const emojiSet = ["😀", "🐶", "🍕", "🚗", "🎉", "🏀", "🌍", "💡", "📚", "💻"];
+const emojiSet = [
+  "🚗",
+  "🏀",
+  "🌍",
+  "💡",
+  "📚",
+  "💻",
+  "🏫",
+  "👨‍🏫",
+  "📏",
+  "🔢",
+];
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
 
@@ -251,7 +273,12 @@ const tables = [2, 3, 4, 5, 6, 7];
 const generateQuestion = () => {
   const operators = ["×", "÷"];
   const operator = operators[Math.floor(Math.random() * operators.length)];
-  let leftNumber, rightNumber, correct, leftItems, rightItems, selectedEmoji;
+  let leftNumber,
+    rightNumber,
+    correct,
+    leftItems,
+    rightItems,
+    selectedEmoji;
 
   selectedEmoji = getRandomEmoji();
 
@@ -265,67 +292,224 @@ const generateQuestion = () => {
     correct = leftNumber / rightNumber;
   }
 
-  leftItems = Array(leftNumber).fill(selectedEmoji);
-  rightItems = Array(rightNumber).fill(selectedEmoji);
+  leftItems = Array(leftNumber)
+    .fill(selectedEmoji)
+    .map((item) => ({ item }));
+  rightItems = Array(rightNumber)
+    .fill(selectedEmoji)
+    .map((item) => ({ item }));
 
-  return { leftItems, rightItems, operator, leftNumber, rightNumber, correct };
+  return {
+    leftItems,
+    rightItems,
+    operator,
+    leftNumber,
+    rightNumber,
+    correct,
+    selectedEmoji,
+  };
 };
 
 export default {
-  setup() {
-    const gameOver = ref(false);
-    const gameStarted = ref(false);
-    const completionMessage = ref("");
-    const colors = [
-      "hover-red",
-      "hover-blue",
-      "hover-yellow",
-      "hover-green",
-      "hover-purple",
-    ];
-    const earnedMedal = ref(false);
-    const isBonusRound = ref(false);
+  components: {
+    TimerBar,
+  },
+  data() {
+    return {
+      operatorEffectActive: false,
+      showMultiplicationGrid: false,
+      multiplicationTableRows: [],
+      multiplicationGridRowNumbers: [],
+      multiplicationGridColNumbers: [],
+      hoverIndex: null,
+      colors: [
+        "hover-red",
+        "hover-blue",
+        "hover-yellow",
+        "hover-green",
+        "hover-purple",
+      ],
+      router: useRouter(),
+      gameOver: false,
+      completionMessage: "",
+      score: 0,
+      highScore: localStorage.getItem("highScore") || 0,
+      streakActive: false,
+      coins: 0,
+      totalCoins: 0,
+      money: 0,
+      correctAnswersInRow: 0,
+      questionsAnswered: 0,
+      currentQuestion: generateQuestion(),
+      userInput: "",
+      isTimerRunning: false,
+      initialTimerSeconds: 20,
+      showHintModal: false,
+      db: "",
+      auth: "",
+    };
+  },
+  computed: {
+    questionIndex() {
+      return this.questionsAnswered;
+    },
+  },
+  methods: {
+    handleOperatorClick(event) {
+      event.stopPropagation();
+      if (this.operatorEffectActive) {
+        this.clearOperatorEffect();
+      } else {
+        this.applyOperatorEffect();
+        document.addEventListener("click", this.handleOutsideClick);
+      }
+    },
+    applyOperatorEffect() {
+      this.operatorEffectActive = true;
+      if (this.currentQuestion.operator === "×") {
+        const leftNumber = this.currentQuestion.leftNumber;
+        const rightNumber = this.currentQuestion.rightNumber;
+        const biggerNumber = Math.max(leftNumber, rightNumber);
+        const smallerNumber = Math.min(leftNumber, rightNumber);
+        const emoji = this.currentQuestion.leftItems[0].item;
 
-    const currentQuestion = ref(generateQuestion());
-    const correctStreak = ref(0);
-    const questionCount = ref(0);
-    const medals = ref(0);
-    const totalMedals = ref(0);
-    const timerWidth = ref(100);
-    const initialTimerSeconds = 20; // Updated from 10 to 20
-    const timerSeconds = ref(initialTimerSeconds);
-    const pausedTimerSeconds = ref(0);
-    const userInput = ref("");
-    const hoverIndex = ref(null);
-    let timerInterval = null;
+        // Generate multiplication grid
+        this.multiplicationTableRows = [];
+        for (let row = 1; row <= biggerNumber; row++) {
+          let rowEmojis = [];
+          for (let col = 1; col <= smallerNumber; col++) {
+            rowEmojis.push(emoji);
+          }
+          this.multiplicationTableRows.push(rowEmojis);
+        }
+        this.multiplicationGridRowNumbers = Array.from(
+          { length: biggerNumber },
+          (_, i) => i + 1
+        );
+        this.multiplicationGridColNumbers = Array.from(
+          { length: smallerNumber },
+          (_, i) => i + 1
+        );
 
-    const hasCorrectStreak = computed(() => correctStreak.value > 0);
+        this.showMultiplicationGrid = true;
+      } else if (this.currentQuestion.operator === "÷") {
+        // Activate division visualization
+        this.operatorEffectActive = true;
+      }
+    },
+    clearOperatorEffect() {
+      this.operatorEffectActive = false;
+      if (this.currentQuestion.operator === "×") {
+        this.showMultiplicationGrid = false;
+        this.multiplicationTableRows = [];
+      } else if (this.currentQuestion.operator === "÷") {
+        this.hoverIndex = null;
+      }
+      document.removeEventListener("click", this.handleOutsideClick);
+    },
+    getEmojiClass(index) {
+      if (
+        this.currentQuestion.operator === "÷" &&
+        this.operatorEffectActive
+      ) {
+        const groupSize = this.currentQuestion.rightNumber;
+        const groupIndex = Math.floor(index / groupSize);
+        return this.colors[groupIndex % this.colors.length];
+      }
+      return "";
+    },
+    handleOutsideClick(event) {
+      const operatorElement = this.$refs.operatorSymbol;
+      if (!operatorElement.contains(event.target)) {
+        this.clearOperatorEffect();
+      }
+    },
+    startTimer() {
+      this.isTimerRunning = true;
+      this.$refs.timerBar.resetTimer();
+    },
+    pauseTimer() {
+      this.isTimerRunning = false;
+    },
+    handleTimerExpired() {
+      this.playSound(false);
+      this.correctAnswersInRow = 0;
+      this.streakActive = false;
+      this.handleIncorrectAnswer();
+    },
+    playSound(correct) {
+      const audio = new Audio(
+        correct
+          ? "https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"
+          : "https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"
+      );
+      audio.play();
+    },
+    handleCorrectAnswer() {
+      this.playSound(true);
+      this.correctAnswersInRow += 1;
+      this.questionsAnswered += 1;
 
-    const showMultiplicationGrid = ref(false);
-    const highlightedRow = ref(0);
-    const highlightedCol = ref(0);
-    const bottomEmojis = ref(null);
-    const db = ref(null);
-    const auth = ref(null);
-    const money = ref(0);
+      // Activate streak message on 5th consecutive correct answer
+      if (this.correctAnswersInRow >= 5) {
+        this.streakActive = true;
+      } else {
+        this.streakActive = false;
+      }
 
-    async function getCurrency(db, collectionName, documentId) {
+      // Award coins
+      if (this.correctAnswersInRow >= 6) {
+        this.coins += 2; // Double coins from 6th correct answer
+      } else {
+        this.coins += 1;
+      }
+
+      if (this.questionsAnswered >= 10) {
+        this.endGame();
+      } else {
+        this.nextQuestion();
+      }
+    },
+    handleIncorrectAnswer() {
+      this.playSound(false);
+      this.correctAnswersInRow = 0;
+      this.streakActive = false;
+      this.questionsAnswered += 1;
+
+      if (this.questionsAnswered >= 10) {
+        this.endGame();
+      } else {
+        this.nextQuestion();
+      }
+    },
+    checkAnswer() {
+      const userAnswer = parseInt(this.userInput, 10);
+
+      if (userAnswer === this.currentQuestion.correct) {
+        this.handleCorrectAnswer();
+      } else {
+        this.handleIncorrectAnswer();
+      }
+    },
+    nextQuestion() {
+      this.userInput = "";
+      this.currentQuestion = generateQuestion();
+      this.startTimer();
+    },
+    async getCurrency(db, collectionName, documentId) {
       const docRef = doc(db, collectionName, documentId);
       try {
-        const doc = await getDoc(docRef);
-        console.log(doc);
-        if (doc.exists()) {
-          console.log("Document data:", doc.data());
-          money.value = doc.data().currency;
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          this.money = docSnap.data().currency;
         } else {
           console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
       }
-    }
-
-    async function updateCurrency(db, collectionName, documentId, currency) {
+    },
+    async updateCurrency(db, collectionName, documentId, currency) {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
@@ -333,14 +517,8 @@ export default {
       } catch (error) {
         console.error("Error writing document: ", error);
       }
-    }
-
-    async function updateCompletedTasks(
-      db,
-      collectionName,
-      documentId,
-      newTask
-    ) {
+    },
+    async updateCompletedTasks(db, collectionName, documentId, newTask) {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(
@@ -352,391 +530,79 @@ export default {
       } catch (error) {
         console.error("Error updating document: ", error);
       }
+    },
+    endGame() {
+      // Update currency and completed tasks if needed
+      this.gameOver = true;
+      this.completionMessage = "Game Over! You've answered 10 questions.";
+      this.pauseTimer();
+    },
+    restartGame() {
+      this.gameOver = false;
+      this.completionMessage = "";
+      this.coins = 0;
+      this.correctAnswersInRow = 0;
+      this.streakActive = false;
+      this.questionsAnswered = 0;
+      this.userInput = "";
+      this.currentQuestion = generateQuestion();
+      this.startTimer();
+    },
+    exitGame() {
+      this.router.push("/game");
+      console.log("Exiting game");
+    },
+    startGame() {
+      this.gameStarted = true;
+      this.startTimer();
+    },
+  },
+  watch: {
+    showHintModal(newVal) {
+      if (newVal) {
+        this.pauseTimer();
+      } else {
+        this.startTimer();
+      }
+    },
+  },
+  mounted() {
+    // Show the instructions dialog
+    const instructionsDialog = document.getElementById("instructions-dialog");
+    if (instructionsDialog && typeof instructionsDialog.showModal === "function") {
+      instructionsDialog.showModal();
     }
 
-    const startTimer = () => {
-      if (gameOver.value) return;
-      clearInterval(timerInterval);
-
-      timerInterval = setInterval(() => {
-        if (gameOver.value) {
-          clearInterval(timerInterval);
-          return;
-        }
-        timerWidth.value = Math.max(
-          0,
-          (timerSeconds.value / initialTimerSeconds) * 100
-        );
-        timerSeconds.value = Math.max(0, timerSeconds.value - 0.1);
-
-        if (timerSeconds.value <= 0) {
-          clearInterval(timerInterval);
-          handleTimerExpired();
-          playSound(false);
-        }
-      }, 100);
-      console.log("Timer started"); // Debugging line
-    };
-
-    const pauseTimer = () => {
-      clearInterval(timerInterval);
-      pausedTimerSeconds.value = timerSeconds.value;
-    };
-
-    const resumeTimer = () => {
-      timerSeconds.value = pausedTimerSeconds.value;
-      startTimer();
-    };
-
-    const handleTimerExpired = () => {
-      correctStreak.value = 0;
-      isBonusRound.value = false; // Remove bonus round popup
-      nextQuestion();
-      playSound(false);
-    };
-
-    const getEmojiClass = (index) => {
-      if (currentQuestion.value.operator === "÷" && hoverIndex.value !== null) {
-        const groupSize = currentQuestion.value.rightNumber;
-        const groupIndex = Math.floor(index / groupSize);
-        return colors[groupIndex % colors.length];
-      }
-      return "";
-    };
-
-    const isHighlighted = (row, col) => {
-      return row <= highlightedRow.value && col <= highlightedCol.value;
-    };
-
-    const highlightCell = (row, col) => {
-      highlightedRow.value = row;
-      highlightedCol.value = col;
-    };
-
-    const clearHighlight = () => {
-      highlightedRow.value = 0;
-      highlightedCol.value = 0;
-    };
-
-    const playSound = (correct) => {
-      const audio = new Audio(
-        correct
-          ? "https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"
-          : "https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"
-      );
-      audio.play();
-    };
-
-    const triggerConfetti = () => {
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
-    };
-
-    const handleCorrectAnswer = () => {
-      playSound(true);
-      correctStreak.value += 1;
-
-      // Activate streak message on 5th consecutive correct answer
-      if (correctStreak.value >= 5) {
-        triggerConfetti();
-        isBonusRound.value = true;
-      } else {
-        isBonusRound.value = false;
-      }
-
-      // Award coins
-      if (correctStreak.value >= 6) {
-        medals.value += 2; // Double coins from 6th correct answer
-      } else {
-        medals.value += 1;
-      }
-
-      // Cap medals at 15
-      if (medals.value > 15) {
-        medals.value = 15;
-      }
-
-      earnedMedal.value = true;
-      setTimeout(() => {
-        earnedMedal.value = false;
-      }, 1000);
-
-      nextQuestion();
-    };
-
-    const handleIncorrectAnswer = () => {
-      playSound(false);
-      correctStreak.value = 0;
-      isBonusRound.value = false;
-
-      nextQuestion();
-    };
-
-    const checkAnswer = () => {
-      if (gameOver.value) return;
-
-      const userAnswer = parseInt(userInput.value, 10);
-
-      if (userAnswer === currentQuestion.value.correct) {
-        handleCorrectAnswer();
-      } else {
-        handleIncorrectAnswer();
-      }
-    };
-
-    const generatedQuestions = new Set();
-
-    const generateUniqueQuestion = () => {
-      let question;
-      let attempts = 0;
-      const maxAttempts = 100;
-
-      do {
-        question = generateQuestion();
-        attempts++;
-        if (attempts > maxAttempts) {
-          console.warn("Max attempts reached. Resetting generated questions.");
-          generatedQuestions.clear();
-          break;
-        }
-      } while (generatedQuestions.has(JSON.stringify(question)));
-
-      generatedQuestions.add(JSON.stringify(question));
-      return question;
-    };
-
-    const nextQuestion = () => {
-      if (gameOver.value) return;
-      questionCount.value += 1;
-
-      if (questionCount.value >= 10) {
-        endGame();
-        return;
-      }
-
-      userInput.value = "";
-      hoverIndex.value = null;
-      currentQuestion.value = generateUniqueQuestion();
-      timerSeconds.value = initialTimerSeconds;
-      startTimer();
-      console.log(
-        "Next question! Current question count:",
-        questionCount.value
-      );
-    };
-
-    const endGame = () => {
-      if (gameOver.value) return;
-      gameOver.value = true;
-      completionMessage.value =
-        "You've obtained " + medals.value + " Destress coins!";
-      updateCurrency(
-        db.value,
-        "users",
-        auth.value.currentUser.uid,
-        money.value + totalMedals.value + medals.value
-      );
-      updateCompletedTasks(
-        db.value,
-        "users",
-        auth.value.currentUser.uid,
-        "multiplicationAndDivision"
-      );
-      clearInterval(timerInterval);
-      console.log("Game over. Total questions answered: ", questionCount.value);
-    };
-
-    const restartGame = () => {
-      gameOver.value = false;
-      gameStarted.value = true;
-      completionMessage.value = "";
-      totalMedals.value += medals.value;
-      medals.value = 0;
-      correctStreak.value = 0;
-      questionCount.value = 0;
-      userInput.value = "";
-      isBonusRound.value = false;
-      currentQuestion.value = generateQuestion();
-      timerSeconds.value = initialTimerSeconds;
-      startTimer();
-    };
-
-    const router = useRouter();
-    const exitGame = () => {
-      console.log("Exiting game");
-      router.push("/game");
-    };
-
-    const showHintDialog = () => {
-      pauseTimer();
-      document.getElementById("dialog-default").showModal();
-    };
-
-    const closeHintDialog = () => {
-      document.getElementById("dialog-default").close();
-      resumeTimer();
-    };
-
-    const showInstructions = () => {
-      document.getElementById("instructions-dialog").showModal();
-    };
-
-    const startGame = () => {
-      gameStarted.value = true;
-      document.getElementById("instructions-dialog").close();
-      setInitialQuestion();
-    };
-
-    const setInitialQuestion = () => {
-      userInput.value = "";
-      hoverIndex.value = null;
-      currentQuestion.value = generateUniqueQuestion();
-      timerSeconds.value = initialTimerSeconds;
-      startTimer();
-    };
-
-    const updateGridPosition = () => {
-      if (bottomEmojis.value && showMultiplicationGrid.value) {
-        const rect = bottomEmojis.value.getBoundingClientRect();
-        const grid = document.querySelector(".multiplication-grid");
-        if (grid) {
-          grid.style.position = "absolute";
-          grid.style.top = `${rect.top - grid.offsetHeight}px`;
-          grid.style.left = `${rect.left}px`;
-          grid.style.width = `${rect.width}px`;
-        }
-      }
-    };
-
-    const handleBottomEmojisHover = () => {
-      if (currentQuestion.value.operator === "×") {
-        showMultiplicationGrid.value = true;
-        nextTick(() => {
-          updateGridPosition();
-        });
-      } else if (currentQuestion.value.operator === "÷") {
-        hoverIndex.value = 0;
-      }
-    };
-
-    const handleBottomEmojisLeave = () => {
-      showMultiplicationGrid.value = false;
-      hoverIndex.value = null;
-    };
-
-    watch(showMultiplicationGrid, (newValue) => {
-      if (newValue) {
-        nextTick(() => {
-          updateGridPosition();
-        });
-      }
-    });
-
-    onMounted(() => {
-      showInstructions();
-      window.addEventListener("resize", updateGridPosition);
-      const authObj = getAuth();
-      console.log(`uid=${authObj.currentUser.uid}`);
-      const dbInstance = getFirestore();
-      db.value = dbInstance;
-      auth.value = authObj;
-      console.log(db);
-      getCurrency(dbInstance, "users", authObj.currentUser.uid);
-    });
-
-    onUnmounted(() => {
-      clearInterval(timerInterval);
-      window.removeEventListener("resize", updateGridPosition);
-    });
-
-    return {
-      timerWidth,
-      timerSeconds,
-      initialTimerSeconds,
-      currentQuestion,
-      userInput,
-      correctStreak,
-      medals,
-      hasCorrectStreak,
-      checkAnswer,
-      getEmojiClass,
-      earnedMedal,
-      restartGame,
-      exitGame,
-      isBonusRound,
-      gameOver,
-      gameStarted,
-      completionMessage,
-      showHintDialog,
-      closeHintDialog,
-      startGame,
-      showMultiplicationGrid,
-      isHighlighted,
-      highlightCell,
-      clearHighlight,
-      bottomEmojis,
-      updateGridPosition,
-      hoverIndex,
-      handleBottomEmojisHover,
-      handleBottomEmojisLeave,
-      questionCount,
-      setInitialQuestion,
-    };
+    this.handleOutsideClick = this.handleOutsideClick.bind(this);
+    const auth = getAuth();
+    console.log(`uid=${auth.currentUser.uid}`);
+    const db = getFirestore();
+    this.db = db;
+    this.auth = auth;
+    this.getCurrency(db, "users", auth.currentUser.uid);
+  },
+  beforeUnmount() {
+    this.pauseTimer();
+    document.removeEventListener("click", this.handleOutsideClick);
   },
 };
 </script>
 
 <style scoped>
+/* ... existing styles ... */
+
 * {
-  font-family: "Press Start 2P";
+  font-family: "Press Start 2P", sans-serif;
 }
 
-.nes-container.is-rounded {
-  border-image-slice: 3;
-  border-image-width: 3;
-  border-image-repeat: stretch;
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
-  border-image-outset: 2;
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-.nes-btn {
-  border-image-slice: 2;
-  border-image-width: 2;
-  border-image-repeat: stretch;
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
-  border-image-outset: 2;
-}
-
-.nes-progress {
-  border-image-slice: 2;
-  border-image-width: 2;
-  border-image-repeat: stretch;
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
-  border-image-outset: 2;
-}
-
-.nes-input {
-  border-image-slice: 2;
-  border-image-width: 2;
-  border-image-repeat: stretch;
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
-  border-image-outset: 2;
-}
-
-.nes-input.is-success,
-.nes-textarea.is-success {
-  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(146,204,65)" /></svg>');
-  outline-color: #76c442;
-}
-
-.math-game {
-  font-family: "Press Start 2P", cursive;
-}
-
-.math-game .game-container {
+.game-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -750,17 +616,17 @@ export default {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.math-game .outer-game-container {
+.outer-game-container {
   width: 100%;
   max-width: 800px;
   padding: 2rem;
 }
 
-.math-game .text-center {
+.text-center {
   text-align: center;
 }
 
-.math-game .emoji-group {
+.emoji-group {
   display: inline-block;
   padding: 0.2em;
   border-radius: 0.25em;
@@ -768,15 +634,15 @@ export default {
   transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.math-game .emoji-group:hover {
+.emoji-group:hover {
   transform: scale(1.2);
 }
 
-.math-game .streak-animation {
+.streak-animation {
   animation: shake 0.5s;
 }
 
-@keyframes math-game-shake {
+@keyframes shake {
   0% {
     transform: translate(1px, 1px) rotate(0deg);
   }
@@ -794,7 +660,7 @@ export default {
   }
 }
 
-.math-game .bonus-round {
+.bonus-round {
   background-color: #ffd700;
   color: #000;
   padding: 1rem;
@@ -804,7 +670,7 @@ export default {
   animation: pulse 1s infinite;
 }
 
-@keyframes math-game-pulse {
+@keyframes pulse {
   0% {
     transform: scale(1);
   }
@@ -816,7 +682,7 @@ export default {
   }
 }
 
-.math-game .game-over-overlay {
+.game-over-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -829,81 +695,108 @@ export default {
   z-index: 1000;
 }
 
-.math-game .game-over-content {
+.game-over-content {
   background-color: white;
   padding: 2rem;
   border-radius: 1rem;
   text-align: center;
 }
 
-.math-game .hover-red {
+.hover-red {
   background-color: #d81b60;
 }
-.math-game .hover-blue {
+.hover-blue {
   background-color: #1e88e5;
 }
-.math-game .hover-yellow {
+.hover-yellow {
   background-color: #ffc107;
 }
-.math-game .hover-green {
+.hover-green {
   background-color: #004d40;
 }
-.math-game .hover-purple {
+.hover-purple {
   background-color: #994f00;
 }
 
-.center-button {
-  display: flex;
-  justify-content: center;
-}
-
-.math-game .multiplication-grid {
+.multiplication-table-overlay {
   position: absolute;
-  z-index: 10;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: rgba(255, 255, 255, 0.9);
-  border: 2px solid #000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
+  border: 2px solid #add8e6;
   padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 10;
 }
 
-.grid-row {
+.multiplication-grid-header,
+.multiplication-grid-row {
   display: flex;
-  align-items: center;
 }
 
-.grid-cell {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #ccc;
+.row-label {
+  width: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.column-number {
+  width: 30px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.multiplication-emoji {
+  width: 30px;
+  text-align: center;
+}
+
+/* Timer Bar Styles */
+.progress-container {
+  width: 100%;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.progress {
+  height: 50px;
+  background-color: #e9ecef;
+  border-radius: 0.25rem;
+}
+
+.progress-bar {
+  transition: width 0.1s ease;
+  background-color: #8bc34a;
+}
+
+.timer-text {
+  margin: 0;
+  color: #000;
+  font-weight: bold;
+}
+
+/* Streak Message Styles */
+.streak-message {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.3s ease;
+  animation: pulse 1s infinite;
 }
 
-.grid-header .grid-cell,
-.grid-label {
-  font-weight: bold;
-  background-color: #f0f0f0;
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-.grid-cell.highlighted {
-  background-color: rgba(255, 255, 0, 0.5);
-}
-
-.bottom-emojis {
-  position: relative;
-  display: inline-block;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
+/* ... existing styles ... */
 </style>
+
