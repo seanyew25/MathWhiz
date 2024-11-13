@@ -19,3 +19,4 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_MATHWHIZ_F717A }}
           projectId: mathwhiz-f717a
+          expires: 1d
