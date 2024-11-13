@@ -1,5 +1,6 @@
 <template>
-  <!-- 1st Div - Welcome to Mathwhiz Hero Video Container -->
+
+  <!-- Welcome to Mathwhiz Hero Video Container -->
   <div class="hero">
     <video class="hero-video" autoplay muted loop playsinline>
       <source src="../media/final_background_video.mp4" type="video/mp4" />
@@ -51,7 +52,7 @@
                    :class="[card.bgColor, 'tw-p-6 tw-rounded-xl tw-shadow-md']">
                 <div class="tw-h-full tw-flex tw-flex-col tw-justify-center">
                   <h3 :class="['tw-text-xl tw-font-semibold tw-mb-4 tw-font-russo-one', card.titleColor]">
-                    More about {{ card.title }}
+                    More about "{{ card.title }}"
                   </h3>
                   <p :class="['tw-font-russo-one', card.textColor]">
                     {{ card.detailedDescription }}
@@ -68,34 +69,33 @@
 
 
   <!-- Mathwhiz Signup Div -->
-  <div class="tw-flex tw-flex-col tw-items-center tw-bg-yellow-50 tw-p-5 tw-h-20vh">
-    <div class="tw-max-w-4xl tw-mx-auto tw-p-5">
-      <h1 class="tw-text-center tw-pt-5 tw-font-russo-one">
+  <div class="tw-min-h-500px tw-bg-yellow-50 tw-pt-2">
+    <div class="tw-max-w-4xl tw-mx-auto">
+      <h1 class="tw-text-center tw-p-6 tw-font-russo-one">
         Join Mathwhiz today! Sign up now!
       </h1>
     </div>
-      <div class="tw-flex tw-flex-col tw-items-center" style="padding:0px 0px 20px 0px"> <!-- Padding at the bottom, follows top right bottom left -->
+      <div class="tw-flex tw-flex-col tw-items-center" style="padding:0px 0px 50px 0px"> <!-- Padding at the bottom, follows top right bottom left -->
         <button
-          v-if="!isAuthenticated"
-          @click="openModal"
-          class="nes-btn is-primary"
-          type="submit"
-          data-bs-target="#getStartedModal"
-          data-bs-toggle="modal"
-        >
-          Get Started!
-        </button>
-        <button
-          v-else
-          class="nes-btn is-disabled"
-          disabled
-          title="You're already signed in!"
-        >
-          Already Signed In
+            v-if="!isAuthenticated"
+            @click="openModal"
+            class="nes-btn is-primary"
+            type="submit"
+            data-bs-target="#getStartedModal"
+            data-bs-toggle="modal"
+          >
+            Get Started!
+          </button>
+          <button
+            v-else
+            class="nes-btn is-disabled"
+            disabled
+            title="You're already signed in!"
+          >
+            Already Signed In
         </button>
       </div>
-    </div>
-  
+  </div>
 </template>
 
 <style>
@@ -213,7 +213,7 @@ video {
 }
 </style>
 
-<script>
+<script setup>
 import { ref, onMounted } from "vue";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 const auth = getAuth();
@@ -227,8 +227,9 @@ onMounted(() => {
     }
   });
 });
+</script>
 
-
+<script>
 export default {
   name: 'MathwhizFeatures',
   data() {
@@ -247,8 +248,8 @@ export default {
         },
         {
           title: 'Interactive Scenarios',
-          description: 'Engage in conversations with diverse characters in various game scenarios. Practice language skills, decision-making, and problem-solving in immersive environments.',
-          detailedDescription: 'Meet a cast of quirky characters, each with their own mathematical dilemmas. Help a chef balance recipes, assist a musician in composing melodies using math, or aid a detective in cracking codes. Every interaction is a chance to apply math creatively.',
+          description: 'Engage in conversations with characters in various game scenarios!',
+          detailedDescription: 'Help the citizens or yourself in Mathropolis. From counting to selecting cakes, every interaction is a chance to apply math creatively.',
           imageSrc: 'public/assets/schoolassets/carrying1.png',
           imageAlt: 'Scenario Character',
           bgColor: 'tw-bg-green-100',
@@ -257,9 +258,9 @@ export default {
           isFlipped: false
         },
         {
-          title: 'Math Adventures',
-          description: 'Dive into exciting math challenges! Practice arithmetic, geometry, and problem-solving skills through interactive games, puzzles, and real-world applications.',
-          detailedDescription: 'Embark on thrilling quests where math is your superpower. Scale geometric mountains, navigate algebraic mazes, and conquer statistical challenges. With each adventure, you\'ll gain confidence in your math abilities and see how they apply to the world around you.',
+          title: 'Test Your Knowledge',
+          description: 'Dive into exciting math challenges! Start your journey into the world of Math in a fun way.',
+          detailedDescription: 'Embark on thrilling quests where math is your superpower. With each adventure, you\'ll gain confidence in your math abilities and see how they apply to the world around you.',
           imageSrc: 'public/assets/schoolassets/reading1.png',
           imageAlt: 'Reading Character',
           bgColor: 'tw-bg-purple-100',
@@ -268,9 +269,9 @@ export default {
           isFlipped: false
         },
         {
-          title: 'Cat Collection Quest',
-          description: 'Embark on a delightful journey to collect virtual cats! Each unique feline provides a little boost to your fun in Mathwhiz.',
-          detailedDescription: 'Discover and befriend a variety of adorable virtual cats, each with its own mathematical personality. Some cats might boost your arithmetic skills, while others enhance your geometric intuition. Collect them all to become a well-rounded math master!',
+          title: 'Collect Cats',
+          description: 'Discover and befriend a variety of adorable virtual cats.',
+          detailedDescription: 'Create and expand your collection of virtual cats in Mathwhiz! Each unique feline provides a little boost to your fun in Mathropolis.',
           imageSrc: 'public/assets/shopassets/morgana.png',
           imageAlt: 'Cat Morgana',
           bgColor: 'tw-bg-orange-100',
