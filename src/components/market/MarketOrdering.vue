@@ -12,7 +12,7 @@
                 <!-- Timer Bar Logic -->
                 <div class="progress-container tw-w-full">
                     <progress class="nes-progress is-success tw-w-full" :value="timerWidth" :max="20"></progress>
-                    <p class="nes-text is-primary timer-text">{{ timerWidth.toFixed(1) }}s</p>
+                    <p class="nes-text timer-text">{{ timerWidth.toFixed(0) }}s</p>
                 </div>  
 
                 <!-- Streak Message -->
@@ -123,6 +123,15 @@
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import confetti from "canvas-confetti";
 import { useRouter } from 'vue-router';
+import { getAuth } from "firebase/auth";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
+
 
 export default {
     name: "MarketOrdering",
@@ -169,6 +178,7 @@ export default {
 
                 if (grocery) {
                     // No animation
+                    
                     grocery.style.transition = "none";
 
                     // Start position
@@ -242,7 +252,7 @@ export default {
             }
         };
 
-
+        const totalCoins = ref(0);
         const checkAnswer = () => {
             submitted.value = true;
             timerFrozen.value = true;
@@ -284,6 +294,19 @@ export default {
                 setTimeout(loadNextQuestion, 1000);
             } else {
                 gameOver.value = true;
+                totalCoins.value += coins.value;
+                updateCurrency(
+                    db.value,
+                    "users",
+                    auth.value.currentUser.uid,
+                    money.value + totalCoins.value
+                );
+                updateCompletedTasks(
+                    db.value,
+                    "users",
+                    auth.value.currentUser.uid,
+                    "counting"
+                );
             }
         };
 
@@ -392,7 +415,65 @@ export default {
             resetTimer();
             setTimeout(() => loadingNextQuestion.value = false, 300);
         };
+
+        const db = ref(null);
+        const auth = ref(null);
+        const money = ref(0);
+
+        async function getCurrency(db, collectionName, documentId) {
+            const docRef = doc(db, collectionName, documentId);
+            try {
+                const doc = await getDoc(docRef);
+                console.log(doc);
+                if (doc.exists()) {
+                console.log("Document data:", doc.data());
+                money.value = doc.data().currency;
+                } else {
+                console.log("No such document!");
+                }
+            } catch (error) {
+                console.error("Error getting document:", error);
+            }
+        }
+
+        async function updateCurrency(db, collectionName, documentId, currency) {
+            const docRef = doc(db, collectionName, documentId);
+            try {
+                await setDoc(docRef, { currency: currency }, { merge: true });
+                console.log(currency);
+                console.log("Currency successfully written!");
+            } catch (error) {
+                console.error("Error writing document: ", error);
+            }
+        }
+
+        async function updateCompletedTasks(
+            db,
+            collectionName,
+            documentId,
+            newTask
+            ) {
+            const docRef = doc(db, collectionName, documentId);
+            try {
+                await setDoc(
+                docRef,
+                { completedTasks: arrayUnion(newTask) },
+                { merge: true }
+                );
+                console.log("Task successfully added to completedTasks!");
+            } catch (error) {
+                console.error("Error updating document: ", error);
+            }
+        }
+
         onMounted(() => {
+            const authObj = getAuth();
+            console.log(`uid=${authObj.currentUser.uid}`);
+            const dbInstance = getFirestore();
+            db.value = dbInstance;
+            auth.value = authObj;
+            console.log(db);
+            getCurrency(dbInstance, "users", authObj.currentUser.uid);
             showTutorial();
             assignRandomImages();
             resetGroceries();
