@@ -16,7 +16,15 @@ class GameOverlayScene extends Phaser.Scene {
       return;
     }
     // MINIMAP;
-    const minimapWidthAsFractionOfScreen = 0.3;
+    let minimapWidthAsFractionOfScreen = 0.3;
+    if (window.innerWidth <= 768) {
+      minimapWidthAsFractionOfScreen = 0.3;
+    } else if (window.innerWidth <= 1440) {
+      minimapWidthAsFractionOfScreen = 0.25;
+    } else {
+      minimapWidthAsFractionOfScreen = 0.2;
+    }
+
     const minimap = this.add.image(0, 0, "minimap").setOrigin(0);
     const initialScale =
       (this.scale.width * minimapWidthAsFractionOfScreen) / minimap.width;
@@ -107,6 +115,13 @@ class GameOverlayScene extends Phaser.Scene {
     });
 
     function repositionMinimap() {
+      if (window.innerWidth <= 768) {
+        minimapWidthAsFractionOfScreen = 0.3;
+      } else if (window.innerWidth <= 1440) {
+        minimapWidthAsFractionOfScreen = 0.25;
+      } else {
+        minimapWidthAsFractionOfScreen = 0.2;
+      }
       const newScale =
         (this.scale.width * minimapWidthAsFractionOfScreen) / minimap.width;
       minimap.setScale(newScale);
