@@ -1,4 +1,5 @@
 <template>
+
   <!-- Welcome to Mathwhiz Hero Video Container -->
   <div class="hero">
     <video class="hero-video" autoplay muted loop playsinline>
@@ -23,96 +24,77 @@
 
   <!-- 3rd Div - Mathwhiz Features -->
   <div class="tw-min-h-fit tw-bg-blue-300 tw-p-8">
-    <div class="tw-max-w-4xl tw-mx-auto">
-      <h1
-        class="tw-text-3xl tw-font-bold tw-text-gray-800 tw-mb-8 tw-text-center tw-font-russo-one"
-      >
+    <div class="tw-max-w-6xl tw-mx-auto">
+      <h1 class="tw-text-3xl tw-font-bold tw-text-gray-800 tw-mb-8 tw-text-center tw-font-russo-one">
         Your Mathwhiz Experience:
       </h1>
-      <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-4">
-        <!-- Explore a city -->
-        <div class="tw-bg-blue-100 tw-p-6 tw-rounded-xl tw-shadow-md">
-          <h2
-            class="tw-text-2xl tw-font-semibold tw-text-blue-800 tw-mb-4 tw-font-russo-one"
-          >
-            Explore a City
-          </h2>
-          <p class="tw-text-blue-700 tw-font-russo-one">
-            Embark on a adventure in Math City. Explore different landmarks!
-          </p>
-        </div>
-
-        <!-- Speak to different characters -->
-        <div class="tw-bg-green-100 tw-p-6 tw-rounded-xl tw-shadow-md">
-          <h2
-            class="tw-text-2xl tw-font-semibold tw-text-green-800 tw-mb-4 tw-font-russo-one"
-          >
-            Interactive Scenarios
-          </h2>
-          <p class="tw-text-green-700 tw-font-russo-one">
-            Engage in conversations with diverse characters in various game
-            scenarios. Practice language skills, decision-making, and
-            problem-solving in immersive environments.
-          </p>
-        </div>
-
-        <!-- Practice math -->
-        <div class="tw-bg-purple-100 tw-p-6 tw-rounded-xl tw-shadow-md">
-          <h2
-            class="tw-text-2xl tw-font-semibold tw-text-purple-800 tw-mb-4 tw-font-russo-one"
-          >
-            Math Adventures
-          </h2>
-          <p class="tw-text-purple-700 tw-font-russo-one">
-            Dive into exciting math challenges! Practice arithmetic, geometry,
-            and problem-solving skills through interactive games, puzzles, and
-            real-world applications.
-          </p>
-        </div>
-
-        <!-- Collect cats -->
-        <div class="tw-bg-orange-100 tw-p-6 tw-rounded-xl tw-shadow-md">
-          <h2
-            class="tw-text-2xl tw-font-semibold tw-text-orange-800 tw-mb-4 tw-font-russo-one"
-          >
-            Cat Collection Quest
-          </h2>
-          <p class="tw-text-orange-700 tw-font-russo-one">
-            Embark on a delightful journey to collect virtual cats! Each unique
-            feline provides a little boost to your fun in Mathwhiz.
-          </p>
+      <div class="tw-grid tw-grid-cols-1 md:tw-grid-cols-2 tw-gap-8">
+        <div v-for="(card, index) in cards" :key="index" 
+             class="tw-flex tw-items-center tw-justify-between"
+             @mouseenter="flipCard(index)"
+             @mouseleave="flipCard(index)">
+          <img v-if="index % 2 === 0" :src="card.imageSrc" :alt="card.imageAlt" class="tw-w-1/5 tw-hidden md:tw-block" />
+          <div class="tw-perspective-1000 tw-w-full md:tw-w-3/4 tw-h-[300px]">
+            <div class="tw-relative tw-w-full tw-h-full tw-transition-transform tw-duration-500 tw-transform-style-preserve-3d"
+                 :class="{ 'tw-rotate-y-180': card.isFlipped }">
+              <!-- Front of the card -->
+              <div class="tw-absolute tw-w-full tw-h-full tw-backface-hidden"
+                   :class="[card.bgColor, 'tw-p-6 tw-rounded-xl tw-shadow-md']">
+                <h2 :class="['tw-text-2xl tw-font-semibold tw-mb-4 tw-font-russo-one', card.titleColor]">
+                  {{ card.title }}
+                </h2>
+                <p :class="['tw-font-russo-one', card.textColor]">
+                  {{ card.description }}
+                </p>
+              </div>
+              <!-- Back of the card -->
+              <div class="tw-absolute tw-w-full tw-h-full tw-backface-hidden tw-rotate-y-180"
+                   :class="[card.bgColor, 'tw-p-6 tw-rounded-xl tw-shadow-md']">
+                <div class="tw-h-full tw-flex tw-flex-col tw-justify-center">
+                  <h3 :class="['tw-text-xl tw-font-semibold tw-mb-4 tw-font-russo-one', card.titleColor]">
+                    More about "{{ card.title }}"
+                  </h3>
+                  <p :class="['tw-font-russo-one', card.textColor]">
+                    {{ card.detailedDescription }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <img v-if="index % 2 !== 0" :src="card.imageSrc" :alt="card.imageAlt" class="tw-w-1/5 tw-hidden md:tw-block" />
         </div>
       </div>
     </div>
   </div>
 
+
   <!-- Mathwhiz Signup Div -->
-  <div class="tw-min-h-500px tw-bg-yellow-50 tw-p-4">
-    <div class="tw-max-w-4xl tw-mx-auto tw-p-5">
+  <div class="tw-min-h-500px tw-bg-yellow-50 tw-pt-2">
+    <div class="tw-max-w-4xl tw-mx-auto">
       <h1 class="tw-text-center tw-p-6 tw-font-russo-one">
         Join Mathwhiz today! Sign up now!
       </h1>
     </div>
-    <div class="tw-flex tw-flex-col tw-items-center">
-      <button
-        v-if="!isAuthenticated"
-        @click="openModal"
-        class="nes-btn is-primary"
-        type="submit"
-        data-bs-target="#getStartedModal"
-        data-bs-toggle="modal"
-      >
-        Get Started!
-      </button>
-      <button
-        v-else
-        class="nes-btn is-disabled"
-        disabled
-        title="You're already signed in!"
-      >
-        Already Signed In
-      </button>
-    </div>
+      <div class="tw-flex tw-flex-col tw-items-center" style="padding:0px 0px 50px 0px"> <!-- Padding at the bottom, follows top right bottom left -->
+        <button
+            v-if="!isAuthenticated"
+            @click="openModal"
+            class="nes-btn is-primary"
+            type="submit"
+            data-bs-target="#getStartedModal"
+            data-bs-toggle="modal"
+          >
+            Get Started!
+          </button>
+          <button
+            v-else
+            class="nes-btn is-disabled"
+            disabled
+            title="You're already signed in!"
+          >
+            Already Signed In
+        </button>
+      </div>
   </div>
 </template>
 
@@ -182,7 +164,7 @@
 .background-container {
   background-image: linear-gradient(to right, #b7e0ff, #95e3ff);
   /* background-color: #B7E0FF; */
-  min-height: 40vh;
+  min-height: 20vh;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -213,6 +195,22 @@ video {
 
   z-index: -2;
 }
+
+.tw-perspective-1000 {
+  perspective: 1000px;
+}
+
+.tw-backface-hidden {
+  backface-visibility: hidden;
+}
+
+.tw-rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.tw-transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
 </style>
 
 <script setup>
@@ -229,4 +227,66 @@ onMounted(() => {
     }
   });
 });
+</script>
+
+<script>
+export default {
+  name: 'MathwhizFeatures',
+  data() {
+    return {
+      cards: [
+        {
+          title: 'Explore a City',
+          description: 'Embark on an adventure in Mathropolis. Explore different landmarks!',
+          detailedDescription: 'Dive into a virtual city where every street corner presents a new mathematical challenge. From calculating fractions to counting money, you\'ll apply math in exciting real-world scenarios.',
+          imageSrc: 'assets/profileassets/character/Hoodie Boy.png',
+          imageAlt: 'Character to Explore With',
+          bgColor: 'tw-bg-blue-100',
+          titleColor: 'tw-text-blue-800',
+          textColor: 'tw-text-blue-700',
+          isFlipped: false
+        },
+        {
+          title: 'Interactive Scenarios',
+          description: 'Engage in conversations with characters in various game scenarios!',
+          detailedDescription: 'Help the citizens or yourself in Mathropolis. From counting to selecting cakes, every interaction is a chance to apply math creatively.',
+          imageSrc: 'assets/schoolassets/carrying1.png',
+          imageAlt: 'Scenario Character',
+          bgColor: 'tw-bg-green-100',
+          titleColor: 'tw-text-green-800',
+          textColor: 'tw-text-green-700',
+          isFlipped: false
+        },
+        {
+          title: 'Test Your Knowledge',
+          description: 'Dive into exciting math challenges! Start your journey into the world of Math in a fun way.',
+          detailedDescription: 'Embark on thrilling quests where math is your superpower. With each adventure, you\'ll gain confidence in your math abilities and see how they apply to the world around you.',
+          imageSrc: 'assets/schoolassets/reading1.png',
+          imageAlt: 'Reading Character',
+          bgColor: 'tw-bg-purple-100',
+          titleColor: 'tw-text-purple-800',
+          textColor: 'tw-text-purple-700',
+          isFlipped: false
+        },
+        {
+          title: 'Collect Cats',
+          description: 'Discover and befriend a variety of adorable virtual cats.',
+          detailedDescription: 'Create and expand your collection of virtual cats in Mathwhiz! Each unique feline provides a little boost to your fun in Mathropolis.',
+          imageSrc: 'assets/shopassets/morgana.png',
+          imageAlt: 'Cat Morgana',
+          bgColor: 'tw-bg-orange-100',
+          titleColor: 'tw-text-orange-800',
+          textColor: 'tw-text-orange-700',
+          isFlipped: false
+        }
+      ]
+    }
+  },
+  methods: {
+    flipCard(index) {
+      this.cards[index].isFlipped = !this.cards[index].isFlipped;
+    }
+  }
+}
+
 </script>
