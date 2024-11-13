@@ -49,7 +49,7 @@ class GameOverlayScene extends Phaser.Scene {
     this.playerPosition.fillStyle(0xff8c00, 1);
 
     // Define star parameters
-    const radius = 6.4;
+    const radius = 12.8;
     const points = 5; // 5-point star
 
     // Player's position on the minimap
@@ -101,7 +101,7 @@ class GameOverlayScene extends Phaser.Scene {
       if (!this.playerPosition) {
         this.playerPosition = this.add.graphics();
       }
-      this.playerPosition.fillStyle(0xff8c00, 1);
+      this.playerPosition.fillStyle(0xffa500, 1);
       const centerX = minimap.x + this.playerX * this.minimapRatioToMap; // Center X of the star
       const centerY = minimap.y + this.playerY * this.minimapRatioToMap;
       const starPoints = getStarPoints(
@@ -111,6 +111,7 @@ class GameOverlayScene extends Phaser.Scene {
         radius / 3,
         points
       );
+
       this.playerPosition.fillPoints(starPoints, true); // Draws a filled star
     });
 
@@ -146,7 +147,7 @@ class GameOverlayScene extends Phaser.Scene {
       if (!this.playerPosition) {
         this.playerPosition = this.add.graphics();
       }
-      this.playerPosition.fillStyle(0xff8c00, 1);
+      this.playerPosition.fillStyle(0xffa500, 1);
       // const circleX = minimap.x + this.playerX / 10 - radius; // X position in top-right corner
       // const circleY = minimap.y + this.playerY / 10 - radius;
       this.minimapRatioToMap = minimap.displayWidth / minimap.width;
