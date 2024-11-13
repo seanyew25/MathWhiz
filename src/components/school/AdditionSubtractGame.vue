@@ -65,19 +65,20 @@
         />
 
         <!-- Streak Message -->
+        <transition name="fade"> 
         <div
           v-if="streakActive"
-          class="tw-flex tw-items-center tw-justify-center streak-message"
+          class="streak-message text-center my-2 tw-flex tw-items-center tw-justify-center"
         >
           <i class="nes-icon trophy is-large"></i>
           <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
           <i class="nes-icon trophy is-large"></i>
         </div>
+        </transition>
 
-        <transition name="fade" mode="out-in">
           <div :key="'question-' + questionIndex" class="question-container">
-            <div class="text-center mb-4">
-              <div class="text-4xl" v-if="currentQuestion">
+            <div class="text-center tw-mt-6">
+              <div class="tw-text-2xl" v-if="currentQuestion">
                 <span>{{ currentQuestion.leftNumber }}</span>
                 <span class="mx-2">{{ currentQuestion.operator }}</span>
                 <span>{{ currentQuestion.rightNumber }}</span>
@@ -86,7 +87,7 @@
 
             <!-- Emoji and Operator Display -->
             <div class="text-center mb-6" style="position: relative">
-              <div class="text-4xl mb-4">
+              <div class="text-4xl mb-2">
                 <!-- Left Emojis -->
                 <transition-group name="bounce" tag="div">
                   <span
@@ -156,7 +157,6 @@
               </div>
             </div>
           </div>
-        </transition>
 
         <div class="nes-field is-inline mb-4">
           <input
@@ -180,10 +180,10 @@
         </div>
 
         <!-- Question and Coins Display -->
-        <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-6">
+        <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mt-4">
           Question {{ questionsAnswered }}/10
         </h2>
-        <h2 class="tw-text-base tw-text-gray-800 tw-text-center">
+        <h2 class="tw-text-base tw-text-gray-800 tw-text-center tw-mb-0">
           Coins: {{ coins }}<i class="nes-icon coin is-small"></i>
         </h2>
 
@@ -195,29 +195,32 @@
             <p>Total Coins Earned: {{ coins }}</p>
             <p>You're one step closer to regaining Morgana's fur!</p>
             <p>Play again?</p>
-            <button @click="exitGame" class="nes-btn is-primary">
-              Exit Game
-            </button>
-            <button @click="restartGame" class="nes-btn is-success">
-              Restart Game
-            </button>
+            <br>
+            <div class="button-container">
+              <button @click="exitGame" class="nes-btn is-primary">
+                Exit Game
+              </button>
+              <button @click="restartGame" class="nes-btn is-success">
+                Restart Game
+              </button>
+            </div>
           </div>
         </div>
 
         <!-- Start Game Dialogue Box-->
         <dialog class="nes-dialog" id="instructions-dialog">
           <form method="dialog">
-            <p class="title" style="text-align: center">
+            <h5 class="title tw-mb-4" style="text-align: center">
               Welcome to the Addition and Subtraction Game!
-            </p>
+            </h5>
             <p style="text-align: center">
-              Answer 10 questions and earn Destress coins.<br /><br />
-              Answer 5 questions in a row correctly to activate a streak! <br />
-              It earns you double coins!<br /><br />
+              Answer 10 questions to tidy up the school.<br /><br />
+              Answer 5 questions in a row correctly to activate a streak -<br />
+              it earns you double coins!<br /><br />
               You have <strong>{{ initialTimerSeconds }}</strong> seconds for
               each question. Good luck!
             </p>
-            <menu class="dialog-menu center-button">
+            <menu class="dialog-menu tw-mb-0 tw-px-0">
               <button
                 class="nes-btn is-primary"
                 style="text-align: center"
@@ -570,6 +573,7 @@ export default {
   border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
   border-image-outset: 2;
 }
+
 .nes-input.is-success,
 .nes-textarea.is-success {
   border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(146,204,65)" /></svg>');
@@ -821,10 +825,27 @@ body {
 
 /* Streak Message Styles */
 .streak-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: #ffd700;
+  color: #000;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
   animation: pulse 1s infinite;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.button-container button {
+  width: 220px;
+  margin: 0 30px;
 }
 
 @keyframes pulse {

@@ -25,7 +25,7 @@
             :value="timerWidth"
             :max="20"
           ></progress>
-          <p class="nes-text timer-text">{{ timerWidth.toFixed(0) }}s</p>
+          <p class="nes-text timer-text tw-font-bold">{{ timerWidth.toFixed(0) }}s</p>
         </div>
 
         <!-- Streak Message -->
@@ -129,7 +129,11 @@
     <div v-if="gameOver" class="game-over-overlay">
       <div class="game-over-content">
         <h2>{{ completionMessage }}</h2>
+        <br />
         <p>Total Coins Earned: {{ coins }}</p>
+        <p>You're one step closer to regaining Morgana's fur!</p>
+        <p>Play again?</p>
+        <br>
         <div class="button-container">
           <button @click="exitGame" class="nes-btn is-primary">
             Exit Game
@@ -151,7 +155,7 @@
           The grocery baskets will start moving at different times.<br /><br />
           Drag the labels onto the conveyor belts to show <br />which basket
           goes 1st, 2nd, 3rd, and 4th.<br /><br />
-          Good luck!
+          You have <strong>20</strong> seconds for each question. Good luck!
         </p>
         <menu class="dialog-menu tw-mb-0 tw-px-0">
           <button
