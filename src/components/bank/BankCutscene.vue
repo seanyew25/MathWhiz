@@ -8,6 +8,14 @@
       style="background-color: rgba(255, 245, 205, 1)"
     >
       <p class="title" style="background-color: rgba(255, 245, 205, 1)">Bank</p>
+      <button
+        class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn"
+        @click="skipCutscene"
+        v-if="currentAnimation != 'finished'"
+      >
+        Skip
+      </button>
+
       <div
         class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center"
         @click="toggleAnimation"
@@ -230,6 +238,14 @@ export default {
       isSmallScreen.value = window.innerWidth < 768;
     };
 
+    const skipCutscene = () => {
+      currentAnimation.value = "finished";
+      currentImage.value = `/assets/bankassets/cutscene/standing1.png`;
+      dialogueText.value = "Thank you very much!";
+      displayedText.value = dialogueText.value;
+      cutsceneActive.value = false;
+    };
+
     onBeforeUnmount(() => {
       window.removeEventListener("resize", updateScreenSize);
     });
@@ -267,6 +283,7 @@ export default {
       endCutscene,
       isSmallScreen,
       updateScreenSize,
+      skipCutscene,
     };
   },
 };

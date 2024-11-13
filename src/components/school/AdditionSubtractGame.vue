@@ -270,12 +270,15 @@ const generateQuestion = () => {
 export default {
   data() {
     return {
+      router: useRouter(),
       gameOver: false,
       completionMessage: "",
       score: 0,
       highScore: localStorage.getItem("highScore") || 0,
       streakActive: false,
       coins: 0,
+      totalCoins: 0,
+      money: 0,
       correctAnswersInRow: 0,
       questionsAnswered: 0,
       questions: [
@@ -395,18 +398,6 @@ export default {
 
       if (this.questionsAnswered >= 10) {
         this.endGame();
-        this.updateCurrency(
-          this.db,
-          "users",
-          this.auth.currentUser.uid,
-          this.coins + this.money
-        );
-        this.updateCompletedTasks(
-          this.db,
-          "users",
-          this.auth.currentUser.uid,
-          "additionAndSubtraction"
-        );
         return;
       }
 
@@ -498,6 +489,19 @@ export default {
     },
 
     endGame() {
+      // console.log(`total coins: ${this.totalCoins}`);
+      this.updateCurrency(
+        this.db,
+        "users",
+        this.auth.currentUser.uid,
+        this.money + this.coins + this.totalCoins
+      );
+      this.updateCompletedTasks(
+        this.db,
+        "users",
+        this.auth.currentUser.uid,
+        "additionAndSubtraction"
+      );
       this.gameOver = true;
       this.completionMessage = "Game Over! You've answered 10 questions.";
       clearInterval(this.timerInterval);
@@ -505,6 +509,8 @@ export default {
     restartGame() {
       this.gameOver = false;
       this.completionMessage = "";
+      this.totalCoins += this.coins;
+      console.log(this.coins);
       this.coins = 0;
       this.correctAnswersInRow = 0;
       this.streakActive = false;
@@ -520,6 +526,7 @@ export default {
       this.startTimer();
     },
     exitGame() {
+      this.router.push("/game");
       console.log("Exiting game");
     },
   },

@@ -229,7 +229,13 @@
 
 <script>
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import confetti from "canvas-confetti";
 import { useRouter } from "vue-router";
@@ -282,6 +288,7 @@ export default {
     const correctStreak = ref(0);
     const questionCount = ref(0);
     const medals = ref(0);
+    const totalMedals = ref(0);
     const timerWidth = ref(100);
     const initialTimerSeconds = 20; // Updated from 10 to 20
     const timerSeconds = ref(initialTimerSeconds);
@@ -530,7 +537,7 @@ const startTimer = () => {
         db.value,
         "users",
         auth.value.currentUser.uid,
-        money.value + medals.value
+        money.value + totalMedals.value + medals.value
       );
       updateCompletedTasks(
         db.value,
@@ -546,6 +553,7 @@ const startTimer = () => {
       gameOver.value = false;
       gameStarted.value = true;
       completionMessage.value = "";
+      totalMedals.value += medals.value;
       medals.value = 0;
       correctStreak.value = 0;
       questionCount.value = 0;
