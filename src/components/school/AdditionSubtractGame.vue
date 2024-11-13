@@ -240,7 +240,7 @@
 import { getAuth } from "firebase/auth";
 import { getFirestore, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
 import { useRouter } from "vue-router";
-import TimerBar from '../TimerBar.vue'; 
+import TimerBar from '../Timerbar.vue'; // Adjust the path as needed
 
 const emojiSet = ["🚗", "🏀", "🌍", "💡", "📚", "💻", "🏫", "👨‍🏫", "📏", "🔢"];
 const getRandomEmoji = () =>
