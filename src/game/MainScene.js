@@ -11,7 +11,7 @@ export default class MainScene extends Phaser.Scene {
   static player;
   static cursors;
   static objects;
-  static speed = 100;
+  static speed = 120;
 
   preload() {
     // Runs once, loads up assets like images and audio
@@ -30,6 +30,7 @@ export default class MainScene extends Phaser.Scene {
       "main",
       `${basePath}/Modern_Exteriors_Complete_Tileset.png`
     );
+    this.load.image("alert", `${basePath}/exclamation.png`);
     // tileset name need to be the same as the image name here
     this.load.tilemapTiledJSON("map", `${basePath}/MainTilemap.json`);
     this.initialData = this.registry.get("initialData");
@@ -100,6 +101,7 @@ export default class MainScene extends Phaser.Scene {
       "1_Terrains_and_Fences_16x16",
       "terrainsAndFences"
     );
+    const alertTileset = map.addTilesetImage("exclamation", "alert");
     const baseLayer = map.createLayer(
       "Base Foundation Layer (looks like road)",
       [
@@ -254,6 +256,8 @@ export default class MainScene extends Phaser.Scene {
       0,
       0
     );
+    const alertLayer = map.createLayer("alert", alertTileset, 0, 0);
+    // alertLayer.setName("alertLayer");
     collisionLayer.setName("collisionLayer");
     collisionLayer.setCollisionByProperty({ collides: true });
     collisionLayer.setVisible(false);
@@ -718,7 +722,7 @@ export default class MainScene extends Phaser.Scene {
       //HORIZONTAL MOVEMENT
       if (MainScene.cursors.left.isDown) {
         currentDirection.x = -1;
-        this.player.body.setVelocityX(-100);
+        this.player.body.setVelocityX(-120);
         eventEmitter.emit("playerMovement", this.player);
         this.player.anims.play("walk-left", true);
         this.player.setDepth(this.player.y);
@@ -734,13 +738,13 @@ export default class MainScene extends Phaser.Scene {
           this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true; //cat position has been set
         }
-        this.cat.body.setVelocityX(-100);
+        this.cat.body.setVelocityX(-120);
         this.cat.anims.play("cat-walk-left", true);
         moving = true;
       } else if (MainScene.cursors.right.isDown) {
         // console.log(this.player.body.velocity.x);
         currentDirection.x = 1;
-        this.player.body.setVelocityX(100);
+        this.player.body.setVelocityX(120);
         eventEmitter.emit("playerMovement", this.player);
         // console.log(this.player.body.velocity.x);
         this.player.anims.play("walk-right", true);
@@ -755,14 +759,14 @@ export default class MainScene extends Phaser.Scene {
           this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true;
         }
-        this.cat.body.setVelocityX(100);
+        this.cat.body.setVelocityX(120);
         this.cat.anims.play("cat-walk-right", true);
         moving = true;
       }
       // VERTICAL MOVEMENT
       if (MainScene.cursors.up.isDown) {
         currentDirection.y = -1;
-        this.player.body.setVelocityY(-100);
+        this.player.body.setVelocityY(-120);
         eventEmitter.emit("playerMovement", this.player);
         this.player.anims.play("walk-up", true);
         this.player.setDepth(this.player.y);
@@ -776,11 +780,11 @@ export default class MainScene extends Phaser.Scene {
           this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true;
         }
-        this.cat.body.setVelocityY(-100);
+        this.cat.body.setVelocityY(-120);
         moving = true;
       } else if (MainScene.cursors.down.isDown) {
         currentDirection.y = 1;
-        this.player.body.setVelocityY(100);
+        this.player.body.setVelocityY(120);
         eventEmitter.emit("playerMovement", this.player);
         this.player.anims.play("walk-down", true);
         this.player.setDepth(this.player.y);
@@ -793,7 +797,7 @@ export default class MainScene extends Phaser.Scene {
           this.cat.y = this.player.y + this.catOffsetY;
           this.setCatPosition = true;
         }
-        this.cat.body.setVelocityY(100);
+        this.cat.body.setVelocityY(120);
         this.cat.anims.play("cat-walk-down", true);
         moving = true;
       }
@@ -916,7 +920,7 @@ export function initializePhaser(equippedPlayer, equippedCat, playerCoords) {
   const config = {
     type: Phaser.CANVAS, // Which renderer to use
     width: window.innerWidth, // Canvas width in pixels
-    height: window.innerHeight - 150.55, // Canvas height in pixels
+    height: window.innerHeight - 110.55, // Canvas height in pixels
     parent: "phaser-container", // ID of the DOM element to add the canvas to
     pixelArt: true,
     transparency: false,
