@@ -218,6 +218,14 @@ export default {
       typeText();
     }
 
+    const skipCutscene = () => {
+      currentAnimation.value = "finished";
+      currentImage.value = `/assets/marketassets/carrying1.png`;
+      dialogueText.value = "Thank you very much!";
+      displayedText.value = dialogueText.value;
+      cutsceneActive.value = false;
+    };
+
     // Emit end-cutscene event to the parent component
     function endCutscene() {
       emit("end-cutscene");
