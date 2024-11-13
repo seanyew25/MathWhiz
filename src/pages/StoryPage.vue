@@ -135,6 +135,50 @@
           </div>
         </div>
 
+        <!-- Carousel 4.1 ADDED 14NOV24 -->
+        <div class="carousel-item">
+          <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
+            <p class="tw-font-press-start">
+              Everything you need to get started!
+            </p>
+            <section class="nes-container">
+              <section class="message-list">
+                <section class="message -left">
+                  <div>
+                    <img :src="imgLink" class="tw-h-20" />
+                    <div class="nes-balloon tw-bg-inherit tw-font-press-start">
+                      <p>Change Morgana's and your outfits at home!</p>
+                    </div>
+
+                    <div>
+                      <img src="/assets/mainassets/home.png" class="tw-h-[100px]">
+                    </div>
+
+                  </div>
+                </section>
+
+                <section class="message -right">
+                  <div>
+                    <div class="nes-balloon tw-bg-inherit tw-font-press-start">
+                      <p>Try interacting with Morgana by using your mouse: click with the left button, right button, and scroll wheel!</p>
+                    </div>
+                    <img :src="imgLink" class="tw-h-20" />
+                  </div>
+                </section>
+
+                <section class="message -left">
+                  <div>
+                    <img :src="imgLink" class="tw-h-20" />
+                    <div class="nes-balloon tw-bg-inherit tw-font-press-start">
+                      <p>Click on the arrows at home to change your outfits when dressing yourself up!</p>
+                    </div>
+                  </div>
+                </section>
+              </section>
+            </section>
+          </div>
+        </div>
+
         <!-- Carousel 5 -->
         <div class="carousel-item">
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
@@ -147,48 +191,11 @@
                   <div>
                     <img :src="imgLink" class="tw-h-20" />
                     <div class="nes-balloon tw-bg-inherit tw-font-press-start">
-                      <p>Move around with the <strong>arrow keys</strong>!</p>
+                      <p>Move around with the arrow keys!</p>
                     </div>
                   </div>
                 </section>
 
-                <!-- Arrow Key Div-->
-                <div>
-                  <button
-                    @mousedown="toggleButtonState('up', true)"
-                    @mouseup="toggleButtonState('up', false)"
-                    @mouseleave="toggleButtonState('up', false)"
-                    :class="buttonClass('up')"
-                  >
-                    ↑</button
-                  ><br />
-                  <button
-                    @mousedown="toggleButtonState('left', true)"
-                    @mouseup="toggleButtonState('left', false)"
-                    @mouseleave="toggleButtonState('left', false)"
-                    :class="buttonClass('left')"
-                  >
-                    ←
-                  </button>
-                  <button
-                    @mousedown="toggleButtonState('down', true)"
-                    @mouseup="toggleButtonState('down', false)"
-                    @mouseleave="toggleButtonState('down', false)"
-                    :class="buttonClass('down')"
-                  >
-                    ↓
-                  </button>
-                  <button
-                    @mousedown="toggleButtonState('right', true)"
-                    @mouseup="toggleButtonState('right', false)"
-                    @mouseleave="toggleButtonState('right', false)"
-                    :class="buttonClass('right')"
-                  >
-                    →
-                  </button>
-                </div>
-
-                <br />
                 <section class="message -right">
                   <div>
                     <div class="nes-balloon tw-font-press-start">
@@ -205,6 +212,10 @@
                     src="/assets/mainassets/warning.png"
                     class="tw-h-[100px]"
                   />
+                  <img
+                    src="/assets/mainassets/exclamation.png"
+                    class="tw-h-[100px]"
+                  />
                 </div>
               </section>
             </section>
@@ -214,7 +225,7 @@
         <!-- Carousel 6 -->
         <div class="carousel-item">
           <div class="nes-container is-centered is-rounded tw-bg-[#FFF5CD]">
-            <p class="tw-font-press-start">Locate yourself!</p>
+            <p class="tw-font-press-start">Everything you need to get started!</p>
             <section class="nes-container">
               <section class="message-list">
                 <section class="message -left">
@@ -229,7 +240,7 @@
 
                 <div>
                   <img
-                    src="/assets/mainassets/minimap.png"
+                    src="/assets/mainassets/gameMinimap_withOrangeStar.png"
                     class="tw-h-[200px]"
                   />
                 </div>
@@ -345,35 +356,36 @@ export default {
     toggleButtonState(direction, isPressed) {
       this.buttonPressed[direction] = isPressed;
     },
-    handleKeydown(event) {
-      if (event.key === "ArrowUp") {
-        this.toggleButtonState("up", true);
-      } else if (event.key === "ArrowLeft") {
-        this.toggleButtonState("left", true);
-      } else if (event.key === "ArrowDown") {
-        this.toggleButtonState("down", true);
-      } else if (event.key === "ArrowRight") {
-        this.toggleButtonState("right", true);
-      }
-    },
-    handleKeyup(event) {
-      if (event.key === "ArrowUp") {
-        this.toggleButtonState("up", false);
-      } else if (event.key === "ArrowLeft") {
-        this.toggleButtonState("left", false);
-      } else if (event.key === "ArrowDown") {
-        this.toggleButtonState("down", false);
-      } else if (event.key === "ArrowRight") {
-        this.toggleButtonState("right", false);
-      }
-    },
-    buttonClass(direction) {
-      return {
-        "nes-btn": true,
-        "is-primary": !this.buttonPressed[direction],
-        "is-success": this.buttonPressed[direction],
-      };
-    },
+    // Removal of arrow keys
+    // handleKeydown(event) {
+    //   if (event.key === "ArrowUp") {
+    //     this.toggleButtonState("up", true);
+    //   } else if (event.key === "ArrowLeft") {
+    //     this.toggleButtonState("left", true);
+    //   } else if (event.key === "ArrowDown") {
+    //     this.toggleButtonState("down", true);
+    //   } else if (event.key === "ArrowRight") {
+    //     this.toggleButtonState("right", true);
+    //   }
+    // },
+    // handleKeyup(event) {
+    //   if (event.key === "ArrowUp") {
+    //     this.toggleButtonState("up", false);
+    //   } else if (event.key === "ArrowLeft") {
+    //     this.toggleButtonState("left", false);
+    //   } else if (event.key === "ArrowDown") {
+    //     this.toggleButtonState("down", false);
+    //   } else if (event.key === "ArrowRight") {
+    //     this.toggleButtonState("right", false);
+    //   }
+    // },
+    // buttonClass(direction) {
+    //   return {
+    //     "nes-btn": true,
+    //     "is-primary": !this.buttonPressed[direction],
+    //     "is-success": this.buttonPressed[direction],
+    //   };
+    // },
   },
 };
 </script>

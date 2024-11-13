@@ -131,6 +131,56 @@
         id="navbarSupportedContent"
       >
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <!-- START OF REMOVE -->
+
+          <!-- li class="nav-item">
+            <RouterLink
+              class="nav-link"
+              to="/market"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Market</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <a>Test</a>
+            <RouterLink
+              class="nav-link"
+              to="/bakery"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Bakery</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <RouterLink
+              class="nav-link"
+              to="/bank"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Bank</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <RouterLink
+              class="nav-link"
+              to="/school"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >School</RouterLink
+            >
+          </li>
+          <li class="nav-item">
+            <RouterLink
+              class="nav-link"
+              to="/timerbar"
+              aria-current="page"
+              style="text-decoration: none; color: black"
+              >Timer</RouterLink
+            >
+          </li-->
+
+          <!-- END OF REMOVE -->
           <li
             class="nav-item first-item"
             :class="{ active: isGameActive }"
@@ -344,6 +394,65 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fff5cd;
+  transition: transform 0.2s ease;
+  transform: translateY(0);
+  width: 100vw;
+}
+
+.navbar.hidden {
+  transform: translateY(-100%);
+}
+
+.nav-item {
+  padding-left: 15px;
+}
+
+.nav-item a {
+  position: relative;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.nav-item a:hover {
+  transform: scale(1.1);
+  color: #ffcfb3;
+}
+
+.nav-item a:hover::after,
+.nav-item.active a::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 50%;
+  filter: blur(2px);
+  opacity: 0.9;
+  transition: opacity 0.5s ease, filter 0.5s ease;
+}
+.profile-icon:hover {
+  animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+</style>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
