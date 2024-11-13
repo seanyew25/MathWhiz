@@ -61,6 +61,7 @@ const routes = [
   { path: "/story", component: StoryPage },
   { path: "/shop", component: ShopPage },
   { path: "/catchangingroom", component: CatChangingRoom },
+  { path: "/characterchangingroom", component: CharacterChangingRoom },
   // { path: "/timerbar", component: TimerBar },
 ];
 
