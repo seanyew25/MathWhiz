@@ -1,5 +1,4 @@
 <template>
-
   <!-- Welcome to Mathwhiz Hero Video Container -->
   <div class="hero">
     <video class="hero-video" autoplay muted loop playsinline>
@@ -13,7 +12,7 @@
       </h1>
     </div>
   </div>
-  
+
   <!-- 2nd Div - Mathwhiz vision -->
   <div class="background-container">
     <h1 class="tw-font-russo-one">Bringing Math to Life!</h1>
@@ -96,22 +95,22 @@
     </div>
     <div class="tw-flex tw-flex-col tw-items-center">
       <button
-          v-if="!isAuthenticated"
-          @click="openModal"
-          class="nes-btn is-primary"
-          type="submit"
-          data-bs-target="#getStartedModal"
-          data-bs-toggle="modal"
-        >
-          Get Started!
-        </button>
-        <button
-          v-else
-          class="nes-btn is-disabled"
-          disabled
-          title="You're already signed in!"
-        >
-          Already Signed In
+        v-if="!isAuthenticated"
+        @click="openModal"
+        class="nes-btn is-primary"
+        type="submit"
+        data-bs-target="#getStartedModal"
+        data-bs-toggle="modal"
+      >
+        Get Started!
+      </button>
+      <button
+        v-else
+        class="nes-btn is-disabled"
+        disabled
+        title="You're already signed in!"
+      >
+        Already Signed In
       </button>
     </div>
   </div>
@@ -120,6 +119,14 @@
 <style>
 :root {
   --tw-content: "";
+}
+
+.nes-btn {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
 }
 
 .hero {

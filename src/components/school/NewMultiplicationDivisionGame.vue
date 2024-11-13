@@ -40,17 +40,25 @@
           >
             <p class="title">Hint</p>
             <p class="tw-text-lg tw-mb-4">
-              Click on the multiplication or division operator to visualise the question!<br>
-              For <strong>multiplication</strong>, you'll see a table with rows and column <br>
-              For <strong>division</strong>, you'll see a number of different coloured groups corresponding to the quotient of the equation
+              Click on the multiplication or division operator to visualise the
+              question!<br />
+              For <strong>multiplication</strong>, you'll see a table with rows
+              and column <br />
+              For <strong>division</strong>, you'll see a number of different
+              coloured groups corresponding to the quotient of the equation
             </p>
-              
+
             <!-- Button-->
-              <div class="tw-flex tw-gap-8 tw-justify-center">
-                <button @click="showHintModal = false" class="nes-btn is-success tw-w-auto">I Understand!</button>
-              </div>
+            <div class="tw-flex tw-gap-8 tw-justify-center">
+              <button
+                @click="showHintModal = false"
+                class="nes-btn is-success tw-w-auto"
+              >
+                I Understand!
+              </button>
             </div>
           </div>
+        </div>
 
         <!-- Timer Bar -->
         <div class="progress-container">
@@ -108,7 +116,7 @@
                   >
                     {{ item.item }}
                   </span>
-                </transition-group> 
+                </transition-group>
 
                 <!-- Equals Sign -->
                 <span>=</span>
@@ -116,42 +124,44 @@
 
               <!-- Multiplication Table Overlay -->
 
-  <div
-    v-if="showMultiplicationGrid && currentQuestion.operator === '×'"
-    class="multiplication-table-overlay"
-  >
-    <!-- Column headers for 1 to 10 -->
-    <div class="multiplication-grid-header">
-      <span class="row-label"></span>
-      <!-- Column numbers from 1 to 10 -->
-      <span
-        v-for="col in 10"
-        :key="'col-' + col"
-        class="column-number"
-      >
-        {{ col }}
-      </span>
-    </div>
-    <!-- Rows with row labels and emojis -->
-    <div
-      v-for="(row, rowIndex) in multiplicationTableRows"
-      :key="rowIndex"
-      class="multiplication-grid-row"
-    >
-      <span class="row-label">{{ rowIndex + 1 }}</span>
-      <!-- Row label -->
-      <span
-        v-for="(emoji, index) in row"
-        :key="index"
-        class="multiplication-emoji"
-      >
-        {{ emoji }}
-      </span>
-    </div>
-  </div>
-</div>
-</div>
-</transition>
+              <div
+                v-if="
+                  showMultiplicationGrid && currentQuestion.operator === '×'
+                "
+                class="multiplication-table-overlay"
+              >
+                <!-- Column headers for 1 to 10 -->
+                <div class="multiplication-grid-header">
+                  <span class="row-label"></span>
+                  <!-- Column numbers from 1 to 10 -->
+                  <span
+                    v-for="col in 10"
+                    :key="'col-' + col"
+                    class="column-number"
+                  >
+                    {{ col }}
+                  </span>
+                </div>
+                <!-- Rows with row labels and emojis -->
+                <div
+                  v-for="(row, rowIndex) in multiplicationTableRows"
+                  :key="rowIndex"
+                  class="multiplication-grid-row"
+                >
+                  <span class="row-label">{{ rowIndex + 1 }}</span>
+                  <!-- Row label -->
+                  <span
+                    v-for="(emoji, index) in row"
+                    :key="index"
+                    class="multiplication-emoji"
+                  >
+                    {{ emoji }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </transition>
 
         <div class="nes-field is-inline mb-4">
           <input
@@ -184,14 +194,11 @@
 
         <!-- Streak Message -->
         <transition name="fade">
-        <div
-          v-if="streakActive"
-          class="bonus-round text-center mb-4"
-        >
-          <i class="nes-icon trophy is-large"></i>
-          <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
-          <i class="nes-icon trophy is-large"></i>
-        </div>
+          <div v-if="streakActive" class="bonus-round text-center mb-4">
+            <i class="nes-icon trophy is-large"></i>
+            <p class="tw-mx-6">On a streak! x2 coins enabled!</p>
+            <i class="nes-icon trophy is-large"></i>
+          </div>
         </transition>
 
         <!--Game Over Dialogue Box-->
@@ -235,7 +242,6 @@
             </menu>
           </form>
         </dialog>
-
       </div>
     </div>
   </div>
@@ -243,7 +249,13 @@
 
 <script>
 import { getAuth } from "firebase/auth";
-import { getFirestore, doc, setDoc, getDoc, arrayUnion } from "firebase/firestore";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  arrayUnion,
+} from "firebase/firestore";
 const emojiSet = ["🚗", "🏀", "🌍", "💡", "📚", "💻", "🏫", "👨‍🏫", "📏", "🔢"];
 const getRandomEmoji = () =>
   emojiSet[Math.floor(Math.random() * emojiSet.length)];
@@ -274,8 +286,15 @@ const generateQuestion = () => {
     .fill(selectedEmoji)
     .map((item) => ({ item, hide: false }));
 
-
-  return { leftItems, rightItems, operator, leftNumber, rightNumber, correct, selectedEmoji, };
+  return {
+    leftItems,
+    rightItems,
+    operator,
+    leftNumber,
+    rightNumber,
+    correct,
+    selectedEmoji,
+  };
 };
 
 export default {
@@ -567,6 +586,44 @@ export default {
 
 * {
   font-family: "Press Start 2P", sans-serif;
+}
+
+.nes-container.is-rounded {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-btn {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-progress {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-input {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-input.is-success,
+.nes-textarea.is-success {
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(146,204,65)" /></svg>');
+  outline-color: #76c442;
 }
 
 body {

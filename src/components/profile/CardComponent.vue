@@ -1,18 +1,19 @@
 <template>
   <button @click="handleCardClick" class="card" ref="cardButton">
     <div
-      class="card-front tw-w-60 tw-h-[327px] tw-rounded-lg border border-dark border-5 animate__animated animate__zoomIn"
+      class="card-front tw-w-60 tw-h-[327px] nes-container is-rounded animate__animated animate__zoomIn tw-bg-black"
       :class="rarityShadow"
+      style="padding: 0; border-width: 3px"
     >
       <div
         class="tw-p-2 tw-text-center tw-items-center border-bottom border-dark border-5"
         :class="rarityHeaders"
       >
-        <p class="tw-font-russo-one tw-text-xl">
+        <p class="tw-font-press-start tw-text-xl">
           {{ catObj.name }}
         </p>
         <div
-          class="rarity tw-text-xs tw-mt-1 tw-font-bold"
+          class="rarity tw-text-xs tw-mt-1 tw-font-bold tw-font-press-start"
           :class="rarityTextColor"
         >
           {{ catObj.rarity }}
@@ -33,7 +34,7 @@
         class="tw-h-20 tw-flex-1 border-top border-dark border-5 tw-p-2 tw-justify-center tw-text-center tw-items-center"
         :class="rarityDescriptions"
       >
-        <p class="tw-text-sm" style="font-family: monospace">
+        <p class="tw-text-xs tw-font-press-start">
           {{ catObj.description }}
         </p>
       </div>
@@ -43,10 +44,10 @@
         :class="rarityPrices"
       >
         <div class="tw-flex tw-items-center tw-ml-1">
-          <span class="tw-font-russo-one tw-mr-1"
-            >{{ catObj.name === "Furless" ? "Ꝏ" : catObj.price }}
-          </span>
-          <i class="nes-icon coin is-small"></i>
+          <span
+            >{{ catObj.name === "Furless" ? "0" : catObj.price
+            }}<i class="nes-icon coin is-small"></i
+          ></span>
         </div>
 
         <button
@@ -61,14 +62,15 @@
     </div>
 
     <div
-      class="card-back tw-w-60 tw-rounded-lg tw-h-[328px] border border-dark border-5"
+      class="card-back tw-w-60 tw-h-[327px] nes-container is-rounded tw-bg-black"
       :class="rarityShadow"
+      style="padding: 0; border-width: 3px"
     >
       <div
         class="tw-p-2 tw-text-center tw-items-center border-bottom border-dark border-5"
         :class="rarityHeaders"
       >
-        <p class="tw-font-russo-one tw-text-xl">
+        <p class="tw-font-press-start tw-text-xl">
           {{ catObj.name }}
         </p>
         <div
@@ -102,13 +104,13 @@
                 >Coolness</span
               >
               <span class="tw-text-xs" style="font-family: monospace"
-                >{{ catObj.cuteness }}%</span
+                >{{ catObj.coolness }}%</span
               >
             </div>
             <progress
               class="nes-progress"
               :class="rarityStatBars"
-              :value="catObj.cuteness"
+              :value="catObj.coolness"
               max="100"
             ></progress>
           </div>
@@ -141,6 +143,14 @@
 .nes-btn.is-success {
   color: #fff;
   background-color: #92cc41;
+}
+
+.nes-container.is-rounded {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
 }
 
 .nes-btn.is-success::after {
@@ -378,9 +388,9 @@ export default {
     },
     rarityTextColor() {
       return {
-        "tw-text-gray-600 tw-font-russo-one": this.catObj.rarity === "Common",
-        "tw-text-green-600 tw-font-russo-one": this.catObj.rarity === "Rare",
-        "tw-text-yellow-600 tw-font-russo-one":
+        "tw-text-gray-600 tw-font-press-start": this.catObj.rarity === "Common",
+        "tw-text-green-600 tw-font-press-start": this.catObj.rarity === "Rare",
+        "tw-text-yellow-600 tw-font-press-start":
           this.catObj.rarity === "Super Rare",
       };
     },
