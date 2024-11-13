@@ -309,7 +309,6 @@ export default {
       const coinsToAward = this.currentQuestion <= 5 ? 1 : 2; //to determine if need to award 1 or 2 coins
       await this.animateCoinEarning(coinsToAward);
       await this.vibrateCoinsEarned();// Wait for vibration to finish.. DOUBLE CHECK IF USE THIS OR PROMISE
-
     },
     animateCoinEarning(count) {
       const counterRect = this.$el.querySelector('.counter-frame-container').getBoundingClientRect();
