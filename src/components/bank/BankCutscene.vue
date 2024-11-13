@@ -7,9 +7,7 @@
       class="nes-container is-rounded is-centered with-title tw-max-w-3xl"
       style="background-color: rgba(255, 245, 205, 1)"
     >
-      <p class="title" style="background-color: rgba(255, 245, 205, 1)">
-        Supermarket
-      </p>
+      <p class="title" style="background-color: rgba(255, 245, 205, 1)">Bank</p>
       <div
         class="tw-max-w-3xl tw-min-h-[450px] tw-flex tw-flex-col tw-items-center tw-justify-center"
         @click="toggleAnimation"
@@ -56,20 +54,11 @@
             <button
               @click="
                 $emit('end-cutscene');
-                $emit('go-to-counting');
+                $emit('go-to-bank-game');
               "
               class="wiggle-button nes-btn is-primary"
             >
-              Go to Counting!
-            </button>
-            <button
-              @click="
-                $emit('end-cutscene');
-                $emit('go-to-ordering');
-              "
-              class="wiggle-button nes-btn is-success"
-            >
-              Go to Ordering!
+              Go to Counting Money!
             </button>
           </div>
         </div>
