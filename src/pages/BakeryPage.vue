@@ -64,7 +64,7 @@
             <div class="col-11 text-center math-game">
               <TimerBar
                 ref="timerBar"
-                :initial-time="5"
+                :initial-time="20"
                 :is-running="isTimerRunning"
                 @timerExpired="handleTimerExpired"
               />
@@ -233,7 +233,7 @@
                   Type into your keyboard the numbers that make up the <br />
                   numerator and denominator of the fraction. <br /><br />
                   You do not need to simplify the fractions.<br /><br />
-                  You have <strong>5</strong> seconds for each question. Good
+                  You have <strong>20</strong> seconds for each question. Good
                   luck!
                 </p>
                 <menu class="dialog-menu center-button">

@@ -11,7 +11,7 @@
 
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <TimerBar ref="timerBar" :initial-time="10" :is-running="isTimerRunning" @timerExpired="handleTimerExpired" />
+        <TimerBar ref="timerBar" :initial-time="20" :is-running="isTimerRunning" @timerExpired="handleTimerExpired" />
       </div>
     </div>
     <transition name="fade">
@@ -142,7 +142,7 @@
               Given how much he wants to deposit, help him drag the coins from<br />
                  each piggy bank to the counter while using the least amount of coins.<br /><br />
                  He is very generous and will tip you some destress coins. <br><br>
-              You have <strong>10</strong> seconds for
+              You have <strong>20</strong> seconds for
               each question. Good luck!
             </p>
             <menu class="dialog-menu center-button">
