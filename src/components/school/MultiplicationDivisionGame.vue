@@ -562,6 +562,7 @@ export default {
     restartGame() {
       this.gameOver = false;
       this.completionMessage = "";
+      this.totalCoins += this.coins;
       this.coins = 0;
       this.correctAnswersInRow = 0;
       this.streakActive = false;
@@ -575,7 +576,6 @@ export default {
       console.log("Exiting game");
     },
     startGame() {
-      this.gameStarted = true;
       this.startTimer();
     },
   },
@@ -873,6 +873,5 @@ body {
   }
 }
 
-/* ... existing styles ... */
 </style>
 
