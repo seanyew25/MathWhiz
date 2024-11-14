@@ -1,6 +1,6 @@
 # MathWhiz
-MathWhiz is a web application that aims to help lower-primary students in Singapore learn math. It was created for IS216, Web App Development II, a core module for a degree in Information Systems at Singapore Management University.
-URL to hosted application: https://mathwhiz-f717a.web.app/ 
+MathWhiz is a web application that aims to help lower-primary students in Singapore learn math. It was created for IS216, Web App Development II, a core module for a degree in Information Systems at Singapore Management University.  
+URL to hosted application: https://mathwhiz-f717a.web.app/  
 URL to git repo: https://github.com/seanyew25/MathWhiz
 
 ## Installation
