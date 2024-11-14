@@ -231,10 +231,10 @@ export default {
               (cat) => !purchasedCatNames.has(cat.name)
             );
           } else {
-            console.log("No purchasedCats data!");
+            // console.log("No purchasedCats data!");
           }
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -264,7 +264,7 @@ export default {
       if (this.money >= catObj.price) {
         this.money -= catObj.price;
         this.purchasedCats.push(catObj);
-        console.log(this.purchasedCats);
+        // console.log(this.purchasedCats);
         this.cats = this.cats.filter((cat) => cat.name !== catObj.name);
         this.updateCats(
           this.db,

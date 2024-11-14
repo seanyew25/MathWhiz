@@ -448,7 +448,7 @@ export default {
         if (docSnap.exists()) {
           this.money = docSnap.data().currency;
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -458,7 +458,7 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log("Currency successfully written!");
+        // console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
       }
@@ -471,7 +471,7 @@ export default {
           { completedTasks: arrayUnion(newTask) },
           { merge: true }
         );
-        console.log("Task successfully added to completedTasks!");
+        // console.log("Task successfully added to completedTasks!");
       } catch (error) {
         console.error("Error updating document: ", error);
       }
@@ -510,7 +510,7 @@ export default {
     },
     exitGame() {
       this.router.push("/game");
-      console.log("Exiting game");
+      // console.log("Exiting game");
     },
     startGame() {
       this.startTimer();
@@ -534,7 +534,7 @@ export default {
 
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
     const auth = getAuth();
-    console.log(`uid=${auth.currentUser.uid}`);
+    // console.log(`uid=${auth.currentUser.uid}`);
     const db = getFirestore();
     this.db = db;
     this.auth = auth;

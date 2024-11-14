@@ -406,12 +406,12 @@ export default {
     },
     handleEquipClick() {
       if (this.equippedCat.name !== this.catObj.name) {
-        console.log(this.catObj);
-        console.log(`equippedCat: ${JSON.stringify(this.equippedCat)}`);
+        // console.log(this.catObj);
+        // console.log(`equippedCat: ${JSON.stringify(this.equippedCat)}`);
         this.$emit("equipAction", this.catObj);
       } else {
-        console.log("equippedCat is the same as catObj");
-        console.log(`equippedCat: ${JSON.stringify(this.equippedCat)}`);
+        // console.log("equippedCat is the same as catObj");
+        // console.log(`equippedCat: ${JSON.stringify(this.equippedCat)}`);
       }
     },
   },

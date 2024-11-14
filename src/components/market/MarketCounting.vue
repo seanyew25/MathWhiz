@@ -266,7 +266,7 @@ export default {
 
     const handleTimeOut = () => {
       playSound(false);
-      console.log("counting, time, playing sound");
+      // console.log("counting, time, playing sound");
       resetStreak();
       loadNextQuestion();
     };
@@ -481,7 +481,7 @@ export default {
         setTimeout(() => {
           showItemCountOverlay(hundredsBox.value, 0);
           playSound(false);
-          console.log("counting, zero, playing sound");
+          // console.log("counting, zero, playing sound");
         }, 200);
 
         // Load the next question after displaying zeros
@@ -549,7 +549,7 @@ export default {
           }
         } else {
           playSound(false);
-          console.log("counting, wrong, playing sound");
+          // console.log("counting, wrong, playing sound");
           resetStreak();
         }
 
@@ -769,12 +769,12 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
+          // console.log("Document data:", doc.data());
           money.value = doc.data().currency;
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -785,8 +785,8 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log(currency);
-        console.log("Currency successfully written!");
+        // console.log(currency);
+        // console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
       }
@@ -805,7 +805,7 @@ export default {
           { completedTasks: arrayUnion(newTask) },
           { merge: true }
         );
-        console.log("Task successfully added to completedTasks!");
+        // console.log("Task successfully added to completedTasks!");
       } catch (error) {
         console.error("Error updating document: ", error);
       }
@@ -834,11 +834,11 @@ export default {
 
     onMounted(() => {
       const authObj = getAuth();
-      console.log(`uid=${authObj.currentUser.uid}`);
+      // console.log(`uid=${authObj.currentUser.uid}`);
       const dbInstance = getFirestore();
       db.value = dbInstance;
       auth.value = authObj;
-      console.log(db);
+      // console.log(db);
       getCurrency(dbInstance, "users", authObj.currentUser.uid);
       showTutorial();
       targetNumber.value = getRandomNumber(1, 999);

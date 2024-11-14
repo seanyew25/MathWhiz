@@ -447,7 +447,7 @@ export default {
     // });
 
     const exitGame = () => {
-      console.log("Exiting game");
+      // console.log("Exiting game");
     };
 
     watch(score, (newScore) => {
