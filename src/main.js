@@ -19,14 +19,13 @@ import { getFirestore } from "firebase/firestore";
 import GamePage from "./pages/GamePage.vue";
 import LandingPage from "./pages/LandingPage.vue";
 import ProfilePage from "./pages/profile/ProfilePage.vue";
-import Market from "./pages/Market.vue";
+import MarketPage from "./pages/MarketPage.vue";
 import SchoolPage from "./pages/SchoolPage.vue";
 import BakeryPage from "./pages/BakeryPage.vue";
 import BankPage from "./pages/BankPage.vue";
 import StoryPage from "./pages/StoryPage.vue";
 import ShopPage from "./pages/ShopPage.vue";
 import CatChangingRoom from "./pages/profile/CatChangingRoom.vue";
-// import TimerBar from "./pages/Timerbar.vue";
 import CharacterChangingRoom from "./pages/profile/CharacterChangingRoom.vue";
 
 // import BankPage from "./components/BankPage.vue";
@@ -54,7 +53,7 @@ const routes = [
   { path: "/game", component: GamePage },
   { path: "/", component: LandingPage },
   { path: "/profile", component: ProfilePage },
-  { path: "/market", component: Market },
+  { path: "/market", component: MarketPage },
   { path: "/school", component: SchoolPage },
   { path: "/bakery", component: BakeryPage },
   { path: "/bank", component: BankPage },
@@ -62,7 +61,6 @@ const routes = [
   { path: "/shop", component: ShopPage },
   { path: "/catchangingroom", component: CatChangingRoom },
   { path: "/characterchangingroom", component: CharacterChangingRoom },
-  // { path: "/timerbar", component: TimerBar },
 ];
 
 const router = createRouter({

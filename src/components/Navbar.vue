@@ -506,7 +506,7 @@ const defaultPlayer = ref({
 
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
-    console.log(user);
+    // console.log(user);
     userData.value = user;
     isAuthenticated.value = user !== null;
     getEquippedPlayer(db, "users", userData.value.uid);
@@ -576,16 +576,16 @@ async function createUserProfile(userId) {
     },
     { merge: true }
   );
-  console.log(userRef);
+  // console.log(userRef);
 }
 
 async function getEquippedPlayer(db, collectionName, documentId) {
   const docRef = doc(db, collectionName, documentId);
   try {
     const doc = await getDoc(docRef);
-    console.log(doc);
+    // console.log(doc);
     if (doc.exists()) {
-      console.log("Document data:", doc.data());
+      // console.log("Document data:", doc.data());
       if (doc.data().equippedPlayer) {
         globalState.playerImgLink = doc.data().equippedPlayer.imgLocation;
       } else {

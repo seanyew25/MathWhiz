@@ -218,9 +218,9 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
+          // console.log("Document data:", doc.data());
           this.money = doc.data().currency;
           if (doc.data().purchasedCats) {
             this.purchasedCats = doc.data().purchasedCats;
@@ -244,7 +244,7 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log("Currency successfully written!");
+        // console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
       }
@@ -253,14 +253,14 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { purchasedCats: purchasedCats }, { merge: true });
-        console.log("purchasedCats successfully written!");
+        // console.log("purchasedCats successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
       }
     },
     async handleBuyAction(catObj) {
-      console.log(this.money);
-      console.log(catObj.price);
+      // console.log(this.money);
+      // console.log(catObj.price);
       if (this.money >= catObj.price) {
         this.money -= catObj.price;
         this.purchasedCats.push(catObj);
@@ -296,11 +296,11 @@ export default {
   },
   mounted() {
     const auth = getAuth();
-    console.log(`uid=${auth.currentUser.uid}`);
+    // console.log(`uid=${auth.currentUser.uid}`);
     const db = getFirestore();
     this.db = db;
     this.auth = auth;
-    console.log(db);
+    // console.log(db);
     this.getCurrencyAndPurchasedCats(db, "users", auth.currentUser.uid);
   },
 };

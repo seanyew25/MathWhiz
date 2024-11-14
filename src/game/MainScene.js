@@ -66,7 +66,7 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 48,
       frameHeight: 32,
     });
-    console.log(this.initialData.equippedCat);
+    // console.log(this.initialData.equippedCat);
     this.load.spritesheet(
       "cat",
       `${basePath}/sprites/cats/${this.initialData.equippedCat}.png`,
@@ -290,7 +290,7 @@ export default class MainScene extends Phaser.Scene {
 
     // PLAYER CREATION AND SPAWN POINT
     // this.player = this.physics.add.sprite(736, 780, "player", 3);
-    console.log(`initial = ${JSON.stringify(this.initialData.spawnLocation)}`);
+    // console.log(`initial = ${JSON.stringify(this.initialData.spawnLocation)}`);
     let playerX = this.initialData.spawnLocation.x;
     let playerY = this.initialData.spawnLocation.y;
     let playerPositionTile = "test";
@@ -304,7 +304,7 @@ export default class MainScene extends Phaser.Scene {
         break;
       } else {
         //IF PLAYER STANDING ON COLLIDING TILE, SHIFT PLAYER DOWN
-        console.log("player shift down");
+        // console.log("player shift down");
         playerY += 10;
       }
     }
@@ -332,7 +332,7 @@ export default class MainScene extends Phaser.Scene {
     this.cat.body.setCollideWorldBounds(true);
     this.player.body.onWorldBounds = true;
     this.physics.world.on("worldbounds", (body) => {
-      console.log("worldbounds");
+      // console.log("worldbounds");
       if (body.gameObject === this.player) {
         this.cat.body.setVelocity(0);
         this.cat.x = this.player.x + this.catOffsetX;
@@ -417,7 +417,7 @@ export default class MainScene extends Phaser.Scene {
       this.cat.y = this.player.y + this.catOffsetY;
     });
     this.physics.add.collider(this.cat, this.player, () => {
-      console.log("cat collided with player");
+      // console.log("cat collided with player");
       // this.cat.setVisible(false);
       let catTeleportLocationX = this.player.x + this.catOffsetX;
       let catTeleportLocationY = this.player.y + this.catOffsetY;
@@ -593,7 +593,7 @@ export default class MainScene extends Phaser.Scene {
     });
 
     this.cat.on("pointerdown", (pointer) => {
-      console.log("cat clicked");
+      // console.log("cat clicked");
       if (pointer.leftButtonDown()) {
         this.cat.anims.play("cat-looking-around", true);
       } else if (pointer.rightButtonDown()) {
@@ -604,10 +604,10 @@ export default class MainScene extends Phaser.Scene {
 
       if (this.cat.anims.isPlaying) {
         const currentAnimationName = this.cat.anims.currentAnim.key; // Get the name of the current animation
-        console.log("Current animation playing: ", currentAnimationName);
+        // console.log("Current animation playing: ", currentAnimationName);
       }
       this.cat.on("animationcomplete", (animation) => {
-        console.log(`Animation completed: ${animation.key}`);
+        // console.log(`Animation completed: ${animation.key}`);
 
         if (animation.key === "cat-looking-around") {
           // Set the sprite directly to frame 65 after the animation ends
@@ -666,7 +666,7 @@ export default class MainScene extends Phaser.Scene {
     // });
     this.catOverlapStatus = false;
     this.events.on("catOverlapWithCollisionBlocks", (cat) => {
-      console.log("cat is overlapping with collision blocks");
+      // console.log("cat is overlapping with collision blocks");
       this.catOverlapStatus = true;
     });
 
@@ -807,7 +807,7 @@ export default class MainScene extends Phaser.Scene {
       currentDirection.x !== this.prevDirection.x ||
       currentDirection.y !== this.prevDirection.y
     ) {
-      console.log("direction changed");
+      // console.log("direction changed");
       this.directionChanged = true; // Set flag if direction has changed
       // console.log("Direction changed");
     }
@@ -878,7 +878,7 @@ export default class MainScene extends Phaser.Scene {
 
     if (catPositionTile != null) {
       this.events.emit("catOverlapWithCollisionBlocks", this.cat);
-      console.log(catPositionTile);
+      // console.log(catPositionTile);
     } else {
       this.catOverlapStatus = false;
     }
@@ -919,8 +919,8 @@ export default class MainScene extends Phaser.Scene {
 export function initializePhaser(equippedPlayer, equippedCat, playerCoords) {
   const config = {
     type: Phaser.CANVAS, // Which renderer to use
-    width: window.innerWidth, // Canvas width in pixels
-    height: window.innerHeight - 110.55, // Canvas height in pixels
+    width: "100%", // Canvas width in pixels
+    height: "100%", // Canvas height in pixels
     parent: "phaser-container", // ID of the DOM element to add the canvas to
     pixelArt: true,
     transparency: false,

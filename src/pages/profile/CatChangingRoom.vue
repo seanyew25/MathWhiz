@@ -56,9 +56,9 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
+          // console.log("Document data:", doc.data());
           if (doc.data().purchasedCats) {
             this.cats = doc.data().purchasedCats;
           } else {
@@ -78,7 +78,7 @@ export default {
     },
     async setEquippedCat(db, collectionName, documentId, catObj) {
       const docRef = doc(db, collectionName, documentId);
-      console.log(catObj);
+      // console.log(catObj);
       this.equippedCat = catObj;
       try {
         const doc = await setDoc(
@@ -88,17 +88,17 @@ export default {
           },
           { merge: true }
         );
-        console.log(doc);
+        // console.log(doc);
       } catch (error) {
         console.error("Error setting document:", error);
       }
     },
     handleEquipAction(catObj) {
-      console.log(catObj);
-      console.log(`equippedCat=${this.equippedCat}`);
+      // console.log(catObj);
+      // console.log(`equippedCat=${this.equippedCat}`);
       console.log(typeof this.equippedCat);
       if (catObj.name !== this.equippedCat.name) {
-        console.log("Proceeding to change equip");
+        // console.log("Proceeding to change equip");
         this.equippedCat = catObj;
         this.setEquippedCat(
           this.db,
@@ -112,7 +112,7 @@ export default {
 
   mounted() {
     const auth = getAuth();
-    console.log(`uid=${auth.currentUser.uid}`);
+    // console.log(`uid=${auth.currentUser.uid}`);
     const db = getFirestore();
     this.db = db;
     this.auth = auth;
