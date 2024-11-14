@@ -5,6 +5,13 @@ class GameOverlayScene extends Phaser.Scene {
     super("GameOverlayScene");
   }
 
+  init(data) {
+    // Access the data passed from MainScene
+    console.log("Received data:", data);
+    this.playerSpawnX = data.x;
+    this.playerSpawnY = data.y;
+  }
+
   preload() {
     this.load.image("minimap", `/assets/mainassets/gameMinimap.png`);
   }
@@ -45,14 +52,14 @@ class GameOverlayScene extends Phaser.Scene {
       this.playerPosition = this.add.graphics();
     }
     this.playerPosition.clear(); // Clear previous drawings
-    this.playerPosition.fillStyle(0xff8c00, 1);
+    this.playerPosition.fillStyle(0xffa500, 1);
 
     // Define star parameters
     const radius = 12.8;
     const points = 5; // 5-point star
 
-    this.playerX = 736;
-    this.playerY = 768;
+    this.playerX = this.playerSpawnX;
+    this.playerY = this.playerSpawnY;
     this.minimapRatioToMap = minimap.displayWidth / minimap.width;
     const centerX = minimap.x + this.playerX * this.minimapRatioToMap; // Center X of the star
     const centerY = minimap.y + this.playerY * this.minimapRatioToMap; // Center Y of the star

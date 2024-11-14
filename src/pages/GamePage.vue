@@ -56,8 +56,6 @@ export default {
     document.addEventListener("contextmenu", (event) => {
       event.preventDefault();
     });
-    // updateNavbarHeight();
-    // window.addEventListener("resize", updateNavbarHeight);
     const navbar = document.querySelector(".navbar");
     if (navbar) {
       this.navbarHeight = navbar.offsetHeight;
