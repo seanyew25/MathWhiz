@@ -1,5 +1,18 @@
-# Vue 3 + Vite
+# MathWhiz
+MathWhiz is a web application that aims to help lower-primary students in Singapore learn math. It was created for IS216, Web App Development II, a core module for a degree in Information Systems at Singapore Management University.
+URL to hosted application: https://mathwhiz-f717a.web.app/ 
+URL to git repo: https://github.com/seanyew25/MathWhiz
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## Installation
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+Use the package manager npm to install files to set up MathWhiz
+
+```bash
+npm install
+npm run dev
+```
+
+## For grading
+We created an account with more of the game currency to help our graders evaluate our project.
+Email: is216@gmail.com
+Password: is216-2024
