@@ -454,7 +454,6 @@
 }
 </style>
 
-
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from "vue";
 import {
@@ -570,7 +569,7 @@ async function createUserProfile(userId) {
   await setDoc(
     userRef,
     {
-      currency: 0,
+      currency: 100,
       equippedCat: defaultCat.value[0],
       purchasedCats: defaultCat.value,
       equippedPlayer: defaultPlayer.value,
