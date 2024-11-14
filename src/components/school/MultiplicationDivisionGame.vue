@@ -30,7 +30,7 @@
         </div>
 
         <!-- Hint Modal -->
-        <div
+        <!-- <div
           v-if="showHintModal"
           class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50"
         >
@@ -47,13 +47,40 @@
               corresponding to the quotient of the equation.
             </p>
 
-            <!-- Button-->
             <div class="tw-flex tw-gap-8 tw-justify-center">
               <button
                 @click="showHintModal = false"
                 class="nes-btn is-success tw-w-auto"
               >
                 I Understand!
+              </button>
+            </div>
+          </div>
+        </div> -->
+        <div
+          v-if="showHintModal"
+          class="tw-fixed tw-inset-0 tw-flex tw-items-center tw-justify-center tw-bg-gray-500 tw-bg-opacity-50 tw-z-50"
+        >
+          <div
+            class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6"
+          >
+          <p class="title">Hint</p>
+            <p class="tw-text-lg tw-mb-4">
+              Click on the multiplication or division operator to visualise the
+              question!<br /><br>
+              For <strong>multiplication</strong>, you'll see a table with rows
+              and columns.<br /><br>
+              For <strong>division</strong>, you'll see different 
+              coloured groups<br>
+              corresponding to the quotient of the equation.
+            </p>
+
+            <div class="tw-flex tw-gap-8 tw-justify-center">
+              <button
+                @click="showHintModal = false"
+                class="nes-btn is-success"
+              >
+                I understand
               </button>
             </div>
           </div>
@@ -511,7 +538,7 @@ export default {
         if (docSnap.exists()) {
           this.money = docSnap.data().currency;
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -521,7 +548,7 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log("Currency successfully written!");
+        // console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
       }
@@ -534,7 +561,7 @@ export default {
           { completedTasks: arrayUnion(newTask) },
           { merge: true }
         );
-        console.log("Task successfully added to completedTasks!");
+        // console.log("Task successfully added to completedTasks!");
       } catch (error) {
         console.error("Error updating document: ", error);
       }
@@ -573,7 +600,7 @@ export default {
     },
     exitGame() {
       this.router.push("/game");
-      console.log("Exiting game");
+      // console.log("Exiting game");
     },
     startGame() {
       this.startTimer();
@@ -597,7 +624,7 @@ export default {
 
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
     const auth = getAuth();
-    console.log(`uid=${auth.currentUser.uid}`);
+    // console.log(`uid=${auth.currentUser.uid}`);
     const db = getFirestore();
     this.db = db;
     this.auth = auth;

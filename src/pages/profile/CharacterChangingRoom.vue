@@ -220,16 +220,16 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
+          // console.log("Document data:", doc.data());
           if (doc.data().equippedPlayer) {
             this.equippedPlayer = doc.data().equippedPlayer;
           } else {
-            console.log("No equippedPlayer data!");
+            // console.log("No equippedPlayer data!");
           }
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -237,7 +237,7 @@ export default {
     },
     async setEquippedPlayer(db, collectionName, documentId, playerObj) {
       const docRef = doc(db, collectionName, documentId);
-      console.log(playerObj);
+      // console.log(playerObj);
       this.equippedPlayer = playerObj;
       globalState.playerImgLink = playerObj.imgLocation;
       try {
@@ -248,17 +248,17 @@ export default {
           },
           { merge: true }
         );
-        console.log(doc);
+        // console.log(doc);
       } catch (error) {
         console.error("Error setting document:", error);
       }
     },
     handleEquipAction(playerObj) {
-      console.log(playerObj);
-      console.log(`equippedPlayer=${this.equippedPlayer}`);
-      console.log(typeof this.equippedPlayer);
+      // console.log(playerObj);
+      // console.log(`equippedPlayer=${this.equippedPlayer}`);
+      // console.log(typeof this.equippedPlayer);
       if (playerObj.name !== this.equippedPlayer.name) {
-        console.log("Proceeding to change equip");
+        // console.log("Proceeding to change equip");
         this.equippedPlayer = playerObj;
         this.setEquippedPlayer(
           this.db,
@@ -271,11 +271,11 @@ export default {
   },
   mounted() {
     const auth = getAuth();
-    console.log(`uid=${auth.currentUser.uid}`);
+    // console.log(`uid=${auth.currentUser.uid}`);
     const db = getFirestore();
     this.db = db;
     this.auth = auth;
-    console.log(db);
+    // console.log(db);
     this.getEquippedPlayer(db, "users", auth.currentUser.uid);
     // this.getPurchasedCatsAndequippedPlayer(db, "users", auth.currentUser.uid);
   },

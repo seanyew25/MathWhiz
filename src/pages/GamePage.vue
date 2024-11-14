@@ -151,10 +151,10 @@ export default {
             }
             // console.log(this.completedTasks);
           } else {
-            console.log("No completedTasks data!");
+            // console.log("No completedTasks data!");
           }
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -184,10 +184,10 @@ export default {
               this.handleDoorCollision();
             });
           } else {
-            console.log("No equippedCats data!");
+            // console.log("No equippedCats data!");
           }
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -223,7 +223,7 @@ export default {
       // console.log(`main scene: ${scene}`);
 
       if (!scene) {
-        console.error("Scene not found!");
+        // console.error("Scene not found!");
         return;
       }
       // console.log(scene);
@@ -298,7 +298,7 @@ export default {
             this.router.push("/school");
           });
         } else if (name === "bakeryDoor" && !this.doorAnimationCompleted) {
-          console.log("bakery door");
+          // console.log("bakery door");
           this.doorAnimationCompleted = true;
           // console.log(this.doorAnimationCompleted);
           const bakeryDoor = scene.add.sprite(1048, 176, "bakeryDoor", 0);

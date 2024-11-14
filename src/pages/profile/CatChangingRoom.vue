@@ -62,15 +62,15 @@ export default {
           if (doc.data().purchasedCats) {
             this.cats = doc.data().purchasedCats;
           } else {
-            console.log("No purchasedCats data!");
+            // console.log("No purchasedCats data!");
           }
           if (doc.data().equippedCat) {
             this.equippedCat = doc.data().equippedCat;
           } else {
-            console.log("No equippedCats data!");
+            // console.log("No equippedCats data!");
           }
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -96,7 +96,7 @@ export default {
     handleEquipAction(catObj) {
       // console.log(catObj);
       // console.log(`equippedCat=${this.equippedCat}`);
-      console.log(typeof this.equippedCat);
+      // console.log(typeof this.equippedCat);
       if (catObj.name !== this.equippedCat.name) {
         // console.log("Proceeding to change equip");
         this.equippedCat = catObj;
@@ -116,7 +116,7 @@ export default {
     const db = getFirestore();
     this.db = db;
     this.auth = auth;
-    console.log(db);
+    // console.log(db);
     this.getPurchasedCatsAndEquippedCat(db, "users", auth.currentUser.uid);
   },
 };

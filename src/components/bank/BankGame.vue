@@ -11,7 +11,7 @@
 
     <div class="row justify-content-center">
       <div class="col-lg-8">
-        <TimerBar ref="timerBar" :initial-time="10" :is-running="isTimerRunning" @timerExpired="handleTimerExpired" />
+        <TimerBar ref="timerBar" :initial-time="20" :is-running="isTimerRunning" @timerExpired="handleTimerExpired" />
       </div>
     </div>
     <transition name="fade">
@@ -142,7 +142,7 @@
               Given how much he wants to deposit, help him drag the coins from<br />
                  each piggy bank to the counter while using the least amount of coins.<br /><br />
                  He is very generous and will tip you some destress coins. <br><br>
-              You have <strong>10</strong> seconds for
+              You have <strong>20</strong> seconds for
               each question. Good luck!
             </p>
             <menu class="dialog-menu center-button">
@@ -326,10 +326,10 @@ export default {
       this.optimalCoinCount = dp[targetAmount] === Infinity ? -1 : dp[targetAmount];
 
       // Debug output to verify calculations
-      console.log("targetAmount (cents):", targetAmount);
-      console.log("dp[targetAmount]:", dp[targetAmount]);
-      console.log("optimalCoinCount:", this.optimalCoinCount);
-      console.log("coinsMap:", coinsMap);
+      // console.log("targetAmount (cents):", targetAmount);
+      // console.log("dp[targetAmount]:", dp[targetAmount]);
+      // console.log("optimalCoinCount:", this.optimalCoinCount);
+      // console.log("coinsMap:", coinsMap);
 
       // return this.optimalCoinCount      // return this.optimalCoinCount;
     },
@@ -477,7 +477,7 @@ export default {
       }
     },
     handleTimerExpired() { //from Timerbar.vue, when the component recognised time ran out
-      console.log("expired")//we go to next question
+      // console.log("expired")//we go to next question
       this.playCoinSound(false);
       this.nextQuestion();
     },
@@ -489,14 +489,14 @@ export default {
       const docRef = doc(this.db, this.collectionName, this.documentId);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
-          console.log("Currency data:", doc.data().currency);
+          // console.log("Document data:", doc.data());
+          // console.log("Currency data:", doc.data().currency);
           const moneyPromiseObject = doc.data().currency;
           return moneyPromiseObject
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -506,7 +506,7 @@ export default {
       const docRef = doc(this.db, this.collectionName, this.documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log("Currency successfully written!");
+        // console.log("Currency successfully written!");
         return true;
       } catch (error) {
         console.error("Error writing document: ", error);
@@ -532,7 +532,7 @@ export default {
   },
   async mounted() {
     const auth = getAuth();
-    console.log(`uid=${auth.currentUser.uid}`);
+    // console.log(`uid=${auth.currentUser.uid}`);
     // const db = getFirestore();
     // this.db = db;
     this.documentId = auth.currentUser.uid;

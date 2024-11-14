@@ -589,10 +589,10 @@ async function getEquippedPlayer(db, collectionName, documentId) {
       if (doc.data().equippedPlayer) {
         globalState.playerImgLink = doc.data().equippedPlayer.imgLocation;
       } else {
-        console.log("No equippedPlayer data!");
+        // console.log("No equippedPlayer data!");
       }
     } else {
-      console.log("No such document!");
+      // console.log("No such document!");
     }
   } catch (error) {
     console.error("Error getting document:", error);

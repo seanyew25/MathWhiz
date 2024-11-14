@@ -11,7 +11,7 @@
         Addition and Subtraction
       </p>
 
-      <div class="p-6 w-[400px] h-[300px] mx-auto">
+      <div class="p-6 h-[300px] mx-auto">
         <!-- Instructions and Hint -->
         <div class="tw-flex tw-items-center tw-justify-center tw-mb-4">
           <h1 class="tw-text-3xl text-center align-center">
@@ -38,13 +38,13 @@
             class="tw-bg-white nes-container is-centered is-rounded with-title tw-p-6"
           >
             <p class="title">Hint</p>
-            <p class="tw-text-lg tw-mb-4">
-              Click on the addition or subtraction operator to visualize the question!<br>
-              For <strong>addition</strong>, you'll see a table with rows and columns.<br>
-              For <strong>subtraction</strong>, you'll see the remaining amount after the corresponding amount has faded away.
-            </p>
+            <!-- <p class="tw-text-lg tw-mb-4"> -->
+              Click on the addition or subtraction operator to visualize the question!<br><br/> 
+              For <strong>addition</strong>, you'll see a table with rows and columns.<br/> <br>
+              For <strong>subtraction</strong>, you'll see the remaining amount after 
+              <br>the corresponding amount has faded away. <br>
+            <!-- </p> -->
 
-            <!-- Button-->
             <div class="tw-flex tw-gap-8 tw-justify-center">
               <button
                 @click="showHintModal = false"
@@ -448,7 +448,7 @@ export default {
         if (docSnap.exists()) {
           this.money = docSnap.data().currency;
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -458,7 +458,7 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log("Currency successfully written!");
+        // console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
       }
@@ -471,7 +471,7 @@ export default {
           { completedTasks: arrayUnion(newTask) },
           { merge: true }
         );
-        console.log("Task successfully added to completedTasks!");
+        // console.log("Task successfully added to completedTasks!");
       } catch (error) {
         console.error("Error updating document: ", error);
       }
@@ -510,7 +510,7 @@ export default {
     },
     exitGame() {
       this.router.push("/game");
-      console.log("Exiting game");
+      // console.log("Exiting game");
     },
     startGame() {
       this.startTimer();
@@ -534,7 +534,7 @@ export default {
 
     this.handleOutsideClick = this.handleOutsideClick.bind(this);
     const auth = getAuth();
-    console.log(`uid=${auth.currentUser.uid}`);
+    // console.log(`uid=${auth.currentUser.uid}`);
     const db = getFirestore();
     this.db = db;
     this.auth = auth;

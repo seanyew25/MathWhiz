@@ -64,7 +64,7 @@
             <div class="col-11 text-center math-game">
               <TimerBar
                 ref="timerBar"
-                :initial-time="5"
+                :initial-time="20"
                 :is-running="isTimerRunning"
                 @timerExpired="handleTimerExpired"
               />
@@ -233,7 +233,7 @@
                   Type into your keyboard the numbers that make up the <br />
                   numerator and denominator of the fraction. <br /><br />
                   You do not need to simplify the fractions.<br /><br />
-                  You have <strong>5</strong> seconds for each question. Good
+                  You have <strong>20</strong> seconds for each question. Good
                   luck!
                 </p>
                 <menu class="dialog-menu center-button">
@@ -566,14 +566,14 @@ export default {
       const docRef = doc(this.db, this.collectionName, this.documentId);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
-          console.log("Currency data:", doc.data().currency);
+          // console.log("Document data:", doc.data());
+          // console.log("Currency data:", doc.data().currency);
           const moneyPromiseObject = doc.data().currency;
           return moneyPromiseObject;
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -583,7 +583,7 @@ export default {
       const docRef = doc(this.db, this.collectionName, this.documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log("Currency successfully written!");
+        // console.log("Currency successfully written!");
         return true;
       } catch (error) {
         console.error("Error writing document: ", error);
@@ -604,7 +604,7 @@ export default {
     },
     handleTimerExpired() {
       //from Timerbar.vue, when the component recognised time ran out
-      console.log("expired"); //we go to next question
+      // console.log("expired"); //we go to next question
       this.nextQuestion();
     },
     finishGame() {

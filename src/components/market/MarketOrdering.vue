@@ -345,7 +345,7 @@ export default {
           coins.value += 1;
         }
       } else {
-        console.log("ordering, wrong, playing sound");
+        // console.log("ordering, wrong, playing sound");
         playSound(false);
         resetStreak();
       }
@@ -440,7 +440,7 @@ export default {
     const handleTimeOut = () => {
       if (questionCount.value < totalQuestions) {
         playSound(false);
-        console.log("handling timeout");
+        // console.log("handling timeout");
         resetStreak();
         loadNextQuestion();
       } else {
@@ -484,12 +484,12 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         const doc = await getDoc(docRef);
-        console.log(doc);
+        // console.log(doc);
         if (doc.exists()) {
-          console.log("Document data:", doc.data());
+          // console.log("Document data:", doc.data());
           money.value = doc.data().currency;
         } else {
-          console.log("No such document!");
+          // console.log("No such document!");
         }
       } catch (error) {
         console.error("Error getting document:", error);
@@ -500,7 +500,7 @@ export default {
       const docRef = doc(db, collectionName, documentId);
       try {
         await setDoc(docRef, { currency: currency }, { merge: true });
-        console.log(currency);
+        // console.log(currency);
         console.log("Currency successfully written!");
       } catch (error) {
         console.error("Error writing document: ", error);
@@ -520,7 +520,7 @@ export default {
           { completedTasks: arrayUnion(newTask) },
           { merge: true }
         );
-        console.log("Task successfully added to completedTasks!");
+        // console.log("Task successfully added to completedTasks!");
       } catch (error) {
         console.error("Error updating document: ", error);
       }
@@ -528,11 +528,11 @@ export default {
 
     onMounted(() => {
       const authObj = getAuth();
-      console.log(`uid=${authObj.currentUser.uid}`);
+      // console.log(`uid=${authObj.currentUser.uid}`);
       const dbInstance = getFirestore();
       db.value = dbInstance;
       auth.value = authObj;
-      console.log(db);
+      // console.log(db);
       getCurrency(dbInstance, "users", authObj.currentUser.uid);
       showTutorial();
       assignRandomImages();

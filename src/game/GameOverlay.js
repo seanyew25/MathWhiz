@@ -7,7 +7,7 @@ class GameOverlayScene extends Phaser.Scene {
 
   init(data) {
     // Access the data passed from MainScene
-    console.log("Received data:", data);
+    // console.log("Received data:", data);
     this.playerSpawnX = data.x;
     this.playerSpawnY = data.y;
   }
@@ -18,7 +18,7 @@ class GameOverlayScene extends Phaser.Scene {
 
   create() {
     if (!this) {
-      console.error("scene contetx not found");
+      // console.error("scene contetx not found");
       return;
     }
     // MINIMAP;
