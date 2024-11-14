@@ -521,8 +521,10 @@ const handleLogin = () => {
       const user = userCredential.user;
       const modalElement = document.getElementById("getStartedModal");
       const modal = bootstrap.Modal.getInstance(modalElement);
-      router.push("/story");
-      modal.hide();
+      getEquippedPlayer(db, "users", userData.value.uid).then(() => {
+        router.push("/story");
+        modal.hide();
+      });
     })
     .catch((error) => {
       const errorCode = error.code;
