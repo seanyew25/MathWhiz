@@ -866,6 +866,5 @@ body {
   }
 }
 
-/* ... existing styles ... */
 </style>
 
