@@ -85,7 +85,7 @@ export default {
 
 .progress {
   height: 50px;
-  background-color: #e9ecef;
+  background-color: white;
   border-radius: 0.25rem;
 }
 

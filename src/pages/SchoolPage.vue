@@ -6,7 +6,6 @@
       @end-cutscene="endCutscene"
       @go-to-addition-subtraction="goToAdditionSubtraction"
       @go-to-multiplication-division="goToMultiplicationDivision"
-      @go-to-new-multiplication-division="goToNewMultiplicationDivision"
     />
     <AdditionSubtractGame v-else-if="showAdditionSubtraction" />
     <MultiplicationDivisionGame v-else-if="showMultiplicationDivision" />
@@ -15,7 +14,6 @@
 </template>
 
 <script setup>
-import NewMultiplicationDivisionGame from "../components/school/NewMultiplicationDivisionGame.vue";
 import MultiplicationDivisionGame from "../components/school/MultiplicationDivisionGame.vue";
 import AdditionSubtractGame from "../components/school/AdditionSubtractGame.vue";
 import { ref, onMounted } from "vue";
@@ -35,12 +33,6 @@ function goToAdditionSubtraction() {
 // Function to display MarketOrdering after the cutscene
 function goToMultiplicationDivision() {
   showMultiplicationDivision.value = true;
-  showCutscene.value = false;
-}
-
-// Function to display New MarketOrdering after the cutscene
-function goToNewMultiplicationDivision() {
-  showNewMultiplicationDivision.value = true;
   showCutscene.value = false;
 }
 

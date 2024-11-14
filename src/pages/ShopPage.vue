@@ -39,6 +39,13 @@
 .shop {
   font-family: "Press Start 2P";
 }
+.nes-container.is-rounded {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
 .nes-btn {
   border-image-slice: 2;
   border-image-width: 2;
@@ -252,8 +259,7 @@ export default {
       }
     },
     async handleBuyAction(catObj) {
-      
-    console.log(this.money)
+      console.log(this.money);
       console.log(catObj.price);
       if (this.money >= catObj.price) {
         this.money -= catObj.price;

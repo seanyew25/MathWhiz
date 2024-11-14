@@ -7,7 +7,7 @@
       class="nes-container is-rounded is-centered with-title tw-max-w-3xl"
       style="background-color: rgba(255, 245, 205, 1)"
     >
-      <p class="title" style="background-color: rgba(255, 245, 205, 1)">Bank</p>
+      <p class="title" style="background-color: rgba(255, 245, 205, 1); margin-bottom: 0;">Bank</p>
       <button
         class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn"
         @click="skipCutscene"
@@ -25,7 +25,7 @@
           <img
             :src="currentImage"
             :class="[
-              { shake: currentAnimation.value === 'alerted' },
+              { shake: isAlerted },
               currentAnimation.value === 'fall' ? 'tw-my-auto' : 'tw-mx-auto',
             ]"
             alt="Character Animation"
@@ -64,7 +64,7 @@
                 $emit('end-cutscene');
                 $emit('go-to-bank-game');
               "
-              class="wiggle-button nes-btn is-primary"
+              class="wiggle-button nes-btn endButton is-primary"
             >
               Go to Counting Money!
             </button>
@@ -94,7 +94,7 @@ export default {
     const walkFrame = ref(0);
 
     // headache Animation Frames
-    const phoneFrames = [0, 1, 2, 3, 4, 5];
+    const phoneFrames = [0, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5];
     let phoneIndex = 0;
 
     // headache Animation Frames
@@ -122,7 +122,7 @@ export default {
     );
 
     // Dialogue Text and Display
-    const dialogueText = ref("Today I will deposit my piggybank at the bank!"); // Initial text for walking
+    const dialogueText = ref("I’m going to deposit my piggy bank today!"); // Initial text for walking
     const displayedText = ref("");
     let index = 0;
 
@@ -161,12 +161,12 @@ export default {
 
       if (currentAnimation.value === "walking") {
         currentAnimation.value = "phone";
-        dialogueText.value = "It's time to use my phone to count the money!";
+        dialogueText.value = "I know! I'll use my phone to count the money!";
       } else if (currentAnimation.value === "phone") {
         currentAnimation.value = "headache";
-        dialogueText.value = "NOOOOO!!! There's no battery left!!";
+        dialogueText.value = "WHAT?! There's no battery left!";
       } else if (currentAnimation.value === "headache") {
-        if (dialogueText.value === "NOOOOO!!! There's no battery left!!") {
+        if (dialogueText.value === "WHAT?! There's no battery left!") {
           dialogueText.value =
             "Mummy is going to scold me if I don't deposit this...";
         } else {
@@ -189,9 +189,9 @@ export default {
       } else if (currentAnimation.value === "standing") {
         if (dialogueText.value === "Hey, you over there!") {
           dialogueText.value =
-            "My math is bad and I need to deposit my piggybank";
+            "My math is bad and I can't count all this money by myself...";
         } else if (standingClickCount < 2) {
-          dialogueText.value = "Can you please help me?";
+          dialogueText.value = "Could you please help me?";
           standingClickCount++;
           currentAnimation.value = "neutral";
           currentImage.value = `/assets/bankassets/cutscene/standing1.png`;
@@ -290,6 +290,34 @@ export default {
 </script>
 
 <style scoped>
+.nes-btn {
+  border-image-slice: 2;
+  border-image-width: 2;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.endButton {
+  width: 250px;
+}
+
+.nes-container.is-rounded {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
+.nes-balloon {
+  border-image-slice: 3;
+  border-image-width: 3;
+  border-image-repeat: stretch;
+  border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="8" height="8" xmlns="http://www.w3.org/2000/svg"><path d="M3 1 h1 v1 h-1 z M4 1 h1 v1 h-1 z M2 2 h1 v1 h-1 z M5 2 h1 v1 h-1 z M1 3 h1 v1 h-1 z M6 3 h1 v1 h-1 z M1 4 h1 v1 h-1 z M6 4 h1 v1 h-1 z M2 5 h1 v1 h-1 z M5 5 h1 v1 h-1 z M3 6 h1 v1 h-1 z M4 6 h1 v1 h-1 z" fill="rgb(33,37,41)" /></svg>');
+  border-image-outset: 2;
+}
+
 .cutscene {
   font-family: "Press Start 2P", sans-serif;
   z-index: 1; /* Ensure the cutscene is below the navbar */
