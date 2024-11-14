@@ -19,6 +19,7 @@ export default class MainScene extends Phaser.Scene {
     //   import.meta.env.MODE === "development"
     //     ? "/assets/mainassets"
     //     : "/assets/mainassets";
+    this.initialData = this.registry.get("initialData");
     const basePath = "/assets/mainassets";
     this.load.image(
       "terrainsAndFences",
@@ -33,7 +34,6 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("alert", `${basePath}/exclamation.png`);
     // tileset name need to be the same as the image name here
     this.load.tilemapTiledJSON("map", `${basePath}/MainTilemap.json`);
-    this.initialData = this.registry.get("initialData");
     this.load.spritesheet(
       "player",
       `${basePath}/sprites/characters/${this.initialData.equippedPlayer}.png`,
@@ -79,7 +79,11 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     // Runs once, after all assets in preload are loaded
-    this.scene.launch("GameOverlayScene");
+    const data = {
+      x: this.initialData.spawnLocation.x,
+      y: this.initialData.spawnLocation.y,
+    };
+    this.scene.launch("GameOverlayScene", data);
     const map = this.make.tilemap({
       key: "map",
       tileWidth: 16,
