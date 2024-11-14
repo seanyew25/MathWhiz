@@ -359,9 +359,13 @@ export default {
         this.clearOperatorEffect();
       }
     },
-    startTimer() {
-      this.isTimerRunning = true;
+    startTimer(reset = true) {
+    this.isTimerRunning = true;
+    if (reset) {
       this.$refs.timerBar.resetTimer();
+    } else {
+      this.$refs.timerBar.resumeTimer();
+    }
     },
     pauseTimer() {
       this.isTimerRunning = false;
@@ -474,6 +478,7 @@ export default {
     },
 
     endGame() {
+      // Update currency and completed tasks if needed
       this.updateCurrency(
         this.db,
         "users",
@@ -486,6 +491,7 @@ export default {
         this.auth.currentUser.uid,
         "additionAndSubtraction"
       );
+
       this.gameOver = true;
       this.completionMessage = "Game Over! You've answered 10 questions.";
       this.pauseTimer();
@@ -512,12 +518,12 @@ export default {
   },
   watch: {
     showHintModal(newVal) {
-      if (newVal) {
-        this.pauseTimer();
-      } else {
-        this.startTimer();
-      }
-    },
+    if (newVal) {
+      this.pauseTimer();
+    } else {
+      this.startTimer(false); 
+    }
+  },
   },
   mounted() {
     // Show the instructions dialog

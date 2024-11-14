@@ -428,9 +428,13 @@ export default {
         this.clearOperatorEffect();
       }
     },
-    startTimer() {
-      this.isTimerRunning = true;
+    startTimer(reset = true) {
+    this.isTimerRunning = true;
+    if (reset) {
       this.$refs.timerBar.resetTimer();
+    } else {
+      this.$refs.timerBar.resumeTimer();
+    }
     },
     pauseTimer() {
       this.isTimerRunning = false;
@@ -537,10 +541,24 @@ export default {
     },
     endGame() {
       // Update currency and completed tasks if needed
+      this.updateCurrency(
+        this.db,
+        "users",
+        this.auth.currentUser.uid,
+        this.money + this.coins + this.totalCoins
+      );
+      this.updateCompletedTasks(
+        this.db,
+        "users",
+        this.auth.currentUser.uid,
+        "additionAndSubtraction"
+      );
+
       this.gameOver = true;
       this.completionMessage = "Game Over! You've answered 10 questions.";
       this.pauseTimer();
     },
+
     restartGame() {
       this.gameOver = false;
       this.completionMessage = "";
@@ -562,11 +580,11 @@ export default {
     },
   },
   watch: {
-    showHintModal(newVal) {
+  showHintModal(newVal) {
       if (newVal) {
         this.pauseTimer();
       } else {
-        this.startTimer();
+        this.startTimer(false); // Resume timer without resetting
       }
     },
   },
