@@ -13,6 +13,7 @@
       >
         School
       </p>
+
       <button
         class="tw-absolute tw-top-0 tw-left-0 tw-m-2 nes-btn"
         @click="skipCutscene"
@@ -121,7 +122,7 @@ export default {
     const isShaking = computed(() => currentAnimation.value === "alerted");
 
     // Dialogue Text and Display
-    const dialogueText = ref("Wow this is very interesting!");
+    const dialogueText = ref("Wow, this is very interesting...");
     const displayedText = ref("");
     let index = 0;
 
@@ -186,10 +187,10 @@ export default {
 
       if (currentAnimation.value === "reading") {
         currentAnimation.value = "headache";
-        dialogueText.value = "Oh no! I got sidetracked again...";
+        dialogueText.value = "Oh no! I got sidetracked again!";
       } else if (currentAnimation.value === "headache") {
         currentAnimation.value = "spin";
-        dialogueText.value = "The school is still so messy!";
+        dialogueText.value = "The school is still so messy...";
       } else if (currentAnimation.value === "spin") {
         currentAnimation.value = "alerted";
         currentImage.value = `/assets/schoolassets/spin4.png`;
@@ -207,12 +208,12 @@ export default {
           dialogueText.value = "The school is in a mess!";
           standingClickCount++;
         } else if (standingClickCount === 1) {
-          dialogueText.value = "I need help tidying the school.";
+          dialogueText.value = "I need help tidying it up.";
           standingClickCount++;
         } else {
           currentAnimation.value = "carrying";
           currentImage.value = `/assets/schoolassets/carrying1.png`;
-          dialogueText.value = "Can you help me sort it out?";
+          dialogueText.value = "Could you help me sort it out?";
           standingClickCount = 0;
         }
       } else if (currentAnimation.value === "carrying") {
