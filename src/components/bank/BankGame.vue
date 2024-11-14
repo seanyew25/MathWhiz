@@ -137,9 +137,11 @@
             </h3>
             <p style="text-align: center;font-size: small;">
               <br>
-              All 10 people in the queue needs your help to deposit their coins.<br /><br />
-              Given how much they want to deposit, help them drag the coins from<br />
-                 the piggy bank to the counter while using the least amount of coins.<br /><br />
+              The boy needs your help to 
+              deposit his coins from his 10 piggy banks.<br /><br />
+              Given how much he wants to deposit, help him drag the coins from<br />
+                 each piggy bank to the counter while using the least amount of coins.<br /><br />
+                 He is very generous and will tip you some destress coins. <br><br>
               You have <strong>10</strong> seconds for
               each question. Good luck!
             </p>
