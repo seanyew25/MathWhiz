@@ -49,13 +49,18 @@ export default {
       this.$emit('timerStopped');
     },
     resetTimer() {
-      this.pauseTimer();
-      this.timerSeconds = this.initialTime;
-      this.timerWidth = 100;
-      if (this.isRunning) {
+    this.pauseTimer();
+    this.timerSeconds = this.initialTime;
+    this.timerWidth = 100;
+    if (this.isRunning) {
+      this.startTimer();
+    }
+  },
+    resumeTimer() {
+      if (this.isRunning && !this.timerInterval) {
         this.startTimer();
       }
-    }
+    },
   },
   watch: {
     isRunning(newValue) {
